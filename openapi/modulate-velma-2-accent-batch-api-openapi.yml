@@ -1,0 +1,235 @@
+openapi: 3.1.0
+info:
+  title: Velma 2 Accent Batch API
+  version: 0.0.0
+  description: "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n"
+servers:
+- url: https://platform.modulate.ai
+  description: Modulate Accent Batch Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Velma 2 Accent Batch
+paths:
+  /api/velma-2-accent-batch:
+    post:
+      summary: Detect accent in an audio file
+      description: 'Analyze an audio file and return a whole-file accent label plus a
+
+        per-window accent time series.
+
+        '
+      operationId: detectAccentBatch
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - upload_file
+              properties:
+                upload_file:
+                  type: string
+                  format: binary
+                  description: 'Audio file to analyze. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.
+
+                    Maximum file size: 100MB.
+
+                    Empty files are rejected.
+
+                    '
+                training_permitted:
+                  type: boolean
+                  default: true
+                  description: 'Whether this request''s audio may be used to improve the models.
+
+                    '
+                use_ensemble:
+                  type: boolean
+                  default: false
+                  description: 'When true, performs a more thorough analysis that may change the
+
+                    returned labels and increases latency.
+
+                    '
+      responses:
+        '200':
+          description: Accent detection completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccentResponse'
+              examples:
+                accent:
+                  summary: Accent with time series
+                  value:
+                    accent: British
+                    time_series:
+                    - start_ms: 0
+                      duration_ms: 15000
+                      accent: British
+                    - start_ms: 15000
+                      duration_ms: 15000
+                      accent: American
+        '400':
+          description: 'Bad request - The submitted audio was rejected: an unsupported file
+
+            extension, an empty file, or audio that could not be processed (for
+
+            example, corrupted data or content that does not match a supported
+
+            format).
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_format:
+                  summary: Invalid file format
+                  value:
+                    detail: 'Unsupported file format. Supported formats: .aac, .aiff, .flac, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm.'
+                empty_file:
+                  summary: Empty file
+                  value:
+                    detail: The uploaded file is empty.
+                unprocessable_audio:
+                  summary: Audio could not be processed
+                  value:
+                    detail: The audio could not be processed. It may be corrupted or in an unsupported format.
+        '403':
+          description: Forbidden - the request is not permitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: This request is not permitted.
+        '422':
+          description: 'Unprocessable Entity - a required request field is missing or malformed (for example, the `X-API-Key` header or the `upload_file` part).
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '429':
+          description: Too many requests - the request could not be completed due to insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Insufficient credits.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Internal server error
+        '502':
+          description: Bad gateway - the request could not be validated or completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation_unavailable:
+                  summary: Request could not be validated
+                  value:
+                    detail: Unable to validate request. Please try again.
+                request_not_completed:
+                  summary: Request could not be completed
+                  value:
+                    detail: Unable to complete the request. Please try again.
+      tags:
+      - Velma 2 Accent Batch
+components:
+  schemas:
+    AccentWindow:
+      type: object
+      required:
+      - start_ms
+      - duration_ms
+      - accent
+      properties:
+        start_ms:
+          type: integer
+          minimum: 0
+          description: 'Start of this window in milliseconds from the beginning of the file.
+
+            '
+          example: 0
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: Length of this window in milliseconds.
+          example: 15000
+        accent:
+          type: string
+          description: The accent label for this window.
+          example: British
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message describing what went wrong
+          example: The audio could not be processed. It may be corrupted or in an unsupported format.
+    AccentResponse:
+      type: object
+      required:
+      - accent
+      - time_series
+      properties:
+        accent:
+          type: string
+          description: 'The accent label for the whole file. Always present and non-null.
+
+            '
+          example: British
+        time_series:
+          type: array
+          description: 'Consecutive fixed-length windows over the file, each with its own
+
+            accent label. Empty when the file is shorter than one window.
+
+            '
+          items:
+            $ref: '#/components/schemas/AccentWindow'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key used for authentication and usage tracking.

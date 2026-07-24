@@ -1,0 +1,207 @@
+openapi: 3.1.0
+info:
+  title: Velma 2 Accent Batch Velma 2 Stt Batch English Vfast API
+  version: 0.0.0
+  description: "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n"
+servers:
+- url: https://platform.modulate.ai
+  description: Modulate Accent Batch Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Velma 2 Stt Batch English Vfast
+paths:
+  /api/velma-2-stt-batch-english-vfast:
+    post:
+      operationId: transcribeEnglishVfast2
+      summary: Transcribe an English audio file
+      description: 'Accepts a single audio file and returns its full transcript as a
+
+        synchronous JSON response.
+
+        '
+      security:
+      - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - upload_file
+              properties:
+                upload_file:
+                  type: string
+                  format: binary
+                  description: 'Audio file to transcribe. Must be non-empty. Supported formats:
+
+                    `.aac`, `.aiff`, `.flac`, `.mov`, `.mp3`, `.mp4`, `.ogg`,
+
+                    `.opus`, `.wav`, `.webm`. Maximum file size: 100 MB.
+
+                    '
+      responses:
+        '200':
+          description: Transcription completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranscriptionResponse'
+              examples:
+                short_audio:
+                  summary: Short audio transcription
+                  value:
+                    text: Hello, how are you doing today?
+                    duration_ms: 2000
+                longer_audio:
+                  summary: Longer audio with multiple sentences
+                  value:
+                    text: Welcome to today's meeting. We'll be discussing the quarterly results and planning for next quarter.
+                    duration_ms: 14253
+        '400':
+          description: 'Bad request - the uploaded file is empty, its format is not supported, or the audio could not be decoded.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_format:
+                  summary: Invalid file format
+                  value:
+                    detail: 'Unsupported file format. Supported formats: .aac, .aiff, .flac, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm.'
+                empty_file:
+                  summary: Empty file
+                  value:
+                    detail: The uploaded file is empty.
+                unprocessable:
+                  summary: Audio could not be decoded
+                  value:
+                    detail: The audio could not be processed. It may be corrupted or in an unsupported format.
+                bad_value:
+                  summary: Malformed request value
+                  value:
+                    detail: Invalid request.
+        '403':
+          description: Forbidden - the request is not permitted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: This request is not permitted.
+        '422':
+          description: 'Unprocessable entity - a required request parameter is missing or invalid (for example, the `X-API-Key` header or the `upload_file` field).
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '429':
+          description: Too many requests - the request could not be completed due to insufficient credits.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Insufficient credits.
+        '500':
+          description: Internal server error during processing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Internal server error
+        '502':
+          description: Bad gateway - the request could not be validated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Unable to validate request. Please try again.
+        '503':
+          description: Service unavailable - the service is temporarily unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: The service is temporarily unavailable. Please try again later.
+        '504':
+          description: Gateway timeout - processing timed out.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: The request timed out. Please try again.
+      tags:
+      - Velma 2 Stt Batch English Vfast
+components:
+  schemas:
+    TranscriptionResponse:
+      type: object
+      required:
+      - text
+      - duration_ms
+      properties:
+        text:
+          type: string
+          description: 'The complete transcribed text from the audio file. Text includes
+
+            automatic capitalization and punctuation. May be an empty string
+
+            if no speech was recognized.
+
+            '
+          example: Hello, how are you doing today?
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: 'The total duration of the processed audio in milliseconds.
+
+            '
+          example: 14253
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    ErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key used for authentication and usage tracking.

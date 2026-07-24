@@ -1,0 +1,482 @@
+openapi: 3.1.0
+info:
+  title: Velma 2 Accent Batch Velma 2 Stt Batch API
+  version: 0.0.0
+  description: "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n"
+servers:
+- url: https://platform.modulate.ai
+  description: Modulate Accent Batch Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Velma 2 Stt Batch
+paths:
+  /api/velma-2-stt-batch:
+    post:
+      summary: Transcribe audio file with automatic language detection
+      description: 'Transcribe an audio file and return the full transcript with per-utterance
+
+        metadata. Language is detected automatically for each utterance, so different
+
+        utterances in the same file may be identified as different languages when
+
+        code-switching occurs.
+
+        '
+      operationId: transcribeMultilingualBatch
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - upload_file
+              properties:
+                upload_file:
+                  type: string
+                  format: binary
+                  description: 'Audio file to transcribe. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.
+
+                    Maximum file size: 100MB.
+
+                    Empty files are rejected.
+
+                    '
+                speaker_diarization:
+                  type: boolean
+                  default: true
+                  description: 'Speaker diarization identifies different speakers in the audio.
+
+                    When enabled, each utterance includes a speaker identifier (e.g., 1, 2).
+
+                    '
+                emotion_signal:
+                  type: boolean
+                  default: false
+                  description: 'Emotion detection for each utterance. When enabled, each utterance
+
+                    includes an emotion signal detected from the speaker''s voice.
+
+                    '
+                accent_signal:
+                  type: boolean
+                  default: false
+                  description: 'Accent detection for each utterance. When enabled, each utterance
+
+                    includes an accent signal detected from the speaker''s voice.
+
+                    '
+                deepfake_signal:
+                  type: boolean
+                  default: false
+                  description: 'Synthetic voice (deepfake) detection for each utterance. When enabled,
+
+                    each utterance includes a deepfake_score indicating the likelihood that
+
+                    the speech is AI-generated. The score ranges from 0.0 (likely natural)
+
+                    to 1.0 (likely synthetic).
+
+                    '
+                pii_phi_tagging:
+                  type: boolean
+                  default: false
+                  description: 'PII/PHI tagging in utterance text. When enabled, personally
+
+                    identifiable information and personal health information are wrapped
+
+                    with appropriate tags in the transcription text.
+
+                    '
+                language:
+                  type: string
+                  pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
+                  description: 'Optional language hint as a case-insensitive ISO 639-1 code
+
+                    (e.g. "en", "fr"). BCP 47 region/script subtags (e.g. "en-US")
+
+                    are accepted; only the primary language subtag is used. When
+
+                    omitted, the language is detected automatically for each utterance.
+
+                    '
+                config:
+                  type: string
+                  contentMediaType: application/json
+                  contentSchema:
+                    $ref: '#/components/schemas/STTConfig'
+                  description: 'Optional JSON-encoded STT configuration. When present, a
+
+                    field in this object overrides the matching top-level form
+
+                    parameter; an omitted field falls back to the form parameter.
+
+                    Carries custom_terms plus the per-request STT flags. Sent as a
+
+                    string form field because multipart/form-data has no
+
+                    first-class object type.
+
+                    '
+            encoding:
+              config:
+                contentType: application/json
+      responses:
+        '200':
+          description: Transcription completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranscriptionResponse'
+              examples:
+                multilingual:
+                  summary: Transcription with multiple languages
+                  value:
+                    text: Hello, how are you? Bonjour, ça va?
+                    duration_ms: 5000
+                    utterances:
+                    - utterance_uuid: e5f6a7b8-c9d0-1234-efab-345678901234
+                      text: Hello, how are you?
+                      start_ms: 0
+                      duration_ms: 2000
+                      speaker: 1
+                      language: en
+                      emotion: Neutral
+                      accent: American
+                      deepfake_score: null
+                    - utterance_uuid: f6a7b8c9-d0e1-2345-fabc-456789012345
+                      text: Bonjour, ça va?
+                      start_ms: 2500
+                      duration_ms: 2500
+                      speaker: 2
+                      language: fr
+                      emotion: Happy
+                      accent: British
+                      deepfake_score: null
+        '400':
+          description: 'Bad request - The submitted audio was rejected: an unsupported file
+
+            extension, an empty file, or audio that could not be processed (for
+
+            example, corrupted data or content that does not match a supported
+
+            format); or a request parameter value was invalid (for example,
+
+            `language`).
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_format:
+                  summary: Invalid file format
+                  value:
+                    detail: 'Unsupported file format. Supported formats: .aac, .aiff, .flac, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm.'
+                empty_file:
+                  summary: Empty file
+                  value:
+                    detail: The uploaded file is empty.
+                unprocessable_audio:
+                  summary: Audio could not be processed
+                  value:
+                    detail: The audio could not be processed. It may be corrupted or in an unsupported format.
+                invalid_language:
+                  summary: Invalid language code
+                  value:
+                    detail: Invalid language='english'. Expected an ISO 639-1 language code (e.g. 'en', 'fr').
+                invalid_config:
+                  summary: Invalid config value
+                  value:
+                    detail: Invalid configuration.
+                bad_value:
+                  summary: Malformed request value
+                  value:
+                    detail: Invalid request.
+        '403':
+          description: Forbidden - the request is not permitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: This request is not permitted.
+        '422':
+          description: 'Unprocessable Entity - a required request field is missing or malformed (for example, the `X-API-Key` header or the `upload_file` part).
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '429':
+          description: Too many requests - the request could not be completed due to insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Insufficient credits.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Internal server error
+        '502':
+          description: Bad gateway - the request could not be validated or completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation_unavailable:
+                  summary: Request could not be validated
+                  value:
+                    detail: Unable to validate request. Please try again.
+                request_not_completed:
+                  summary: Request could not be completed
+                  value:
+                    detail: Unable to complete the request. Please try again.
+      tags:
+      - Velma 2 Stt Batch
+components:
+  schemas:
+    TranscriptionResponse:
+      type: object
+      required:
+      - text
+      - duration_ms
+      - utterances
+      properties:
+        text:
+          type: string
+          description: 'The complete transcribed text from the audio file, containing all utterances
+
+            concatenated together. This provides a full transcript of the audio content.
+
+            Always present; may be an empty string when no speech was recognized.
+
+            '
+          example: Hello everyone. Welcome to the meeting.
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: 'The total duration of the processed audio in milliseconds. This value represents
+
+            the actual audio duration and is used for usage tracking and billing purposes.
+
+            '
+          example: 45000
+        utterances:
+          type: array
+          description: 'Array of individual utterances detected in the audio, ordered by start time.
+
+            Each utterance represents a continuous segment of speech, potentially from a
+
+            specific speaker if diarization is enabled.
+
+            Always present; may be an empty array when no speech was recognized.
+
+            '
+          items:
+            $ref: '#/components/schemas/Utterance'
+    Utterance:
+      type: object
+      required:
+      - utterance_uuid
+      - text
+      - start_ms
+      - duration_ms
+      - speaker
+      - language
+      - emotion
+      - accent
+      - deepfake_score
+      properties:
+        utterance_uuid:
+          type: string
+          format: uuid
+          description: 'Unique identifier for this utterance.
+
+            '
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        text:
+          type: string
+          description: 'The transcribed text for this utterance. Represents a single continuous segment
+
+            of speech.
+
+            '
+          example: Hello everyone.
+        start_ms:
+          type: integer
+          minimum: 0
+          description: 'The start time of this utterance in milliseconds, relative to the beginning
+
+            of the audio file. Allows precise synchronization with the original audio.
+
+            '
+          example: 0
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: 'The duration of this utterance in milliseconds.
+
+            '
+          example: 2500
+        speaker:
+          type: integer
+          description: 'Speaker number for this utterance (1-indexed). When speaker diarization is enabled,
+
+            this identifies which speaker produced this utterance. Speaker numbers are consistent
+
+            within a single audio file but may vary between different files.
+
+            '
+          example: 1
+        language:
+          type: string
+          description: 'The automatically detected language code for this utterance (e.g., "en" for English,
+
+            "fr" for French).
+
+            '
+          example: en
+        emotion:
+          oneOf:
+          - type: string
+          - type: 'null'
+          description: 'Detected emotion signal for this utterance. Null if emotion detection is disabled.
+
+            Possible values include: Neutral, Calm, Happy, Amused, Excited, Proud, Affectionate,
+
+            Interested, Hopeful, Frustrated, Angry, Contemptuous, Concerned, Afraid, Sad,
+
+            Ashamed, Bored, Tired, Surprised, Anxious, Stressed, Disgusted, Disappointed,
+
+            Confused, Relieved, Confident.
+
+            '
+          example: Neutral
+        accent:
+          oneOf:
+          - type: string
+          - type: 'null'
+          description: 'Detected accent signal for this utterance. Null if accent detection is disabled.
+
+            Possible values include: American, British, Australian, Southern, Indian, Irish,
+
+            Scottish, Eastern_European, African, Asian, Latin_American, Middle_Eastern, Unknown.
+
+            '
+          example: American
+        deepfake_score:
+          oneOf:
+          - type: number
+            format: double
+            minimum: 0
+            maximum: 1
+          - type: 'null'
+          description: 'Synthetic voice (deepfake) detection score for this utterance. Null if deepfake
+
+            detection is disabled or if the utterance could not be analyzed.
+
+            Values range from 0.0 (likely natural human speech) to 1.0 (likely AI-generated
+
+            synthetic speech).
+
+            '
+          example: 0.05
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message describing what went wrong
+          example: 'Unsupported file format. Supported formats: .aac, .aiff, .flac, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm.'
+    CustomTerm:
+      type: object
+      required:
+      - term
+      properties:
+        term:
+          type: string
+          minLength: 1
+          description: The vocabulary term to bias transcription toward.
+        definition:
+          type: string
+          maxLength: 256
+          description: Optional short definition of the term.
+        pronunciations:
+          type: array
+          maxItems: 16
+          items:
+            type: string
+            maxLength: 128
+          description: Optional pronunciation hints, as X-SAMPA notation or hyphen-separated ASCII respelling with the stressed syllable in capitals (e.g. GOO-guhl). Printable ASCII only.
+    STTConfig:
+      type: object
+      description: Per-request STT configuration. Every field is optional; a field present here overrides the matching top-level form parameter, and an omitted field falls back to the form parameter.
+      properties:
+        speaker_diarization:
+          type: boolean
+        emotion_signal:
+          type: boolean
+        accent_signal:
+          type: boolean
+        deepfake_signal:
+          type: boolean
+        pii_phi_tagging:
+          type: boolean
+        language:
+          oneOf:
+          - type: string
+            pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
+          - type: 'null'
+        custom_terms:
+          description: Optional custom vocabulary to bias transcription toward domain terms and names. Each entry is either a plain string (the term) or a CustomTerm object. Blank terms and blank pronunciations are dropped. At most 1000 entries, and the term strings serialized together as JSON must total under 8000 characters. Null or omitted means no biasing.
+          oneOf:
+          - type: 'null'
+          - type: array
+            maxItems: 1000
+            items:
+              oneOf:
+              - type: string
+              - $ref: '#/components/schemas/CustomTerm'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key used for authentication and usage tracking.

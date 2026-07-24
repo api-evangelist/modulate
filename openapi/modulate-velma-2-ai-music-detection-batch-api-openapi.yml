@@ -1,0 +1,385 @@
+openapi: 3.1.0
+info:
+  title: Velma 2 Accent Batch Velma 2 Ai Music Detection Batch API
+  version: 0.0.0
+  description: "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n"
+servers:
+- url: https://platform.modulate.ai
+  description: Modulate Accent Batch Server
+security:
+- ApiKeyAuth: []
+tags:
+- name: Velma 2 Ai Music Detection Batch
+paths:
+  /api/velma-2-ai-music-detection-batch:
+    post:
+      operationId: detectAIMusic
+      summary: Detect AI-generated music in an audio file
+      description: 'Accepts an audio file and returns a clip-level verdict on whether the
+
+        content contains AI-generated music, along with a per-window breakdown
+
+        of how each segment was classified.
+
+        '
+      security:
+      - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - upload_file
+              properties:
+                upload_file:
+                  type: string
+                  format: binary
+                  description: 'Audio file to analyse. Must be non-empty. Supported formats:
+
+                    `.aac`, `.flac`, `.m4a`, `.mp3`, `.mp4`, `.ogg`, `.opus`,
+
+                    `.wav`. Maximum file size: 100 MB.
+
+                    '
+      responses:
+        '200':
+          description: Detection completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIMusicDetectionResponse'
+              example:
+                filename: my_audio.mp3
+                duration_s: 89.28
+                primary_verdict: ai-vocal-music
+                vocal_percentage: 87.5
+                vocal_ai_percentage: 56.5
+                vocal_ai_confidence: 0.96
+                instrumental_percentage: 64.3
+                instrumental_ai_percentage: 10.5
+                instrumental_ai_confidence: 0.95
+                silence_percentage: 3.51
+                windows:
+                - start_time_ms: 0
+                  end_time_ms: 4000
+                  vocal_percentage: 100
+                  vocal_ai_percentage: 100
+                  vocal_ai_confidence: 0.97
+                  instrumental_percentage: 79
+                  instrumental_ai_percentage: 0
+                  instrumental_ai_confidence: 0
+                  silence_percentage: 0
+                - start_time_ms: 4000
+                  end_time_ms: 8000
+                  vocal_percentage: 0
+                  vocal_ai_percentage: 0
+                  vocal_ai_confidence: 0
+                  instrumental_percentage: 82
+                  instrumental_ai_percentage: 0
+                  instrumental_ai_confidence: 0.76
+                  silence_percentage: 18
+                latency_ms: 1333
+        '400':
+          description: 'Bad request - the uploaded file is empty or its format is not supported.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: The uploaded file is empty.
+        '403':
+          description: Forbidden - the request is not permitted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: This request is not permitted.
+        '422':
+          description: 'Unprocessable entity - a required request parameter is missing or invalid. A missing `X-API-Key` header returns an `ErrorResponse` with detail "Invalid request."; a missing or invalid `upload_file` field returns the framework validation body.
+
+            '
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/ErrorResponse'
+                - $ref: '#/components/schemas/HTTPValidationError'
+              examples:
+                missing_api_key:
+                  value:
+                    detail: Invalid request.
+                invalid_upload_file:
+                  value:
+                    detail:
+                    - loc:
+                      - body
+                      - upload_file
+                      msg: Field required
+                      type: missing
+        '429':
+          description: Too many requests - the request could not be completed due to insufficient credits.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Insufficient credits.
+        '500':
+          description: Internal server error during processing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Internal server error
+        '502':
+          description: Bad gateway - the request could not be validated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Unable to validate request. Please try again.
+      tags:
+      - Velma 2 Ai Music Detection Batch
+components:
+  schemas:
+    AIMusicDetectionResponse:
+      type: object
+      required:
+      - filename
+      - duration_s
+      - primary_verdict
+      - vocal_percentage
+      - vocal_ai_percentage
+      - vocal_ai_confidence
+      - instrumental_percentage
+      - instrumental_ai_percentage
+      - instrumental_ai_confidence
+      - silence_percentage
+      - windows
+      - latency_ms
+      properties:
+        filename:
+          type: string
+          description: 'Name of the submitted audio file. Empty string if no filename was provided in the upload.
+
+            '
+          example: my_audio.mp3
+        duration_s:
+          type: number
+          format: double
+          minimum: 0
+          description: Total duration of the analysed audio in seconds.
+          example: 89.28
+        primary_verdict:
+          type: string
+          enum:
+          - ai-vocal-music
+          - ai-instrumental
+          - not-ai-music
+          description: "Clip-level classification:\n- `ai-vocal-music` - AI-generated music with a detected synthetic\n  voice (covers AI songs and AI synthetic vocal tracks).\n- `ai-instrumental` - AI-generated instrumental music with no\n  detectable synthetic voice.\n- `not-ai-music` - the clip does not appear to contain\n  AI-generated music.\n"
+          example: ai-vocal-music
+        vocal_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: 'Clip-level average percentage of the audio that contains vocal content, averaged across all windows.
+
+            '
+          example: 87.5
+        vocal_ai_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: 'Percentage of the clip duration classified as AI-generated vocals. Computed as (seconds of windows classified as AI vocals) / (total clip seconds) * 100. A window contributes its full duration when it is classified as AI-generated vocals; zero otherwise.
+
+            '
+          example: 56.5
+        vocal_ai_confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: 'Average confidence that the vocal windows contain AI-generated vocals, across all windows with vocal content. Not diluted by non-vocal windows.
+
+            '
+          example: 0.89
+        instrumental_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: 'Clip-level average percentage of the audio that contains instrumental music content, averaged across all windows.
+
+            '
+          example: 64.3
+        instrumental_ai_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: 'Percentage of non-vocal non-silent windows classified as AI-generated instrumental content (0-100 scale).
+
+            '
+          example: 10.5
+        instrumental_ai_confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: 'Maximum confidence that a non-vocal window contains AI-generated instrumental content. Zero if no such window was found.
+
+            '
+          example: 0.95
+        silence_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: 'Clip-level average percentage of the audio that contains neither vocal nor instrumental content, averaged across all windows.
+
+            '
+          example: 3.51
+        windows:
+          type: array
+          items:
+            $ref: '#/components/schemas/WindowPrediction'
+          description: Per-window breakdown of detection results.
+        latency_ms:
+          type: number
+          format: double
+          minimum: 0
+          description: End-to-end inference time in milliseconds.
+          example: 1333
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    WindowPrediction:
+      type: object
+      required:
+      - start_time_ms
+      - end_time_ms
+      - vocal_percentage
+      - vocal_ai_percentage
+      - vocal_ai_confidence
+      - instrumental_percentage
+      - instrumental_ai_percentage
+      - instrumental_ai_confidence
+      - silence_percentage
+      properties:
+        start_time_ms:
+          type: integer
+          minimum: 0
+          description: Window start time in milliseconds.
+          example: 0
+        end_time_ms:
+          type: integer
+          minimum: 0
+          description: Window end time in milliseconds.
+          example: 4000
+        vocal_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: 'Percentage of this window that contains vocal content.
+
+            '
+          example: 100
+        vocal_ai_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: '`100` if this window is classified as containing AI-generated vocals; `0` otherwise. Only meaningful for vocal windows; always `0` for windows without sufficient vocal content.
+
+            '
+          example: 100
+        vocal_ai_confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: 'Confidence that this window contains AI-generated vocals. Present only for vocal windows; `0` for windows without sufficient vocal content.
+
+            '
+          example: 0.97
+        instrumental_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: 'Percentage of this window that contains instrumental music content.
+
+            '
+          example: 79
+        instrumental_ai_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: '`100` if this window is classified as AI-generated instrumental content; `0` otherwise. Only meaningful for non-vocal windows; always `0` for vocal windows.
+
+            '
+          example: 0
+        instrumental_ai_confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: 'Confidence that this window contains AI-generated instrumental content. Present only for non-vocal windows; `0` for vocal windows.
+
+            '
+          example: 0
+        silence_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: 'Percentage of this window that contains neither vocal nor instrumental content.
+
+            '
+          example: 0
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key used for authentication and usage tracking.
