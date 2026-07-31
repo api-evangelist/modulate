@@ -1,0 +1,241 @@
+openapi: 3.1.0
+info:
+  title: Velma 2 Emotion Batch API
+  version: 0.0.0
+  description: |
+    Batch emotion detection on an audio file via HTTP POST. Returns a single
+    whole-file emotion label plus a time series of fixed-length windows, each
+    with its own emotion label.
+
+    ## Behavior Notes
+    - The `time_series` entries are consecutive, fixed-length windows over the
+      file; each entry's `start_ms` and `duration_ms` delimit its span. A
+      trailing remainder shorter than one full window is omitted.
+    - A file shorter than one window returns an empty `time_series`; the
+      whole-file `emotion` is still returned.
+    - `emotion` is always a non-null string.
+servers:
+  - url: https://platform.modulate.ai
+    description: Modulate Emotion Batch Server
+security:
+  - ApiKeyAuth: []
+paths:
+  /api/velma-2-emotion-batch:
+    post:
+      summary: Detect emotion in an audio file
+      description: |
+        Analyze an audio file and return a whole-file emotion label plus a
+        per-window emotion time series.
+      operationId: detectEmotionBatch
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - upload_file
+              properties:
+                upload_file:
+                  type: string
+                  format: binary
+                  description: >
+                    Audio file to analyze. Supported formats: AAC, AIFF, FLAC,
+                    MP3, MP4, MOV, OGG, Opus, WAV, WebM.
+
+                    Maximum file size: 100MB.
+
+                    Empty files are rejected.
+                training_permitted:
+                  type: boolean
+                  default: true
+                  description: >
+                    Whether this request's audio may be used to improve the
+                    models.
+                use_ensemble:
+                  type: boolean
+                  default: false
+                  description: >
+                    When true, performs a more thorough analysis that may change
+                    the
+
+                    returned labels and increases latency.
+      responses:
+        '200':
+          description: Emotion detection completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmotionResponse'
+              examples:
+                emotion:
+                  summary: Emotion with time series
+                  value:
+                    emotion: Happy
+                    time_series:
+                      - start_ms: 0
+                        duration_ms: 15000
+                        emotion: Happy
+                      - start_ms: 15000
+                        duration_ms: 15000
+                        emotion: Neutral
+        '400':
+          description: |
+            Bad request - The submitted audio was rejected: an unsupported file
+            extension, an empty file, or audio that could not be processed (for
+            example, corrupted data or content that does not match a supported
+            format).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_format:
+                  summary: Invalid file format
+                  value:
+                    detail: >-
+                      Unsupported file format. Supported formats: .aac, .aiff,
+                      .flac, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm.
+                empty_file:
+                  summary: Empty file
+                  value:
+                    detail: The uploaded file is empty.
+                unprocessable_audio:
+                  summary: Audio could not be processed
+                  value:
+                    detail: >-
+                      The audio could not be processed. It may be corrupted or
+                      in an unsupported format.
+        '403':
+          description: Forbidden - the request is not permitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: This request is not permitted.
+        '422':
+          description: >
+            Unprocessable Entity - a required request field is missing or
+            malformed (for example, the `X-API-Key` header or the `upload_file`
+            part).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '429':
+          description: >-
+            Too many requests - the request could not be completed due to
+            insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Insufficient credits.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Internal server error
+        '502':
+          description: Bad gateway - the request could not be validated or completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation_unavailable:
+                  summary: Request could not be validated
+                  value:
+                    detail: Unable to validate request. Please try again.
+                request_not_completed:
+                  summary: Request could not be completed
+                  value:
+                    detail: Unable to complete the request. Please try again.
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key used for authentication and usage tracking.
+  schemas:
+    EmotionResponse:
+      type: object
+      required:
+        - emotion
+        - time_series
+      properties:
+        emotion:
+          type: string
+          description: |
+            The emotion label for the whole file. Always present and non-null.
+          example: Happy
+        time_series:
+          type: array
+          description: |
+            Consecutive fixed-length windows over the file, each with its own
+            emotion label. Empty when the file is shorter than one window.
+          items:
+            $ref: '#/components/schemas/EmotionWindow'
+    EmotionWindow:
+      type: object
+      required:
+        - start_ms
+        - duration_ms
+        - emotion
+      properties:
+        start_ms:
+          type: integer
+          minimum: 0
+          description: |
+            Start of this window in milliseconds from the beginning of the file.
+          example: 0
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: Length of this window in milliseconds.
+          example: 15000
+        emotion:
+          type: string
+          description: The emotion label for this window.
+          example: Happy
+    ErrorResponse:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message describing what went wrong
+          example: >-
+            The audio could not be processed. It may be corrupted or in an
+            unsupported format.
+    ValidationError:
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'

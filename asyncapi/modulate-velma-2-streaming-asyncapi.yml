@@ -1,0 +1,1011 @@
+asyncapi: 3.0.0
+info:
+  title: Modulate Velma-2 Streaming Server
+  version: 0.0.0
+  description: >
+    Streaming velma-2 over WebSocket. Transcribes and analyzes a live audio
+
+    stream against a client-supplied analysis configuration, emitting JSON
+    events
+
+    that describe clips and analysis results as they are produced, plus
+    aggregate
+
+    results (topics, sentiments, summary) and a final `done` event.
+servers:
+  production:
+    host: platform.modulate.ai
+    protocol: wss
+    description: Modulate Velma-2 Streaming Server
+channels:
+  listPresets:
+    address: /api/velma-2-streaming/list-presets
+    description: |
+      HTTP `GET` endpoint that returns the catalog of behavior presets
+      that can be referenced from the `behaviors` array in a BatchConfig
+      using the `preset:<identifier>` syntax. Each entry includes the
+      preset `identifier`, `name`, `short_description`, and
+      `detailed_description`.
+
+      Requires the `X-API-Key` header. The key is validated for
+      model access before the presets are returned, but calling this
+      endpoint does not consume any usage. Returns HTTP `403` if the
+      request is not permitted, HTTP `429` if the account has
+      insufficient credits, or HTTP `502` if the usage check is
+      temporarily unavailable.
+    messages:
+      listPresetsResponse:
+        $ref: '#/components/messages/ListPresetsResponse'
+  velma2Streaming:
+    address: /api/velma-2-streaming
+    description: >
+      WebSocket channel for streaming velma-2.
+
+
+      ## Connection Flow
+
+      1. Connect with `api_key` and optional audio-format query parameters.
+
+      2. Connection is accepted if authentication succeeds and limits are not
+      exceeded.
+
+      3. Send one text frame: either the literal string `default` or a
+         JSON-encoded `BatchConfig`.
+      4. Stream audio data as binary WebSocket frames.
+
+      5. Send an empty text frame ("") to signal end of audio.
+
+      6. Receive streaming events as JSON messages.
+
+      7. Receive a final `done` event with total audio duration.
+
+      8. Connection closes automatically after completion.
+
+
+      ## Error Handling
+
+      If an error occurs, the server sends an `error` event and closes the
+
+      connection. Connection rejections during handshake use WebSocket close
+
+      codes.
+
+
+      ## WebSocket Close Codes
+
+      - `1000`: Normal closure after the `done` message, or after the
+        connection completes.
+      - `1003`: Protocol error (invalid or incomplete config, audio before
+        config, unsupported audio format / sample rate / channel count). An
+        `error` message is sent before the close.
+      - `4003`: The request could not be validated, or the request is not
+        permitted. An `error` message is sent before the close.
+      - `4029`: The request could not be completed due to insufficient credits.
+        An `error` message is sent before the close.
+    bindings:
+      ws:
+        query:
+          type: object
+          required:
+            - api_key
+          properties:
+            api_key:
+              type: string
+              description: |
+                Your API key for authentication. Required. Must be provided as a
+                query parameter when establishing the WebSocket connection; the
+                connection is rejected during the handshake if it is missing.
+            audio_format:
+              type: string
+              description: |
+                Audio encoding format. Self-describing formats (AAC, AIFF, FLAC,
+                MP3, OGG, WAV, WebM) are auto-detected when omitted.
+                Raw/headerless formats (PCM, mu-law, A-law) require this
+                parameter plus `sample_rate` and `num_channels`.
+              enum:
+                - s8
+                - s16le
+                - s16be
+                - s24le
+                - s24be
+                - s32le
+                - s32be
+                - u8
+                - u16le
+                - u16be
+                - u24le
+                - u24be
+                - u32le
+                - u32be
+                - f32le
+                - f32be
+                - f64le
+                - f64be
+                - mulaw
+                - alaw
+                - wav
+                - mp3
+                - ogg
+                - flac
+                - webm
+                - aac
+                - aiff
+            sample_rate:
+              type: integer
+              description: |
+                Audio sample rate in Hz. Required when `audio_format` is a
+                raw/headerless format. Cannot be specified without
+                `audio_format`.
+              enum:
+                - 8000
+                - 11025
+                - 16000
+                - 22050
+                - 32000
+                - 44100
+                - 48000
+                - 96000
+            num_channels:
+              type: integer
+              minimum: 1
+              maximum: 8
+              description: |
+                Number of audio channels (1-8). Required when `audio_format` is
+                a raw/headerless format. Cannot be specified without
+                `audio_format`.
+    messages:
+      streamConfig:
+        $ref: '#/components/messages/StreamConfig'
+      audioChunk:
+        $ref: '#/components/messages/AudioChunk'
+      endOfStream:
+        $ref: '#/components/messages/EndOfStream'
+      clipEvent:
+        $ref: '#/components/messages/ClipEvent'
+      partialClipEvent:
+        $ref: '#/components/messages/PartialClipEvent'
+      clipUpdateEvent:
+        $ref: '#/components/messages/ClipUpdateEvent'
+      conversationTypeEvent:
+        $ref: '#/components/messages/ConversationTypeEvent'
+      participantRoleEvent:
+        $ref: '#/components/messages/ParticipantRoleEvent'
+      behaviorDetectionEvent:
+        $ref: '#/components/messages/BehaviorDetectionEvent'
+      topicsEvent:
+        $ref: '#/components/messages/TopicsEvent'
+      topicSentimentEvent:
+        $ref: '#/components/messages/TopicSentimentEvent'
+      summaryEvent:
+        $ref: '#/components/messages/SummaryEvent'
+      errorEvent:
+        $ref: '#/components/messages/ErrorEvent'
+      doneEvent:
+        $ref: '#/components/messages/DoneEvent'
+operations:
+  receiveListPresets:
+    action: receive
+    summary: HTTP GET - list available behavior presets.
+    channel:
+      $ref: '#/channels/listPresets'
+    messages:
+      - $ref: '#/channels/listPresets/messages/listPresetsResponse'
+  sendStreamConfig:
+    action: send
+    summary: First text frame - `default` or JSON-encoded BatchConfig.
+    channel:
+      $ref: '#/channels/velma2Streaming'
+    messages:
+      - $ref: '#/channels/velma2Streaming/messages/streamConfig'
+  sendAudioChunk:
+    action: send
+    summary: Binary audio frame.
+    channel:
+      $ref: '#/channels/velma2Streaming'
+    messages:
+      - $ref: '#/channels/velma2Streaming/messages/audioChunk'
+  sendEndOfStream:
+    action: send
+    summary: Empty text frame signaling end of audio.
+    channel:
+      $ref: '#/channels/velma2Streaming'
+    messages:
+      - $ref: '#/channels/velma2Streaming/messages/endOfStream'
+  receiveStreamingEvents:
+    action: receive
+    summary: Server-emitted events. Discriminated by the `type` field.
+    channel:
+      $ref: '#/channels/velma2Streaming'
+    messages:
+      - $ref: '#/channels/velma2Streaming/messages/clipEvent'
+      - $ref: '#/channels/velma2Streaming/messages/partialClipEvent'
+      - $ref: '#/channels/velma2Streaming/messages/clipUpdateEvent'
+      - $ref: '#/channels/velma2Streaming/messages/conversationTypeEvent'
+      - $ref: '#/channels/velma2Streaming/messages/participantRoleEvent'
+      - $ref: '#/channels/velma2Streaming/messages/behaviorDetectionEvent'
+      - $ref: '#/channels/velma2Streaming/messages/topicsEvent'
+      - $ref: '#/channels/velma2Streaming/messages/topicSentimentEvent'
+      - $ref: '#/channels/velma2Streaming/messages/summaryEvent'
+      - $ref: '#/channels/velma2Streaming/messages/errorEvent'
+      - $ref: '#/channels/velma2Streaming/messages/doneEvent'
+components:
+  messages:
+    ListPresetsResponse:
+      name: listPresetsResponse
+      title: List Presets Response
+      summary: JSON body returned by `GET /api/velma-2-streaming/list-presets`.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/ListPresetsResponse'
+    StreamConfig:
+      name: streamConfig
+      title: Stream Configuration
+      summary: |
+        First text frame: either the literal string `default` (to use
+        the built-in default configuration) or a JSON-encoded
+        BatchConfig object.
+      contentType: application/json
+      payload:
+        oneOf:
+          - $ref: '#/components/schemas/BatchConfig'
+          - type: string
+            const: default
+    AudioChunk:
+      name: audioChunk
+      title: Audio Data Chunk
+      summary: Raw audio data chunk.
+      contentType: application/octet-stream
+      payload:
+        type: string
+        format: binary
+    EndOfStream:
+      name: endOfStream
+      title: End of Audio Stream
+      summary: Empty text frame signalling end of audio stream.
+      contentType: text/plain
+      payload:
+        type: string
+        const: ''
+    ClipEvent:
+      name: clipEvent
+      title: Clip
+      summary: A transcribed clip with metadata.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - clip
+        properties:
+          type:
+            type: string
+            const: clip
+          clip:
+            $ref: '#/components/schemas/Clip'
+    PartialClipEvent:
+      name: partialClipEvent
+      title: Partial Clip
+      summary: |
+        An in-progress clip streamed while an utterance is still being spoken,
+        before it finalizes. Multiple partials may be emitted for the same
+        `clip_uuid` as the utterance grows; the eventual `clip` event for that
+        utterance reuses the same `clip_uuid`, so a run of partials can be
+        correlated with its final clip.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - partial_clip
+        properties:
+          type:
+            type: string
+            const: partial_clip
+          partial_clip:
+            $ref: '#/components/schemas/PartialClip'
+    ClipUpdateEvent:
+      name: clipUpdateEvent
+      title: Clip Update
+      summary: |
+        Refined values for a previously finalized clip;
+        `clip_update.clip_uuid` matches the `clip_uuid` of an earlier `clip`
+        event. A finalized clip may receive any number of `clip_update`
+        events (including none), each emitted after that clip's `clip` event
+        (possibly interleaved with events for other clips) and always before
+        the `done` event on clean completion. For each field present, the
+        latest received value supersedes the value on the `clip` event and on
+        any earlier `clip_update` for that clip.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - clip_update
+        properties:
+          type:
+            type: string
+            const: clip_update
+          clip_update:
+            $ref: '#/components/schemas/ClipUpdate'
+    ConversationTypeEvent:
+      name: conversationTypeEvent
+      title: Conversation Type Pick
+      summary: Inferred or default conversation-type pick for the session.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - pick
+        properties:
+          type:
+            type: string
+            const: conversation_type
+          pick:
+            $ref: '#/components/schemas/ConversationTypePick'
+    ParticipantRoleEvent:
+      name: participantRoleEvent
+      title: Participant Role Pick
+      summary: Inferred or default participant-role pick for a speaker.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - pick
+        properties:
+          type:
+            type: string
+            const: participant_role
+          pick:
+            $ref: '#/components/schemas/ParticipantRolePick'
+    BehaviorDetectionEvent:
+      name: behaviorDetectionEvent
+      title: Behavior Detection
+      summary: Per-behavior detection result.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - detection
+        properties:
+          type:
+            type: string
+            const: behavior_detection
+          detection:
+            $ref: '#/components/schemas/BehaviorDetection'
+    TopicsEvent:
+      name: topicsEvent
+      title: Topics
+      summary: |
+        Aggregated list of conversation topics. May be emitted more than once as
+        the stream progresses; each event fully replaces the previous `topics`
+        event, so always treat the latest as authoritative and never merge with
+        earlier ones.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - topics
+        properties:
+          type:
+            type: string
+            const: topics
+          topics:
+            type: array
+            items:
+              type: string
+    TopicSentimentEvent:
+      name: topicSentimentEvent
+      title: Topic Sentiment
+      summary: |
+        Per-speaker sentiment for an aggregated topic, keyed by topic and
+        speaker. May be emitted more than once as the stream progresses; a later
+        event supersedes an earlier one for the same topic and speaker.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - topic_sentiment
+        properties:
+          type:
+            type: string
+            const: topic_sentiment
+          topic_sentiment:
+            $ref: '#/components/schemas/TopicSentiment'
+    SummaryEvent:
+      name: summaryEvent
+      title: Summary
+      summary: |
+        Free-form summary of the conversation. May be emitted more than once as
+        the stream progresses; each event fully replaces the previous `summary`
+        event, so always treat the latest as authoritative.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - text
+        properties:
+          type:
+            type: string
+            const: summary
+          text:
+            type: string
+    ErrorEvent:
+      name: errorEvent
+      title: Error
+      summary: An error occurred during processing.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - error
+        properties:
+          type:
+            type: string
+            const: error
+          error:
+            type: string
+            description: Human-readable error message
+      examples:
+        - name: internalError
+          payload:
+            type: error
+            error: Internal server error
+        - name: invalidInputAudio
+          payload:
+            type: error
+            error: Invalid input audio
+        - name: invalidConfig
+          payload:
+            type: error
+            error: Invalid configuration.
+        - name: notPermitted
+          payload:
+            type: error
+            error: This request is not permitted.
+        - name: insufficientCredits
+          payload:
+            type: error
+            error: Insufficient credits.
+        - name: validationUnavailable
+          payload:
+            type: error
+            error: Unable to validate request. Please try again.
+        - name: invalidAudioFormat
+          payload:
+            type: error
+            error: >-
+              Invalid audio_format='mp4'. Valid values: ['aac', 'aiff', 'alaw',
+              'f32be', 'f32le', 'f64be', 'f64le', 'flac', 'mp3', 'mulaw', 'ogg',
+              's16be', 's16le', 's24be', 's24le', 's32be', 's32le', 's8',
+              'u16be', 'u16le', 'u24be', 'u24le', 'u32be', 'u32le', 'u8', 'wav',
+              'webm']
+        - name: rawFormatMissingParams
+          payload:
+            type: error
+            error: >-
+              Raw audio formats require sample_rate and num_channels query
+              parameters
+        - name: paramsWithoutFormat
+          payload:
+            type: error
+            error: sample_rate and num_channels require audio_format to be specified
+        - name: invalidSampleRate
+          payload:
+            type: error
+            error: >-
+              Invalid sample_rate=50000. Valid values: [8000, 11025, 16000,
+              22050, 32000, 44100, 48000, 96000]
+        - name: invalidNumChannels
+          payload:
+            type: error
+            error: Invalid num_channels=12. Must be between 1 and 8
+    DoneEvent:
+      name: doneEvent
+      title: Done
+      summary: Streaming completed.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - duration_ms
+        properties:
+          type:
+            type: string
+            const: done
+          duration_ms:
+            type: integer
+            minimum: 0
+      examples:
+        - name: completionExample
+          payload:
+            type: done
+            duration_ms: 45000
+  schemas:
+    ConversationTypeDef:
+      type: object
+      required:
+        - conversation_type_uuid
+        - name
+        - short_description
+        - detailed_description
+      properties:
+        conversation_type_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+    ParticipantRoleDef:
+      type: object
+      required:
+        - participant_role_uuid
+        - name
+        - short_description
+        - detailed_description
+      properties:
+        participant_role_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+        applies_to_conversation_type_uuids:
+          description: Null/missing means applies to all conversation types.
+          oneOf:
+            - type: array
+              items:
+                type: string
+                format: uuid
+            - type: 'null'
+    BehaviorDef:
+      type: object
+      required:
+        - behavior_uuid
+        - name
+        - short_description
+        - detailed_description
+      properties:
+        behavior_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+        applies_to_conversation_type_uuids:
+          oneOf:
+            - type: array
+              items:
+                type: string
+                format: uuid
+            - type: 'null'
+        applies_to_participant_role_uuids:
+          oneOf:
+            - type: array
+              items:
+                type: string
+                format: uuid
+            - type: 'null'
+    BehaviorPresetListing:
+      type: object
+      required:
+        - identifier
+        - name
+        - short_description
+        - detailed_description
+      properties:
+        identifier:
+          type: string
+          description: |
+            The preset identifier to use in a `preset:<identifier>`
+            behavior reference.
+        name:
+          type: string
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+    ListPresetsResponse:
+      type: object
+      required:
+        - presets
+      properties:
+        presets:
+          type: array
+          items:
+            $ref: '#/components/schemas/BehaviorPresetListing'
+    STTOptions:
+      type: object
+      properties:
+        speaker_diarization:
+          type: boolean
+          default: true
+        emotion_signal:
+          type: boolean
+          default: false
+        accent_signal:
+          type: boolean
+          default: false
+        deepfake_signal:
+          type: boolean
+          default: false
+        pii_phi_tagging:
+          type: boolean
+          default: false
+        language:
+          description: |
+            Optional language hint as a case-insensitive ISO 639-1 code (e.g.
+            "en", "fr"). BCP 47 region/script subtags (e.g. "en-US") are
+            accepted; only the primary language subtag is used. When omitted or
+            null, the language is detected automatically for each clip.
+          oneOf:
+            - type: string
+              pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
+            - type: 'null'
+        custom_terms:
+          description: >-
+            Optional custom vocabulary to bias transcription toward domain terms
+            and names. Each entry is either a plain string (the term) or a
+            CustomTerm object. Blank terms and blank pronunciations are dropped.
+            At most 1000 entries, and the term strings serialized together as
+            JSON must total under 8000 characters. Null or omitted means no
+            biasing.
+          oneOf:
+            - type: 'null'
+            - type: array
+              maxItems: 1000
+              items:
+                oneOf:
+                  - type: string
+                  - $ref: '#/components/schemas/CustomTerm'
+    CustomTerm:
+      type: object
+      required:
+        - term
+      properties:
+        term:
+          type: string
+          minLength: 1
+          description: The vocabulary term to bias transcription toward.
+        definition:
+          type: string
+          maxLength: 256
+          description: Optional short definition of the term.
+        pronunciations:
+          type: array
+          maxItems: 16
+          items:
+            type: string
+            maxLength: 128
+          description: >-
+            Optional pronunciation hints, as X-SAMPA notation or
+            hyphen-separated ASCII respelling with the stressed syllable in
+            capitals (e.g. GOO-guhl). Printable ASCII only.
+    BatchConfig:
+      type: object
+      properties:
+        conversation_types:
+          description: |
+            Candidate conversation types. If this key is omitted, the
+            built-in default conversation types are used; pass an empty
+            array to provide no candidates.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversationTypeDef'
+        participant_roles:
+          description: |
+            Candidate participant roles. If this key is omitted, the
+            built-in default participant roles are used; pass an empty
+            array to provide no candidates.
+          type: array
+          items:
+            $ref: '#/components/schemas/ParticipantRoleDef'
+        behaviors:
+          description: |
+            Each entry is either a full BehaviorDef object or a preset
+            reference string matching `preset:<identifier>` (e.g.
+            `preset:complaints`). Preset references are expanded into
+            full BehaviorDef objects before processing. Use the
+            list-presets endpoint to discover available identifiers.
+            If this key is omitted, no behaviors are evaluated.
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/BehaviorDef'
+              - type: string
+                pattern: ^preset:.+$
+        stt:
+          $ref: '#/components/schemas/STTOptions'
+        produce_topics:
+          type: boolean
+          default: true
+        produce_topic_sentiments:
+          type: boolean
+          default: true
+        produce_summary:
+          type: boolean
+          default: true
+        default_conversation_type:
+          description: |
+            Fallback conversation type used when no candidate
+            conversation type applies. If this key is omitted, a
+            built-in fallback is supplied automatically; set it to null
+            to disable the fallback.
+          oneOf:
+            - $ref: '#/components/schemas/ConversationTypeDef'
+            - type: 'null'
+        default_participant_role:
+          description: |
+            Fallback participant role used when no candidate participant
+            role applies to a speaker. If this key is omitted, a
+            built-in fallback is supplied automatically; set it to null
+            to disable the fallback.
+          oneOf:
+            - $ref: '#/components/schemas/ParticipantRoleDef'
+            - type: 'null'
+    SelectionSource:
+      type: string
+      enum:
+        - inferred
+        - auto_selected_single_option
+        - default
+    ConversationTypePick:
+      type: object
+      required:
+        - conversation_type_uuid
+        - name
+        - confidence
+        - selection_source
+        - detail
+      properties:
+        conversation_type_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+        selection_source:
+          $ref: '#/components/schemas/SelectionSource'
+        detail:
+          type: string
+        reasoning:
+          oneOf:
+            - type: string
+            - type: 'null'
+    ParticipantRolePick:
+      type: object
+      required:
+        - speaker_label
+        - participant_role_uuid
+        - name
+        - confidence
+        - selection_source
+        - detail
+      properties:
+        speaker_label:
+          type: string
+        participant_role_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+        selection_source:
+          $ref: '#/components/schemas/SelectionSource'
+        detail:
+          type: string
+        reasoning:
+          oneOf:
+            - type: string
+            - type: 'null'
+    Clip:
+      type: object
+      required:
+        - clip_uuid
+        - text
+        - start_ms
+        - duration_ms
+        - speaker_label
+        - language
+      properties:
+        clip_uuid:
+          type: string
+          format: uuid
+        text:
+          type: string
+        start_ms:
+          type: integer
+          minimum: 0
+        duration_ms:
+          type: integer
+          minimum: 0
+        speaker_label:
+          type: string
+        language:
+          type: string
+        emotion:
+          description: >-
+            Predicted emotion label for the clip, or null when no emotion label
+            is available.
+          oneOf:
+            - type: string
+            - type: 'null'
+        accent:
+          description: >-
+            Predicted accent label for the clip, or null when no accent label is
+            available.
+          oneOf:
+            - type: string
+            - type: 'null'
+        deepfake_score:
+          oneOf:
+            - type: number
+              format: double
+              minimum: 0
+              maximum: 1
+            - type: 'null'
+    PartialClip:
+      type: object
+      required:
+        - clip_uuid
+        - text
+        - start_ms
+      properties:
+        clip_uuid:
+          type: string
+          format: uuid
+          description: >-
+            Stable identifier shared across a clip's lifetime. The eventual
+            finalized `clip` event for the same utterance reuses this value.
+        text:
+          type: string
+        start_ms:
+          type: integer
+          minimum: 0
+        end_ms:
+          description: >-
+            Current end of the in-progress utterance; grows as the utterance
+            extends. Null until available. The finalized clip reports
+            `duration_ms` instead of `end_ms`.
+          oneOf:
+            - type: integer
+              minimum: 0
+            - type: 'null'
+        speaker_label:
+          description: Null until diarization resolves the speaker.
+          oneOf:
+            - type: string
+            - type: 'null'
+        emotion:
+          description: >-
+            Latest in-progress emotion label, or null when no value is available
+            yet.
+          oneOf:
+            - type: string
+            - type: 'null'
+        accent:
+          description: >-
+            Latest in-progress accent label, or null when no value is available
+            yet.
+          oneOf:
+            - type: string
+            - type: 'null'
+        deepfake_score:
+          description: >-
+            Latest in-progress deepfake score, or null when no value is
+            available yet.
+          oneOf:
+            - type: number
+              format: double
+              minimum: 0
+              maximum: 1
+            - type: 'null'
+    ClipUpdate:
+      type: object
+      required:
+        - clip_uuid
+      properties:
+        clip_uuid:
+          type: string
+          format: uuid
+          description: Matches the `clip_uuid` of a previously emitted `clip` event.
+        emotion:
+          description: >-
+            Refined emotion label for the clip, or null when no emotion label is
+            available.
+          oneOf:
+            - type: string
+            - type: 'null'
+        accent:
+          description: >-
+            Refined accent label for the clip, or null when no accent label is
+            available.
+          oneOf:
+            - type: string
+            - type: 'null'
+    BehaviorDetection:
+      type: object
+      required:
+        - behavior_uuid
+        - behavior_name
+        - speaker_label
+        - detected
+      properties:
+        behavior_uuid:
+          type: string
+          format: uuid
+        behavior_name:
+          type: string
+        speaker_label:
+          oneOf:
+            - type: string
+            - type: 'null'
+        detected:
+          type: boolean
+        confidence:
+          oneOf:
+            - type: number
+              format: double
+              minimum: 0
+              maximum: 1
+            - type: 'null'
+        evidence_clip_uuids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        definitive_clip_uuid:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: 'null'
+        reasoning:
+          oneOf:
+            - type: string
+            - type: 'null'
+    TopicSentiment:
+      type: object
+      required:
+        - topic
+        - speaker_label
+        - sentiment_score
+        - sentiment_label
+      properties:
+        topic:
+          type: string
+        speaker_label:
+          type: string
+        sentiment_score:
+          type: number
+          format: double
+          minimum: -1
+          maximum: 1
+        sentiment_label:
+          type: string

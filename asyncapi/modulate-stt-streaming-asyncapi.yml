@@ -1,0 +1,765 @@
+asyncapi: 3.0.0
+info:
+  title: Velma 2 STT Streaming API
+  version: 0.0.0
+  description: |
+    Real-time speech-to-text over WebSocket. Provides live multilingual
+    transcription with automatic per-utterance language detection, delivering
+    each utterance as it is completed. Optional capabilities - speaker
+    diarization, emotion detection, accent detection, synthetic voice (deepfake)
+    detection, PII/PHI tagging, and partial (interim) results - are selected via
+    query parameters.
+servers:
+  production:
+    host: platform.modulate.ai
+    protocol: wss
+    description: Modulate STT Streaming Server
+channels:
+  velma2SttStreaming:
+    address: /api/velma-2-stt-streaming
+    description: >
+      Establish a WebSocket connection for real-time transcription with
+      automatic language
+
+      detection. The service automatically detects the language for each
+      utterance in
+
+      real-time. Different utterances within the same stream may be identified
+      as different
+
+      languages if code-switching occurs.
+
+
+      ## Connection Flow
+
+      1. Connect with `api_key` and optional query parameters
+
+      2. Connection will be accepted if authentication succeeds and limits are
+      not exceeded
+
+      3. Optionally send a JSON configuration as the first text frame, before
+      any audio.
+         If the first frame is binary it is treated as the first audio chunk and the
+         query-parameter defaults apply.
+      4. Stream audio data as binary WebSocket frames
+
+      5. Receive utterance results as JSON messages
+
+      6. Send empty text frame ("") when audio stream ends
+
+      7. Receive final "done" message with total audio duration
+
+      8. Connection closes automatically after completion
+
+
+      ## Error Handling
+
+      If an error occurs during transcription, the server sends an error message
+      and closes
+
+      the connection. Connection rejections during handshake use WebSocket close
+      codes.
+
+
+      ## WebSocket Close Codes
+
+      - `1000`: Normal closure after the `done` message, or after the
+        connection completes.
+      - `1003`: Invalid connection parameters (e.g. unsupported `audio_format`,
+        invalid `sample_rate` or `num_channels`, an invalid `language`, or a raw
+        format missing `sample_rate`/`num_channels`), or an invalid first-frame
+        configuration (malformed JSON or a value outside the documented
+        configuration schema). An `error` message is sent before the close.
+      - `4003`: The request could not be validated, or the request is not
+        permitted. An `error` message is sent before the close.
+      - `4029`: The request could not be completed due to insufficient credits.
+        An `error` message is sent before the close.
+    bindings:
+      ws:
+        query:
+          type: object
+          required:
+            - api_key
+          properties:
+            api_key:
+              type: string
+              description: >
+                Your API key for authentication. Required. Must be provided as a
+                query
+
+                parameter when establishing the WebSocket connection; the
+                connection is
+
+                rejected during the handshake if it is missing.
+            speaker_diarization:
+              type: boolean
+              default: true
+              description: >
+                Enable speaker diarization to identify different speakers in the
+                audio stream.
+
+                When enabled, each utterance includes a speaker identifier
+                (1-indexed integer).
+            emotion_signal:
+              type: boolean
+              default: false
+              description: >
+                Enable emotion detection for each utterance. When enabled, the
+                `emotion` field
+
+                in each utterance will contain the detected emotional tone of
+                the speaker.
+            accent_signal:
+              type: boolean
+              default: false
+              description: >
+                Enable accent detection for each utterance. When enabled, the
+                `accent` field
+
+                in each utterance will contain the detected accent of the
+                speaker.
+            deepfake_signal:
+              type: boolean
+              default: false
+              description: >
+                Enable synthetic voice (deepfake) detection for each utterance.
+                When enabled,
+
+                the `deepfake_score` field in each utterance will contain a
+                score from 0.0
+
+                (likely natural) to 1.0 (likely synthetic).
+            pii_phi_tagging:
+              type: boolean
+              default: false
+              description: >
+                Enable PII/PHI tagging. When enabled, personally identifiable
+                information and
+
+                personal health information in the transcribed text will be
+                wrapped with
+
+                appropriate tags.
+            audio_format:
+              type: string
+              description: >
+                Audio encoding format. Determines how the service interprets
+                incoming audio data.
+
+
+                **Self-describing formats** (`wav`, `mp3`, `ogg`, `flac`,
+                `webm`, `aac`, `aiff`):
+
+                These include container formats (AIFF, OGG, WAV, WebM) and
+                codecs whose streams
+
+                carry per-frame headers (AAC/ADTS, FLAC, MP3). When omitted
+                (default), the service
+
+                auto-detects the format from these headers. You may specify the
+                format explicitly
+
+                to override auto-detection. Do not specify `sample_rate` or
+                `num_channels` for
+
+                self-describing formats - the headers already carry this
+                metadata.
+
+
+                **Raw/headerless formats** (`s8`..`f64be`, `mulaw`, `alaw`):
+
+                These formats are raw sample data with no headers. When using a
+                raw format, you
+
+                must also specify `sample_rate` and `num_channels` so the
+                service knows how to
+
+                interpret the byte stream. Omitting either will result in an
+                error.
+              enum:
+                - s8
+                - s16le
+                - s16be
+                - s24le
+                - s24be
+                - s32le
+                - s32be
+                - u8
+                - u16le
+                - u16be
+                - u24le
+                - u24be
+                - u32le
+                - u32be
+                - f32le
+                - f32be
+                - f64le
+                - f64be
+                - mulaw
+                - alaw
+                - wav
+                - mp3
+                - ogg
+                - flac
+                - webm
+                - aac
+                - aiff
+            sample_rate:
+              type: integer
+              description: >
+                Audio sample rate in Hz. Required when `audio_format` is a
+                raw/headerless format
+
+                (PCM, mu-law, A-law). Do not specify for self-describing formats
+                (WAV, MP3, OGG,
+
+                etc.) - their headers already include this metadata. Cannot be
+                specified without
+
+                `audio_format`.
+              enum:
+                - 8000
+                - 11025
+                - 16000
+                - 22050
+                - 32000
+                - 44100
+                - 48000
+                - 96000
+            num_channels:
+              type: integer
+              minimum: 1
+              maximum: 8
+              description: >
+                Number of audio channels (1-8). Required when `audio_format` is
+                a raw/headerless
+
+                format (PCM, mu-law, A-law). Do not specify for self-describing
+                formats (WAV, MP3,
+
+                OGG, etc.) - their headers already include this metadata. Use 1
+                for mono, 2 for
+
+                stereo. Cannot be specified without `audio_format`.
+            partial_results:
+              type: boolean
+              default: false
+              description: >
+                Enable partial (interim) transcription results. When enabled,
+                the server sends
+
+                `partial_utterance` messages containing in-progress text as
+                speech is being
+
+                recognized, in addition to the finalized `utterance` messages.
+                Each partial also
+
+                carries the latest interim `emotion`, `accent`, and
+                `deepfake_score` for the
+
+                utterance when those signals are enabled; each is null until a
+                value is
+
+                available. Each partial replaces the previous partial; when the
+                finalized
+
+                `utterance` arrives, it supersedes all preceding partials.
+            language:
+              type: string
+              pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
+              description: >
+                Optional language hint as a case-insensitive ISO 639-1 code
+                (e.g. "en",
+
+                "fr"). BCP 47 region/script subtags (e.g. "en-US") are accepted;
+                only the
+
+                primary language subtag is used. When omitted, the language is
+                detected
+
+                automatically for each utterance.
+    messages:
+      streamConfig:
+        $ref: '#/components/messages/ConfigFrame'
+      audioChunk:
+        $ref: '#/components/messages/AudioChunk'
+      endOfStream:
+        $ref: '#/components/messages/EndOfStream'
+      utteranceResult:
+        $ref: '#/components/messages/UtteranceResult'
+      errorResult:
+        $ref: '#/components/messages/ErrorResponse'
+      doneResult:
+        $ref: '#/components/messages/DoneResult'
+      partialUtteranceResult:
+        $ref: '#/components/messages/PartialUtteranceResult'
+operations:
+  streamAudio:
+    action: send
+    channel:
+      $ref: '#/channels/velma2SttStreaming'
+    summary: Stream audio for real-time transcription with automatic language detection
+    messages:
+      - $ref: '#/channels/velma2SttStreaming/messages/streamConfig'
+      - $ref: '#/channels/velma2SttStreaming/messages/audioChunk'
+      - $ref: '#/channels/velma2SttStreaming/messages/endOfStream'
+  receiveTranscription:
+    action: receive
+    channel:
+      $ref: '#/channels/velma2SttStreaming'
+    summary: Receive transcription results from the server
+    messages:
+      - $ref: '#/channels/velma2SttStreaming/messages/utteranceResult'
+      - $ref: '#/channels/velma2SttStreaming/messages/partialUtteranceResult'
+      - $ref: '#/channels/velma2SttStreaming/messages/errorResult'
+      - $ref: '#/channels/velma2SttStreaming/messages/doneResult'
+components:
+  messages:
+    AudioChunk:
+      name: audioChunk
+      title: Audio Data Chunk
+      summary: Raw audio data chunk for real-time transcription
+      contentType: application/octet-stream
+      payload:
+        type: string
+        format: binary
+    EndOfStream:
+      name: endOfStream
+      title: End of Audio Stream
+      summary: Empty text frame signaling end of audio stream
+      contentType: text/plain
+      payload:
+        type: string
+        const: ''
+      examples:
+        - name: endSignal
+          payload: ''
+    ConfigFrame:
+      name: configFrame
+      title: Stream Configuration
+      summary: >
+        Optional JSON configuration sent as the FIRST WebSocket text frame,
+
+        before any audio. When the first frame is text it is parsed as this
+
+        configuration; when the first frame is binary it is treated as the first
+
+        audio chunk and the query-parameter defaults apply. Backward compatible:
+
+        binary-first clients need not send it. A field present here overrides
+        the
+
+        matching query parameter.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/STTStreamConfig'
+    UtteranceResult:
+      name: utteranceResult
+      title: Utterance Result
+      summary: A completed utterance with detected language
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - utterance
+        properties:
+          type:
+            type: string
+            const: utterance
+          utterance:
+            $ref: '#/components/schemas/StreamingUtterance'
+      examples:
+        - name: frenchUtterance
+          payload:
+            type: utterance
+            utterance:
+              utterance_uuid: b2c3d4e5-f6a7-8901-bcde-f12345678901
+              text: Bonjour, comment allez-vous?
+              start_ms: 0
+              duration_ms: 2800
+              speaker: 1
+              language: fr
+              emotion: null
+              accent: null
+              deepfake_score: null
+    PartialUtteranceResult:
+      name: partialUtteranceResult
+      title: Partial Utterance Result
+      summary: In-progress transcription text (interim, not yet finalized)
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - partial_utterance
+        properties:
+          type:
+            type: string
+            const: partial_utterance
+          partial_utterance:
+            $ref: '#/components/schemas/PartialUtterance'
+      examples:
+        - name: partialExample
+          payload:
+            type: partial_utterance
+            partial_utterance:
+              text: Hello, how are
+              start_ms: 0
+              speaker: 1
+              emotion: null
+              accent: null
+              deepfake_score: null
+    ErrorResponse:
+      name: errorResult
+      title: Error
+      summary: An error occurred during transcription
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - error
+        properties:
+          type:
+            type: string
+            const: error
+          error:
+            type: string
+            description: Human-readable error message
+      examples:
+        - name: internalError
+          payload:
+            type: error
+            error: Internal server error
+        - name: invalidInputAudio
+          payload:
+            type: error
+            error: Invalid input audio
+        - name: invalidConfig
+          payload:
+            type: error
+            error: Invalid configuration.
+        - name: notPermitted
+          payload:
+            type: error
+            error: This request is not permitted.
+        - name: insufficientCredits
+          payload:
+            type: error
+            error: Insufficient credits.
+        - name: validationUnavailable
+          payload:
+            type: error
+            error: Unable to validate request. Please try again.
+        - name: invalidAudioFormat
+          payload:
+            type: error
+            error: >-
+              Invalid audio_format='mp4'. Valid values: ['aac', 'aiff', 'alaw',
+              'f32be', 'f32le', 'f64be', 'f64le', 'flac', 'mp3', 'mulaw', 'ogg',
+              's16be', 's16le', 's24be', 's24le', 's32be', 's32le', 's8',
+              'u16be', 'u16le', 'u24be', 'u24le', 'u32be', 'u32le', 'u8', 'wav',
+              'webm']
+        - name: rawFormatMissingParams
+          payload:
+            type: error
+            error: >-
+              Raw audio formats require sample_rate and num_channels query
+              parameters
+        - name: paramsWithoutFormat
+          payload:
+            type: error
+            error: sample_rate and num_channels require audio_format to be specified
+        - name: invalidSampleRate
+          payload:
+            type: error
+            error: >-
+              Invalid sample_rate=50000. Valid values: [8000, 11025, 16000,
+              22050, 32000, 44100, 48000, 96000]
+        - name: invalidNumChannels
+          payload:
+            type: error
+            error: Invalid num_channels=12. Must be between 1 and 8
+    DoneResult:
+      name: doneResult
+      title: Transcription Complete
+      summary: Transcription completed successfully
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - duration_ms
+        properties:
+          type:
+            type: string
+            const: done
+          duration_ms:
+            type: integer
+            minimum: 0
+            description: Total duration of audio processed in milliseconds
+      examples:
+        - name: completionExample
+          payload:
+            type: done
+            duration_ms: 45000
+  schemas:
+    StreamingUtterance:
+      type: object
+      required:
+        - utterance_uuid
+        - text
+        - start_ms
+        - duration_ms
+        - speaker
+        - language
+        - emotion
+        - accent
+        - deepfake_score
+      properties:
+        utterance_uuid:
+          type: string
+          format: uuid
+          description: >
+            Unique identifier for this utterance. Can be used for tracking and
+            correlating
+
+            utterances across systems.
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        text:
+          type: string
+          description: >
+            The transcribed text for this utterance. Represents a single
+            continuous segment
+
+            of speech detected in the audio stream. May contain PII/PHI tags if
+            tagging
+
+            is enabled. Always present; may be an empty string.
+          example: Hello, how are you today?
+        start_ms:
+          type: integer
+          minimum: 0
+          description: >
+            The start time of this utterance in milliseconds, relative to the
+            beginning
+
+            of the audio stream. Allows precise synchronization with the
+            original audio timing.
+          example: 0
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: The duration of this utterance in milliseconds.
+          example: 2500
+        speaker:
+          type: integer
+          description: >
+            Speaker identifier for this utterance (1-indexed). When speaker
+            diarization is
+
+            enabled, this identifies which speaker produced this utterance.
+            Speaker numbers
+
+            are consistent within a single connection but may vary between
+            different connections.
+          example: 1
+        language:
+          type: string
+          description: >
+            The automatically detected language code for this utterance (e.g.,
+            "en" for English,
+
+            "fr" for French).
+          example: en
+        emotion:
+          oneOf:
+            - type: string
+            - type: 'null'
+          description: >
+            The detected emotional tone of the speaker for this utterance. Only
+            present when
+
+            `emotion_signal` is enabled. Possible values include: Neutral, Calm,
+            Happy, Amused,
+
+            Excited, Proud, Affectionate, Interested, Hopeful, Frustrated,
+            Angry, Contemptuous,
+
+            Concerned, Afraid, Sad, Ashamed, Bored, Tired, Surprised, Anxious,
+            Stressed,
+
+            Disgusted, Disappointed, Confused, Relieved, Confident.
+          example: Neutral
+        accent:
+          oneOf:
+            - type: string
+            - type: 'null'
+          description: >
+            The detected accent of the speaker for this utterance. Only present
+            when
+
+            `accent_signal` is enabled. Possible values include: American,
+            British, Australian,
+
+            Southern, Indian, Irish, Scottish, Eastern_European, African, Asian,
+
+            Latin_American, Middle_Eastern, Unknown.
+          example: American
+        deepfake_score:
+          oneOf:
+            - type: number
+              format: double
+              minimum: 0
+              maximum: 1
+            - type: 'null'
+          description: >
+            Synthetic voice (deepfake) detection score for this utterance. Null
+            if deepfake
+
+            detection is disabled or if the utterance is too short for analysis
+            (< 0.5 seconds).
+
+            Values range from 0.0 (likely natural human speech) to 1.0 (likely
+            AI-generated
+
+            synthetic speech).
+          example: 0.05
+    PartialUtterance:
+      type: object
+      required:
+        - text
+        - start_ms
+        - speaker
+        - emotion
+        - accent
+        - deepfake_score
+      properties:
+        text:
+          type: string
+          description: >
+            In-progress transcription text. This is a preview that may change as
+            more
+
+            audio is processed. Each new partial replaces the previous one. The
+            finalized
+
+            utterance supersedes all preceding partials. Always present; may be
+            an empty string.
+          example: Hello, how are you
+        start_ms:
+          oneOf:
+            - type: integer
+              minimum: 0
+            - type: 'null'
+          description: >
+            Start time of the in-progress speech segment in milliseconds,
+            relative to the
+
+            beginning of the audio stream. May be null if timing data is not yet
+            available.
+          example: 0
+        speaker:
+          oneOf:
+            - type: integer
+            - type: 'null'
+          description: >
+            Speaker identifier (1-indexed). Matches the speaker numbering used
+            in
+
+            finalized utterances. May be null if speaker has not yet been
+            identified.
+          example: 1
+        emotion:
+          oneOf:
+            - type: string
+            - type: 'null'
+          description: >
+            Latest interim emotion label for the in-progress utterance, or null
+            when the
+
+            emotion signal is not enabled or no value is available yet.
+        accent:
+          oneOf:
+            - type: string
+            - type: 'null'
+          description: >
+            Latest interim accent label for the in-progress utterance, or null
+            when the
+
+            accent signal is not enabled or no value is available yet.
+        deepfake_score:
+          oneOf:
+            - type: number
+              format: double
+              minimum: 0
+              maximum: 1
+            - type: 'null'
+          description: >
+            Latest interim deepfake score for the in-progress utterance, or null
+            when the
+
+            deepfake signal is not enabled or no value is available yet.
+    STTStreamConfig:
+      type: object
+      description: >-
+        Optional first-frame stream configuration. Every field is optional; a
+        field present here overrides the matching query parameter.
+      properties:
+        speaker_diarization:
+          type: boolean
+        emotion_signal:
+          type: boolean
+        accent_signal:
+          type: boolean
+        deepfake_signal:
+          type: boolean
+        pii_phi_tagging:
+          type: boolean
+        partial_results:
+          type: boolean
+        language:
+          oneOf:
+            - type: string
+              pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
+            - type: 'null'
+        custom_terms:
+          description: >-
+            Optional custom vocabulary to bias transcription toward domain terms
+            and names. Each entry is either a plain string (the term) or a
+            CustomTerm object. Blank terms and blank pronunciations are dropped.
+            At most 1000 entries, and the term strings serialized together as
+            JSON must total under 8000 characters. Null or omitted means no
+            biasing.
+          oneOf:
+            - type: 'null'
+            - type: array
+              maxItems: 1000
+              items:
+                oneOf:
+                  - type: string
+                  - $ref: '#/components/schemas/CustomTerm'
+    CustomTerm:
+      type: object
+      required:
+        - term
+      properties:
+        term:
+          type: string
+          minLength: 1
+          description: The vocabulary term to bias transcription toward.
+        definition:
+          type: string
+          maxLength: 256
+          description: Optional short definition of the term.
+        pronunciations:
+          type: array
+          maxItems: 16
+          items:
+            type: string
+            maxLength: 128
+          description: >-
+            Optional pronunciation hints, as X-SAMPA notation or
+            hyphen-separated ASCII respelling with the stressed syllable in
+            capitals (e.g. GOO-guhl). Printable ASCII only.

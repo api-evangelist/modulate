@@ -1,0 +1,257 @@
+openapi: 3.1.0
+info:
+  title: Velma 2 Synthetic Voice Detection Batch API
+  description: >
+    Batch endpoint for detecting synthetic (AI-generated) speech in
+
+    single-speaker audio files via HTTP POST. The audio is analysed as a
+    sequence
+
+    of windowed frames, each independently classified as synthetic,
+
+    non-synthetic, or no-content (silence), returned in order across the full
+
+    duration.
+
+
+    ## Behavior Notes
+
+
+    - Leading and trailing silence is excluded from analysis; frame timestamps
+      still reflect positions in the original file.
+    - Frames that contain only silence or no usable audio are assigned a
+      `no-content` verdict with confidence `1.0`.
+    - Files shorter than a single 4-second analysis window are still accepted
+      and analysed.
+  version: 0.0.0
+servers:
+  - url: https://platform.modulate.ai
+    description: Modulate Synthetic Voice Detection Batch Server
+security:
+  - ApiKeyAuth: []
+paths:
+  /api/velma-2-synthetic-voice-detection-batch:
+    post:
+      operationId: detectSyntheticVoice
+      summary: Detect synthetic voice in an audio file
+      description: |
+        Accepts a single audio file and returns a per-frame synthetic-voice
+        classification across the clip as a synchronous JSON response.
+        Recommended audio length: 4-60 seconds; files shorter than 0.5 seconds
+        are rejected with a 422.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - upload_file
+              properties:
+                upload_file:
+                  type: string
+                  format: binary
+                  description: |
+                    Audio file to analyse. Must be non-empty. Supported formats:
+                    `.3gp`, `.3gpp`, `.aac`, `.aiff`, `.amr`, `.au`, `.flac`,
+                    `.m4a`, `.mov`, `.mp3`, `.mp4`, `.ogg`, `.opus`, `.wav`,
+                    `.webm`, `.wma`. Maximum file size: 100 MB.
+      responses:
+        '200':
+          description: Detection completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetectionAPIResponse'
+        '400':
+          description: >-
+            Bad request - the uploaded file is empty or its format is not
+            supported.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_format:
+                  summary: Invalid file format
+                  value:
+                    detail: >-
+                      Unsupported file format. Supported formats: .3gp, .3gpp,
+                      .aac, .aiff, .amr, .au, .flac, .m4a, .mov, .mp3, .mp4,
+                      .ogg, .opus, .wav, .webm, .wma.
+                empty_file:
+                  summary: Empty file
+                  value:
+                    detail: The uploaded file is empty.
+                bad_value:
+                  summary: Malformed request value
+                  value:
+                    detail: Invalid request.
+        '403':
+          description: Forbidden - the request is not permitted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: This request is not permitted.
+        '422':
+          description: |
+            Unprocessable entity - the audio is too short to analyze, could not
+            be processed, or a required request parameter is missing or invalid
+            (for example, the `X-API-Key` header or the `upload_file` field).
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+                  - $ref: '#/components/schemas/HTTPValidationError'
+              examples:
+                audio_too_short:
+                  summary: Audio too short
+                  value:
+                    detail: The audio is too short to analyze.
+                audio_unprocessable:
+                  summary: Audio could not be processed
+                  value:
+                    detail: >-
+                      The audio could not be processed. It may be corrupted or
+                      in an unsupported format.
+        '429':
+          description: >-
+            Too many requests - the request could not be completed due to
+            insufficient credits.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Insufficient credits.
+        '500':
+          description: Internal server error during inference.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Internal server error
+        '502':
+          description: Bad gateway - the request could not be validated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Unable to validate request. Please try again.
+        '504':
+          description: Gateway timeout - inference did not complete in time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: The request timed out. Please try again.
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key used for authentication and usage tracking.
+  schemas:
+    DetectionAPIResponse:
+      type: object
+      required:
+        - filename
+        - frames
+        - duration_ms
+      properties:
+        filename:
+          oneOf:
+            - type: string
+            - type: 'null'
+          description: Original filename of the uploaded audio.
+          example: recording.wav
+        frames:
+          type: array
+          description: >-
+            Ordered list of per-frame detection results covering the full audio
+            duration.
+          items:
+            $ref: '#/components/schemas/FrameResult'
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: Total duration of the audio in milliseconds.
+          example: 34500
+    FrameResult:
+      type: object
+      required:
+        - start_time_ms
+        - end_time_ms
+        - verdict
+        - confidence
+      properties:
+        start_time_ms:
+          type: integer
+          minimum: 0
+          description: Frame start time in milliseconds.
+          example: 0
+        end_time_ms:
+          type: integer
+          minimum: 0
+          description: Frame end time in milliseconds.
+          example: 3000
+        verdict:
+          type: string
+          enum:
+            - synthetic
+            - non-synthetic
+            - no-content
+          description: |
+            Classification for this frame:
+            - `synthetic` - the frame likely contains AI-generated speech.
+            - `non-synthetic` - the frame likely contains natural human speech.
+            - `no-content` - the frame is silent or contains no usable audio.
+          example: synthetic
+        confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: Confidence in the stated verdict, from 0 (lowest) to 1 (highest).
+          example: 0.9732
+    ErrorResponse:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message.
+    ValidationError:
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'

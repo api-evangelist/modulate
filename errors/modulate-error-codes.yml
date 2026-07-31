@@ -1,0 +1,68 @@
+generated: '2026-07-20'
+method: searched
+source: >-
+  Derived from OpenAPI 4xx/5xx responses across openapi/*.yml and enriched from
+  https://docs.modulate.ai/faq and https://docs.modulate.ai/guides/authentication
+envelope:
+  format: json
+  schema: ErrorResponse
+  content_type: application/json
+  note: >-
+    Batch (REST) endpoints return a JSON error body. Validation failures use the
+    HTTPValidationError schema. WebSocket streaming endpoints signal errors via
+    close codes rather than an HTTP status.
+http_errors:
+- status: 400
+  title: Bad Request
+  meaning: The submitted audio was rejected — unsupported file type, corrupt or
+    undecodable audio, or a malformed request.
+  remediation: Verify the audio format is supported and the multipart upload is well-formed.
+- status: 401
+  title: Unauthorized
+  meaning: Missing or invalid API key.
+  remediation: Send a valid key in the X-API-Key header.
+- status: 403
+  title: Forbidden
+  meaning: Valid key but model access is disabled, or monthly usage quota exceeded.
+  remediation: Confirm model access is enabled for your organization; check the usage
+    dashboard; contact support to raise limits.
+- status: 422
+  title: Unprocessable Entity
+  meaning: A required request field is missing or malformed, or the audio is too short
+    for analysis (deepfake detection requires >= 0.5 seconds).
+  remediation: Check required fields and minimum audio length.
+- status: 429
+  title: Too Many Requests
+  meaning: Concurrency limit hit — too many simultaneous in-flight requests.
+  remediation: Retry with exponential backoff and jitter; distribute load across models.
+- status: 500
+  title: Internal Server Error
+  meaning: Unexpected server-side error.
+  remediation: Retry; contact support if persistent.
+- status: 502
+  title: Bad Gateway
+  meaning: The request could not be validated or completed upstream.
+  remediation: Retry with backoff.
+- status: 503
+  title: Service Unavailable
+  meaning: The inference server is temporarily overloaded.
+  remediation: Wait and retry with exponential backoff and jitter.
+- status: 504
+  title: Gateway Timeout
+  meaning: Processing timed out — batch processing has a 60-second limit.
+  remediation: Reduce file size/length; contact support if consistent within recommended sizes.
+websocket_close_codes:
+- code: 1000
+  meaning: Normal closure — received after the done message, connection finished cleanly.
+- code: 1003
+  meaning: Invalid query parameters (bad audio_format, sample_rate, or num_channels).
+- code: 1011
+  meaning: Internal server error during streaming.
+- code: 4001
+  meaning: Invalid API key (streaming).
+- code: 4002
+  meaning: Audio could not be decoded or does not match the declared format.
+- code: 4003
+  meaning: Authentication failed or model access not enabled for your organization.
+- code: 4029
+  meaning: Rate limit exceeded — monthly quota or concurrency limit hit.

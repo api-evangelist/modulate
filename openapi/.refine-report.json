@@ -1,0 +1,34 @@
+{
+  "provider": "modulate",
+  "sources": [
+    "modulate-velma-2-accent-batch-api-openapi.yml",
+    "modulate-velma-2-ai-music-detection-batch-api-openapi.yml",
+    "modulate-velma-2-batch-api-openapi.yml",
+    "modulate-velma-2-emotion-batch-api-openapi.yml",
+    "modulate-velma-2-language-detection-batch-api-openapi.yml",
+    "modulate-velma-2-music-detection-batch-api-openapi.yml",
+    "modulate-velma-2-pii-phi-redaction-batch-api-openapi.yml",
+    "modulate-velma-2-stt-batch-api-openapi.yml",
+    "modulate-velma-2-stt-batch-english-vfast-api-openapi.yml",
+    "modulate-velma-2-stt-batch-multilingual-vfast-api-openapi.yml",
+    "modulate-velma-2-synthetic-voice-detection-batch-api-openapi.yml"
+  ],
+  "outputs": [
+    "modulate-velma-2-accent-batch-api-openapi.yml",
+    "modulate-velma-2-ai-music-detection-batch-api-openapi.yml",
+    "modulate-velma-2-batch-api-openapi.yml",
+    "modulate-velma-2-emotion-batch-api-openapi.yml",
+    "modulate-velma-2-language-detection-batch-api-openapi.yml",
+    "modulate-velma-2-music-detection-batch-api-openapi.yml",
+    "modulate-velma-2-pii-phi-redaction-batch-api-openapi.yml",
+    "modulate-velma-2-stt-batch-api-openapi.yml",
+    "modulate-velma-2-stt-batch-english-vfast-api-openapi.yml",
+    "modulate-velma-2-stt-batch-multilingual-vfast-api-openapi.yml",
+    "modulate-velma-2-synthetic-voice-detection-batch-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

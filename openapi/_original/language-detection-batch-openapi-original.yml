@@ -1,0 +1,234 @@
+openapi: 3.1.0
+info:
+  title: Velma 2 Language Detection Batch API
+  version: 0.0.0
+  description: >
+    Identify the spoken language of an audio file via HTTP POST. Submit a clip,
+
+    get back the detected language - both an ISO code and a human-readable name
+    -
+
+    with a confidence score, in a single synchronous JSON response. Pure
+    language
+
+    detection only: no transcription, diarization, emotion, accent, or PII
+
+    tagging.
+servers:
+  - url: https://platform.modulate.ai
+    description: Modulate Language Detection Batch Server
+security:
+  - ApiKeyAuth: []
+paths:
+  /api/velma-2-language-detection-batch:
+    post:
+      operationId: detectLanguageBatch
+      summary: Identify the spoken language of an audio file
+      description: |
+        Accepts a single audio file and returns the detected language as a
+        synchronous JSON response.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - upload_file
+              properties:
+                upload_file:
+                  type: string
+                  format: binary
+                  description: |
+                    Audio file to analyze. Must be non-empty. Supported formats:
+                    `.aac`, `.aiff`, `.flac`, `.mov`, `.mp3`, `.mp4`, `.ogg`,
+                    `.opus`, `.wav`, `.webm`. Maximum file size: 100 MB.
+      responses:
+        '200':
+          description: Language detection completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguageDetectionResponse'
+              examples:
+                english:
+                  summary: English clip with high confidence
+                  value:
+                    predicted_language: English
+                    predicted_language_code: en
+                    confidence: 0.9847
+                    duration_ms: 14253
+                french:
+                  summary: French clip
+                  value:
+                    predicted_language: French
+                    predicted_language_code: fr
+                    confidence: 0.9612
+                    duration_ms: 8421
+                lowConfidence:
+                  summary: Low-confidence result
+                  value:
+                    predicted_language: Spanish
+                    predicted_language_code: es
+                    confidence: 0.4123
+                    duration_ms: 5230
+        '400':
+          description: >
+            Bad request - the uploaded file is empty, its format is not
+            supported, or the audio could not be decoded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_format:
+                  summary: Invalid file format
+                  value:
+                    detail: >-
+                      Unsupported file format. Supported formats: .aac, .aiff,
+                      .flac, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm.
+                empty_file:
+                  summary: Empty file
+                  value:
+                    detail: The uploaded file is empty.
+                unprocessable:
+                  summary: Audio could not be decoded
+                  value:
+                    detail: >-
+                      The audio could not be processed. It may be corrupted or
+                      in an unsupported format.
+                bad_value:
+                  summary: Malformed request value
+                  value:
+                    detail: Invalid request.
+        '403':
+          description: Forbidden - the request is not permitted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: This request is not permitted.
+        '422':
+          description: >
+            Unprocessable entity - a required request parameter is missing or
+            invalid (for example, the `X-API-Key` header or the `upload_file`
+            field).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '429':
+          description: >-
+            Too many requests - the request could not be completed due to
+            insufficient credits.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Insufficient credits.
+        '500':
+          description: Internal server error during processing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Internal server error
+        '503':
+          description: Service unavailable - the service is temporarily unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: >-
+                  The service is temporarily unavailable. Please try again
+                  later.
+        '504':
+          description: Gateway timeout - processing timed out.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: The request timed out. Please try again.
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key used for authentication and usage tracking.
+  schemas:
+    LanguageDetectionResponse:
+      type: object
+      required:
+        - predicted_language
+        - predicted_language_code
+        - confidence
+        - duration_ms
+      properties:
+        predicted_language:
+          type: string
+          description: >
+            Human-readable language name (e.g. `"English"`, `"French"`,
+            `"Mandarin"`). Suitable for display to end users.
+          example: English
+        predicted_language_code:
+          type: string
+          description: >
+            Lowercase ISO 639-1 language code (e.g. `"en"`, `"fr"`, `"zh"`).
+            Suitable for routing, locale switching, or BCP-47 tags.
+          example: en
+        confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: >
+            Probability associated with the predicted language, in the range
+            0.0-1.0. Higher means more confident.
+          example: 0.9847
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: >
+            Total duration of the decoded audio in milliseconds. Note: only the
+            first 30 seconds are analyzed regardless of this value.
+          example: 14253
+    ErrorResponse:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message.
+    ValidationError:
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'

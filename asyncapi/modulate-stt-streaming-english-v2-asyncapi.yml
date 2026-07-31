@@ -1,0 +1,442 @@
+asyncapi: 3.0.0
+info:
+  title: Velma 2 STT Streaming English v2 API
+  version: 0.0.0
+  description: >
+    Low-latency English speech-to-text over WebSocket. Pure transcription only -
+
+    no diarization, emotion detection, accent detection, or PII/PHI tagging.
+
+    Streams interim partial transcripts while audio arrives, followed by a
+    single
+
+    final transcript at end-of-stream.
+servers:
+  production:
+    host: platform.modulate.ai
+    protocol: wss
+    description: Modulate STT Streaming Server v2
+channels:
+  velma2SttStreamingEnglishV2:
+    address: /api/velma-2-stt-streaming-english-v2
+    description: |
+      Establish a WebSocket connection for low-latency English transcription.
+      The server emits partial transcripts as audio streams in, and a final
+      complete transcript when the client signals end-of-stream.
+
+      ## Connection Flow
+      1. Connect with `api_key`, `audio_format`, and (for raw PCM)
+         `sample_rate` + `num_channels`
+      2. Connection accepted if authentication succeeds and limits are not
+         exceeded
+      3. Stream audio data as binary WebSocket frames
+      4. Receive `partial_utterance` results every ~1.5 seconds (each is
+         the complete transcript so far - REPLACE, don't append)
+      5. Send empty text frame (`""`) when audio stream ends
+      6. Receive final `utterance` message with the complete transcript
+      7. Receive `done` message with total audio duration
+      8. Connection closes automatically
+
+      ## Partial Transcript Semantics
+      Each `partial_utterance` message contains the complete transcript
+      built so far, not a delta from the previous message. The last few
+      words may be revised in subsequent partials as the model sees more
+      audio context. Clients should replace any previously-displayed
+      partial text, not append.
+
+      ## Text Formatting
+      Both `partial_utterance` and `utterance` payloads contain text that
+      has already been auto-capitalized and auto-punctuated by the model.
+      Clients can render the `text` field directly without additional
+      casing or punctuation normalization. Note that in `partial_utterance`
+      messages, both capitalization and punctuation in the final words may
+      be revised in subsequent partials as the model sees more audio
+      context.
+
+      ## Error Handling
+      If an error occurs during transcription, the server sends an error
+      message and closes the connection. Connection rejections during
+      handshake use WebSocket close codes (see below).
+
+      ## WebSocket Close Codes
+      - `1000`: Normal closure after the `done` message, or after the
+        connection completes.
+      - `1003`: Invalid query parameters (missing `audio_format`, invalid
+        `sample_rate`, unsupported value, etc.).
+      - `4002`: Audio data didn't match the declared raw PCM format (sent
+        container bytes but declared a raw PCM type).
+      - `4003`: The request is not permitted.
+      - `4029`: Rate limit exceeded. Either monthly usage limit has been
+        exceeded or too many concurrent connections are active.
+    bindings:
+      ws:
+        query:
+          type: object
+          required:
+            - api_key
+            - audio_format
+          properties:
+            api_key:
+              type: string
+              description: |
+                Your API key for authentication. Must be provided as a query
+                parameter when establishing the WebSocket connection.
+            audio_format:
+              type: string
+              description: >
+                Container or raw PCM format of the audio data the client will
+                send.
+
+                Required.
+
+
+                For container formats (`wav`, `mp3`, `ogg`, `flac`, `webm`,
+                `aac`,
+
+                `aiff`), the audio header determines the sample rate and channel
+
+                count, and `sample_rate` / `num_channels` query parameters are
+
+                ignored.
+
+
+                For raw PCM formats, `sample_rate` and `num_channels` are
+                required.
+
+
+                For lowest end-to-end latency, send
+
+                `audio_format=s16le&sample_rate=16000&num_channels=1`.
+              enum:
+                - s8
+                - s16le
+                - s16be
+                - s24le
+                - s24be
+                - s32le
+                - s32be
+                - u8
+                - u16le
+                - u16be
+                - u24le
+                - u24be
+                - u32le
+                - u32be
+                - f32le
+                - f32be
+                - f64le
+                - f64be
+                - mulaw
+                - alaw
+                - wav
+                - mp3
+                - ogg
+                - flac
+                - webm
+                - aac
+                - aiff
+            sample_rate:
+              type: integer
+              description: |
+                Source sample rate of the audio data in Hz. Required when
+                `audio_format` is a raw PCM type; ignored for container formats.
+              enum:
+                - 8000
+                - 11025
+                - 16000
+                - 22050
+                - 32000
+                - 44100
+                - 48000
+                - 96000
+            num_channels:
+              type: integer
+              description: |
+                Number of audio channels in the source data (1-8). Required when
+                `audio_format` is a raw PCM type; ignored for container formats.
+              minimum: 1
+              maximum: 8
+    messages:
+      audioChunk:
+        $ref: '#/components/messages/AudioChunk'
+      endOfStream:
+        $ref: '#/components/messages/EndOfStream'
+      partialUtteranceResult:
+        $ref: '#/components/messages/PartialUtteranceResult'
+      utteranceResult:
+        $ref: '#/components/messages/UtteranceResult'
+      errorResult:
+        $ref: '#/components/messages/ErrorResult'
+      doneResult:
+        $ref: '#/components/messages/DoneResult'
+operations:
+  streamAudio:
+    action: send
+    channel:
+      $ref: '#/channels/velma2SttStreamingEnglishV2'
+    summary: Stream audio for low-latency English transcription
+    description: |
+      Client sends a sequence of frames over the open WebSocket:
+
+      1. Zero or more **binary** frames containing audio bytes in the
+         format declared by `audio_format`. Chunk size is up to the
+         client; 4-64 KB per frame is typical.
+      2. Exactly one **text** frame containing the empty string (`""`)
+         to signal end of audio.
+
+      The server does not respond to any other client frame types.
+    messages:
+      - $ref: '#/channels/velma2SttStreamingEnglishV2/messages/audioChunk'
+      - $ref: '#/channels/velma2SttStreamingEnglishV2/messages/endOfStream'
+  receiveTranscription:
+    action: receive
+    channel:
+      $ref: '#/channels/velma2SttStreamingEnglishV2'
+    summary: Receive partial and final transcription results from the server
+    description: |
+      Server sends a sequence of JSON text frames over the open WebSocket.
+      Transcript text in both `partial_utterance` and `utterance` payloads
+      is auto-capitalized and auto-punctuated by the model.
+
+      Successful stream:
+        - zero or more `partial_utterance` messages (during streaming)
+        - exactly one final `utterance` message (after end-of-stream)
+        - exactly one `done` message (immediately after the final utterance)
+
+      Failed stream:
+        - exactly one `error` message, after which the WebSocket closes.
+    messages:
+      - $ref: '#/channels/velma2SttStreamingEnglishV2/messages/partialUtteranceResult'
+      - $ref: '#/channels/velma2SttStreamingEnglishV2/messages/utteranceResult'
+      - $ref: '#/channels/velma2SttStreamingEnglishV2/messages/errorResult'
+      - $ref: '#/channels/velma2SttStreamingEnglishV2/messages/doneResult'
+components:
+  messages:
+    AudioChunk:
+      name: audioChunk
+      title: Audio Data Chunk
+      summary: |
+        Raw audio data chunk for transcription. Sent zero or more times
+        by the client during the stream lifetime. Each chunk's bytes are
+        decoded by the server according to the connection's
+        `audio_format` query parameter.
+      contentType: application/octet-stream
+      payload:
+        type: string
+        format: binary
+    EndOfStream:
+      name: endOfStream
+      title: End of Audio Stream
+      summary: |
+        Empty text frame signaling end of audio. Sent exactly once by the
+        client after the last audio chunk. The server responds with a
+        final `utterance` message followed by a `done` message, then
+        closes the connection.
+      contentType: text/plain
+      payload:
+        type: string
+        const: ''
+      examples:
+        - name: endSignal
+          payload: ''
+    PartialUtteranceResult:
+      name: partialUtteranceResult
+      title: Partial Utterance Result
+      summary: |
+        In-progress transcript snapshot containing the complete transcript
+        so far. Sent zero or more times during the stream, roughly every
+        1.5 seconds. The `text` field contains the FULL transcript built
+        so far - not a delta - with auto-capitalization and
+        auto-punctuation already applied. Clients should REPLACE any
+        previously displayed partial text, not append.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - partial_utterance
+        properties:
+          type:
+            type: string
+            const: partial_utterance
+          partial_utterance:
+            $ref: '#/components/schemas/StreamingPartialUtterance'
+      examples:
+        - name: midStreamPartial
+          payload:
+            type: partial_utterance
+            partial_utterance:
+              text: Hello, how are you
+              is_final: false
+    UtteranceResult:
+      name: utteranceResult
+      title: Final Utterance Result
+      summary: |
+        The final transcript covering the entire audio stream, with
+        auto-capitalization and auto-punctuation applied. Sent exactly
+        once, after the client signals end-of-stream and before the
+        `done` message. This transcript supersedes all previously
+        emitted `partial_utterance` messages.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - utterance
+        properties:
+          type:
+            type: string
+            const: utterance
+          utterance:
+            $ref: '#/components/schemas/StreamingUtterance'
+      examples:
+        - name: finalUtterance
+          payload:
+            type: utterance
+            utterance:
+              text: Hello, how are you doing today?
+              is_final: true
+    ErrorResult:
+      name: errorResult
+      title: Error
+      summary: |
+        An error occurred during transcription. Sent at most once per
+        connection; the WebSocket closes shortly after. No further
+        messages follow an `error`.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - error
+        properties:
+          type:
+            type: string
+            const: error
+          error:
+            type: string
+            description: Human-readable error message
+      examples:
+        - name: internalError
+          payload:
+            type: error
+            error: Internal server error
+        - name: notPermitted
+          payload:
+            type: error
+            error: This request is not permitted.
+        - name: insufficientCredits
+          payload:
+            type: error
+            error: Insufficient credits.
+        - name: serviceUnavailable
+          payload:
+            type: error
+            error: The service is temporarily unavailable. Please try again later.
+        - name: audioMismatch
+          payload:
+            type: error
+            error: Audio data does not match the declared audio_format.
+        - name: invalidAudioFormat
+          payload:
+            type: error
+            error: >-
+              Invalid audio_format='mp4'. Valid values: ['aac', 'aiff', 'alaw',
+              'f32be', 'f32le', 'f64be', 'f64le', 'flac', 'mp3', 'mulaw', 'ogg',
+              's16be', 's16le', 's24be', 's24le', 's32be', 's32le', 's8',
+              'u16be', 'u16le', 'u24be', 'u24le', 'u32be', 'u32le', 'u8', 'wav',
+              'webm']
+        - name: rawFormatMissingParams
+          payload:
+            type: error
+            error: >-
+              Raw audio formats require sample_rate and num_channels query
+              parameters
+        - name: paramsWithoutFormat
+          payload:
+            type: error
+            error: sample_rate and num_channels require audio_format to be specified
+        - name: invalidSampleRate
+          payload:
+            type: error
+            error: >-
+              Invalid sample_rate=50000. Valid values: [8000, 11025, 16000,
+              22050, 32000, 44100, 48000, 96000]
+        - name: invalidNumChannels
+          payload:
+            type: error
+            error: Invalid num_channels=12. Must be between 1 and 8
+    DoneResult:
+      name: doneResult
+      title: Transcription Complete
+      summary: |
+        Transcription completed successfully. Sent exactly once, immediately
+        after the final `utterance` message. After this message the server
+        closes the WebSocket.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - type
+          - duration_ms
+        properties:
+          type:
+            type: string
+            const: done
+          duration_ms:
+            type: integer
+            minimum: 0
+            description: Total duration of audio processed in milliseconds
+      examples:
+        - name: completionExample
+          payload:
+            type: done
+            duration_ms: 14253
+  schemas:
+    StreamingPartialUtterance:
+      type: object
+      required:
+        - text
+        - is_final
+      properties:
+        text:
+          type: string
+          description: |
+            The complete transcript built so far for this connection,
+            with auto-capitalization (sentence case, proper nouns, "I",
+            etc.) and auto-punctuation (commas, periods, question marks,
+            etc.) already applied by the model. This is NOT a delta from
+            the previous partial - clients should display this as a
+            replacement for any previously displayed partial text. The
+            last few words, including their capitalization and
+            punctuation, may be revised in subsequent partials as the
+            model sees more audio context.
+          example: Hello, how are you
+        is_final:
+          type: boolean
+          const: false
+          description: |
+            Always `false` for `partial_utterance` messages. Use the
+            message `type` field to distinguish partial from final.
+    StreamingUtterance:
+      type: object
+      required:
+        - text
+        - is_final
+      properties:
+        text:
+          type: string
+          description: |
+            The final transcribed text covering the entire audio stream,
+            with auto-capitalization (sentence case, proper nouns, "I",
+            etc.) and auto-punctuation (commas, periods, question marks,
+            etc.) already applied by the model. Sent exactly once per
+            successful connection, after the client signals end-of-stream.
+            This is the authoritative transcript and will not be revised.
+          example: Hello, how are you doing today?
+        is_final:
+          type: boolean
+          const: true
+          description: |
+            Always `true` for `utterance` messages. Use the message `type`
+            field to distinguish partial from final.

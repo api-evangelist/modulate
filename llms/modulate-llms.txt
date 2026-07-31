@@ -1,0 +1,102 @@
+# generated: 2026-07-20
+# method: searched
+# source: https://docs.modulate.ai/llms.txt
+# Modulate
+
+> Build with the modulate.ai models — real-time transcription, deepfake detection, and PII/PHI redaction at scale.
+
+## Docs
+
+- [Accent Detection Batch](https://docs.modulate.ai/api-reference/accent/batch.md): Classify the speaker accent of an audio file. Returns a whole-file accent label plus a time series of fixed-length windows, each with its own label, in a single synchronous response.
+- [Accent Detection](https://docs.modulate.ai/api-reference/accent/overview.md): Accent detection API — classify the speaker accent of an audio file, with a whole-file label and a per-window time series, in a single synchronous HTTP POST.
+- [AI Music Detection Batch](https://docs.modulate.ai/api-reference/ai-music-detection/batch.md): Detect AI-generated music in an audio file. Returns a clip-level verdict plus a per-window breakdown of vocal and instrumental AI content.
+- [AI Music Detection](https://docs.modulate.ai/api-reference/ai-music-detection/overview.md): AI music detection APIs - detect AI-generated music with clip-level verdicts and per-window vocal/instrumental breakdowns, batch and real-time streaming.
+- [AI Music Detection Streaming](https://docs.modulate.ai/api-reference/ai-music-detection/streaming.md): Real-time AI music detection over WebSocket. Per-window vocal AI verdicts are emitted progressively as audio arrives, followed by a final clip-level summary that includes instrumental AI detection.
+- [Emotion Detection Batch](https://docs.modulate.ai/api-reference/emotion/batch.md): Classify the emotional tone of an audio file. Returns a whole-file emotion label plus a time series of fixed-length windows, each with its own label, in a single synchronous response.
+- [Emotion Detection](https://docs.modulate.ai/api-reference/emotion/overview.md): Emotion detection API — classify the emotional tone of an audio file, with a whole-file label and a per-window time series, in a single synchronous HTTP POST.
+- [Language Detection Batch](https://docs.modulate.ai/api-reference/language-detection/batch.md): Identify the spoken language of an audio file. Returns an ISO 639-1 language code, human-readable display name, and confidence score in a single synchronous response.
+- [Language Detection](https://docs.modulate.ai/api-reference/language-detection/overview.md): Language detection API — identify the spoken language of an audio file in a single synchronous HTTP POST.
+- [Music Detection Batch](https://docs.modulate.ai/api-reference/music-detection/batch.md): Classify music and speech in an audio file. Returns frame-level probabilities, a primary label, and percentage breakdowns of content type.
+- [Music Detection](https://docs.modulate.ai/api-reference/music-detection/overview.md): Music detection APIs — batch classification and real-time streaming over WebSocket.
+- [Music Detection Streaming](https://docs.modulate.ai/api-reference/music-detection/streaming.md): Real-time frame-level music and speech classification over WebSocket. Frames are emitted progressively as audio is streamed.
+- [PII/PHI Redaction Batch](https://docs.modulate.ai/api-reference/redaction/batch.md): Transcribe a pre-recorded audio file and redact PII/PHI from both the transcript text and the returned audio.
+- [PII/PHI Redaction](https://docs.modulate.ai/api-reference/redaction/overview.md): PII/PHI Redaction transcribes audio, replaces sensitive spans with empty marker tags, and silences the matching audio ranges.
+- [PII/PHI Redaction Streaming](https://docs.modulate.ai/api-reference/redaction/streaming.md): Real-time PII/PHI redaction over WebSocket — receive a redacted transcript and a redacted MP3 clip per utterance.
+- [Speech-to-Text Transcription Batch Multilingual](https://docs.modulate.ai/api-reference/stt/batch.md): Multilingual batch transcription with automatic language detection, speaker diarization, emotion and accent detection, and PII/PHI tagging.
+- [Speech-to-Text Transcription Batch English VFast](https://docs.modulate.ai/api-reference/stt/batch-english-vfast.md): Fast English-only batch transcription. Trades enrichment features for the lowest possible turnaround.
+- [Multilingual Fast Transcription Batch](https://docs.modulate.ai/api-reference/stt/batch-multilingual-vfast.md): Fast multilingual batch transcription. Optionally declare the spoken language for the fastest path; otherwise the language is detected automatically.
+- [Speech-to-text Transcription](https://docs.modulate.ai/api-reference/stt/overview.md): Speech-to-text APIs — multilingual batch transcription, fast English-only batch, fast multilingual batch, real-time streaming, and low-latency English streaming.
+- [Speech-to-Text Transcription Streaming Multilingual](https://docs.modulate.ai/api-reference/stt/streaming.md): Real-time speech-to-text over WebSocket, with optional speaker diarization, emotion detection, accent detection, and PII/PHI tagging.
+- [Speech-to-Text Streaming English](https://docs.modulate.ai/api-reference/stt/streaming-vfast.md): Low-latency English speech-to-text over WebSocket. Emits rolling partial transcripts during streaming and a single final transcript at end-of-stream. No enrichments.
+- [Deepfake Detection Batch](https://docs.modulate.ai/api-reference/svd/batch.md): Detect synthetic (AI-generated) voice in a pre-recorded audio file. Returns per-frame deepfake scores.
+- [Deepfake Detection](https://docs.modulate.ai/api-reference/svd/overview.md): Synthetic voice detection — deepfake detection on pre-recorded files (batch) or live audio (streaming).
+- [Deepfake Detection Streaming](https://docs.modulate.ai/api-reference/svd/streaming.md): Real-time deepfake detection over WebSocket, with per-frame verdicts and confidence scores delivered as analysis windows complete.
+- [Velma Batch](https://docs.modulate.ai/api-reference/velma/batch.md): Run full conversation analysis on an uploaded audio file — transcription, conversation type, participant roles, behaviors, topics, sentiment, and summary in one response.
+- [Velma](https://docs.modulate.ai/api-reference/velma/overview.md): Velma is an audio-native voice intelligence model over REST or WebSocket — surface behaviors and risks in voice conversations using pre-built or custom detectors.
+- [List behavior presets](https://docs.modulate.ai/api-reference/velma/presets.md): List the catalog of behavior presets that can be referenced from a BatchConfig using the preset:<identifier> syntax.
+- [Velma Streaming](https://docs.modulate.ai/api-reference/velma/streaming.md): Real-time conversation analysis over WebSocket — stream audio and receive clips, conversation type, participant roles, behaviors, topics, sentiment, and a summary as they are produced.
+- [FAQ](https://docs.modulate.ai/faq.md): Frequently asked questions about authentication, models, audio formats, pricing, rate limits, streaming, errors, privacy, and support.
+- [AI music detection](https://docs.modulate.ai/get-started/ai-music-detection.md): Detect AI-generated music in audio — clip-level verdicts with per-window vocal and instrumental breakdowns, batch and real-time streaming.
+- [Deepfake Detection](https://docs.modulate.ai/get-started/deepfake.md): Detect synthetic (AI-generated) voice in recorded files or live audio streams — per-frame verdicts with confidence scores.
+- [Language Detection](https://docs.modulate.ai/get-started/language-detection.md): Identify the spoken language of an audio file — confidence-scored results across 100 languages in a single synchronous API call.
+- [Music & Speech Detection](https://docs.modulate.ai/get-started/music-detection.md): Classify audio as music, speech, or neither — frame-level probabilities, batch and real-time streaming.
+- [PII/PHI Redaction](https://docs.modulate.ai/get-started/pii.md): Remove sensitive content from transcripts and silence the matching audio ranges — batch and real-time streaming.
+- [Transcription](https://docs.modulate.ai/get-started/stt.md): Transcribe audio with speaker diarization, emotion, accent, and PII/PHI tagging — batch or real-time streaming.
+- [Audio formats and preprocessing](https://docs.modulate.ai/guides/audio-formats.md): Supported audio formats across all Modulate model endpoints, with guidance on format selection, conversion, and the special requirements of the streaming Deepfake Detection endpoint.
+- [Authentication and rate limits](https://docs.modulate.ai/guides/authentication.md): How to authenticate Modulate API requests, what rate limits apply, and how to handle auth and rate limit errors.
+- [Code examples by language](https://docs.modulate.ai/guides/code-examples.md): Working integration patterns in cURL, Python (sync, async, concurrent), and JavaScript / Node.js with WebSocket support.
+- [Music & Speech Detection quickstart](https://docs.modulate.ai/guides/music-detection-quickstart.md): Stream audio to the Music & Speech Detection API over WebSocket and receive frame-level music and speech probabilities in real time.
+- [Transcription enrichment features](https://docs.modulate.ai/guides/stt-enrichment-features.md): Optional metadata and request options for transcription — speaker diarization, emotion, accent, PII/PHI tagging, deepfake scoring, language hints, and custom vocabulary.
+- [How Deepfake Detection works](https://docs.modulate.ai/guides/synthetic-voice-detection.md): The mechanics behind Deepfake Detection — windowing, silence trimming, confidence scoring, and the no-content verdict.
+- [Troubleshooting](https://docs.modulate.ai/guides/troubleshooting.md): Common errors organized by category, with causes and fixes — auth, rate limits, audio validation, timeouts, and server errors.
+- [Which API should I use?](https://docs.modulate.ai/guides/which-api.md): Pick the right Modulate model based on the kind of output you need, your latency requirements, language coverage, and audio constraints.
+- [Modulate developer docs](https://docs.modulate.ai/index.md): Build with Modulate's voice AI platform. Start with Velma for complete conversation intelligence, or use individual models for transcription, deepfake detection, music & speech detection, emotion detection, PII/PHI redaction and more.
+- [Quick start](https://docs.modulate.ai/quickstart.md): Get to your first successful API call for each Velma-2 model in about 5 minutes.
+- [Support](https://docs.modulate.ai/support.md): How to reach the Modulate team for technical questions, bug reports, feature requests, or limit increases.
+- [Best practices & what to avoid](https://docs.modulate.ai/velma/behaviors/best-practices.md): How to write behavior descriptions that produce consistent, accurate detection results — and the common patterns that cause false positives and missed detections.
+- [Custom behaviors](https://docs.modulate.ai/velma/behaviors/custom-behaviors.md): Define your own behavior from scratch, or adapt a pre-built behavior's language for your specific context.
+- [Using behaviors](https://docs.modulate.ai/velma/behaviors/using-behaviors.md): How to retrieve the preset catalog, apply preset slugs, and include BehaviorDef objects in your BatchConfig.
+- [What are behaviors?](https://docs.modulate.ai/velma/behaviors/what-are-behaviors.md): Behaviors are the signals you tell Velma to listen for. Each one is a named, described detection target that Velma evaluates against the conversation audio.
+- [Capabilities](https://docs.modulate.ai/velma/capabilities.md): A complete reference for the Velma Triage batch and streaming endpoints — configuration, all outputs, and how the analysis fits together.
+- [Detection packages](https://docs.modulate.ai/velma/detection-packages.md): Ready-made Velma Triage configurations that group behaviors into clear, use-case buckets you can explore and download.
+- [Agentic AI Guardrails](https://docs.modulate.ai/velma/detection-packages/agentic-ai-guardrails.md): Keep AI voice agents on-policy: catch off-script, unsafe, or out-of-scope behavior.
+- [Compliance and Risk Monitoring](https://docs.modulate.ai/velma/detection-packages/compliance-and-risk-monitoring.md): Catch disclosure gaps, compliance breaches, and risk events across regulated calls.
+- [Customer Retention](https://docs.modulate.ai/velma/detection-packages/customer-retention.md): Surface churn signals, dissatisfaction, and save opportunities on every call.
+- [Fraud Detection and Prevention](https://docs.modulate.ai/velma/detection-packages/fraud-detection-and-prevention.md): Catch social engineering, account-takeover attempts, and impersonation in customer conversations.
+- [Human Agent Welfare](https://docs.modulate.ai/velma/detection-packages/human-agent-welfare.md): Protect agents by detecting abuse, distress, and burnout indicators.
+- [Trust and Safety](https://docs.modulate.ai/velma/detection-packages/trust-and-safety.md): Flag harassment, hate, and safety violations in live social and voice-chat audio.
+- [What is Velma?](https://docs.modulate.ai/velma/overview.md): Velma is an audio-native voice intelligence model over REST or WebSocket.
+
+## OpenAPI Specs
+
+- [velma_2_stt_batch_multilingual_vfast](https://docs.modulate.ai/api/velma_2_stt_batch_multilingual_vfast.yaml)
+- [velma_2_stt_batch](https://docs.modulate.ai/api/velma_2_stt_batch.yaml)
+- [velma_2_pii_phi_redaction_batch](https://docs.modulate.ai/api/velma_2_pii_phi_redaction_batch.yaml)
+- [velma_2_emotion_batch](https://docs.modulate.ai/api/velma_2_emotion_batch.yaml)
+- [velma_2_batch](https://docs.modulate.ai/api/velma_2_batch.yaml)
+- [velma_2_accent_batch](https://docs.modulate.ai/api/velma_2_accent_batch.yaml)
+- [velma_2_synthetic_voice_detection_batch](https://docs.modulate.ai/api/velma_2_synthetic_voice_detection_batch.yaml)
+- [velma_2_stt_batch_english_vfast](https://docs.modulate.ai/api/velma_2_stt_batch_english_vfast.yaml)
+- [velma_2_music_detection_batch](https://docs.modulate.ai/api/velma_2_music_detection_batch.yaml)
+- [velma_2_language_detection_batch](https://docs.modulate.ai/api/velma_2_language_detection_batch.yaml)
+- [velma_2_ai_music_detection_batch](https://docs.modulate.ai/api/velma_2_ai_music_detection_batch.yaml)
+- [language_detection_batch_openapi](https://docs.modulate.ai/api/language_detection_batch_openapi.yaml)
+- [music_detection_batch_openapi](https://docs.modulate.ai/api/music_detection_batch_openapi.yaml)
+- [music_detection_streaming_openai](https://docs.modulate.ai/api/music_detection_streaming_openai.yaml)
+- [velma-2-synthetic-voice-detection-batch-openapi](https://docs.modulate.ai/api/velma-2-synthetic-voice-detection-batch-openapi.yaml)
+- [velma-2-stt-batch-openapi](https://docs.modulate.ai/api/velma-2-stt-batch-openapi.yaml)
+- [velma-2-stt-batch-english-vfast-openapi](https://docs.modulate.ai/api/velma-2-stt-batch-english-vfast-openapi.yaml)
+- [velma-2-pii-phi-redaction-batch-openapi](https://docs.modulate.ai/api/velma-2-pii-phi-redaction-batch-openapi.yaml)
+- [openapi](https://docs.modulate.ai/api/openapi.json)
+
+## AsyncAPI Specs
+
+- [velma_2_stt_streaming_english_v2](https://docs.modulate.ai/api/velma_2_stt_streaming_english_v2.yaml)
+- [velma_2_stt_streaming](https://docs.modulate.ai/api/velma_2_stt_streaming.yaml)
+- [velma_2_streaming](https://docs.modulate.ai/api/velma_2_streaming.yaml)
+- [velma_2_pii_phi_redaction_streaming](https://docs.modulate.ai/api/velma_2_pii_phi_redaction_streaming.yaml)
+- [velma_2_ai_music_detection_streaming](https://docs.modulate.ai/api/velma_2_ai_music_detection_streaming.yaml)
+- [velma_2_synthetic_voice_detection_streaming](https://docs.modulate.ai/api/velma_2_synthetic_voice_detection_streaming.yaml)
+- [velma_2_music_detection_streaming](https://docs.modulate.ai/api/velma_2_music_detection_streaming.yaml)
+- [music_detection_streaming_openai](https://docs.modulate.ai/api/music_detection_streaming_openai.yaml)
+- [velma-2-synthetic-voice-detection-streaming-openapi](https://docs.modulate.ai/api/velma-2-synthetic-voice-detection-streaming-openapi.yaml)

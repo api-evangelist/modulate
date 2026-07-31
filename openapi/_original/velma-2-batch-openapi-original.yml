@@ -1,0 +1,677 @@
+openapi: 3.1.0
+info:
+  title: Modulate Velma-2 Batch Server
+  version: 0.0.0
+  description: |
+    Batch endpoint for the velma-2 service. Accepts a multipart upload with an
+    audio file and a JSON `config` blob describing the conversation types,
+    participant roles, and behaviors to use for analysis. Returns the full
+    transcribed-and-analyzed conversation in one response (clips,
+    conversation-type pick, participant-role picks, behaviors, topics, topic
+    sentiments, and an optional summary).
+servers:
+  - url: https://platform.modulate.ai
+    description: Modulate Velma-2 Batch Server
+security:
+  - ApiKeyAuth: []
+paths:
+  /api/velma-2-batch:
+    post:
+      summary: Run velma-2 batch analysis on an uploaded audio file.
+      operationId: velma2Batch
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - upload_file
+              properties:
+                upload_file:
+                  type: string
+                  format: binary
+                  description: |
+                    Audio file. Max 100 MB. Supported extensions: aac, aiff,
+                    flac, mp3, mp4, mov, ogg, opus, wav, webm.
+                config:
+                  type: string
+                  default: default
+                  contentMediaType: application/json
+                  contentSchema:
+                    $ref: '#/components/schemas/BatchConfig'
+                  description: |
+                    Either the literal string `default` (which loads a
+                    built-in default configuration) or a JSON-encoded
+                    BatchConfig object (whose structure is given by
+                    `contentSchema`). When omitted the default
+                    configuration is used. Sent as a string form field
+                    because multipart/form-data has no first-class object
+                    type.
+            encoding:
+              upload_file:
+                contentType: application/octet-stream
+              config:
+                contentType: application/json
+      responses:
+        '200':
+          description: Batch processing completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchResponse'
+        '400':
+          description: |
+            Bad request - The submitted audio was rejected: an unsupported file
+            extension, an empty file, or a request that could not be processed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_format:
+                  summary: Invalid file format
+                  value:
+                    detail: >-
+                      Unsupported file format. Supported formats: .aac, .aiff,
+                      .flac, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm.
+                empty_file:
+                  summary: Empty file
+                  value:
+                    detail: The uploaded file is empty.
+                bad_value:
+                  summary: Malformed request value
+                  value:
+                    detail: Invalid request.
+        '403':
+          description: Forbidden - the request is not permitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: This request is not permitted.
+        '422':
+          description: |
+            Unprocessable Entity. Either the `config` value was malformed
+            (invalid JSON, an invalid preset reference, or a definition
+            missing a required field), returning an
+            ErrorResponse body; or a required request field was missing or
+            the wrong type (for example, the `X-API-Key` header or the
+            `upload_file` part), returning the framework HTTPValidationError
+            body.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+                  - $ref: '#/components/schemas/HTTPValidationError'
+              examples:
+                invalid_config:
+                  summary: Invalid config value
+                  value:
+                    detail: Invalid configuration.
+                missing_field:
+                  summary: Missing or malformed required field
+                  value:
+                    detail:
+                      - loc:
+                          - header
+                          - x-api-key
+                        msg: Field required
+                        type: missing
+        '429':
+          description: >-
+            Too many requests - the request could not be completed due to
+            insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Insufficient credits.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Internal server error
+        '502':
+          description: Bad gateway - the request could not be validated or completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation_unavailable:
+                  summary: Request could not be validated
+                  value:
+                    detail: Unable to validate request. Please try again.
+                request_not_completed:
+                  summary: Request could not be completed
+                  value:
+                    detail: Unable to complete the request. Please try again.
+  /api/velma-2-batch/list-presets:
+    get:
+      summary: List available behavior presets.
+      description: |
+        Returns the catalog of behavior presets that can be referenced
+        from the `behaviors` array in a BatchConfig using the
+        `preset:<identifier>` syntax. Each entry includes the preset
+        `identifier`, `name`, `short_description`, and
+        `detailed_description`.
+      operationId: velma2BatchListPresets
+      responses:
+        '200':
+          description: List of premade presets.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPresetsResponse'
+        '403':
+          description: Forbidden - the request is not permitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: This request is not permitted.
+        '429':
+          description: >-
+            Too many requests - the request could not be completed due to
+            insufficient credits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Insufficient credits.
+        '502':
+          description: Bad gateway - the request could not be validated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Unable to validate request. Please try again.
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key used for authentication and usage tracking.
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message describing what went wrong
+    ValidationError:
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ConversationTypeDef:
+      type: object
+      required:
+        - conversation_type_uuid
+        - name
+        - short_description
+        - detailed_description
+      properties:
+        conversation_type_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+    ParticipantRoleDef:
+      type: object
+      required:
+        - participant_role_uuid
+        - name
+        - short_description
+        - detailed_description
+      properties:
+        participant_role_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+        applies_to_conversation_type_uuids:
+          description: Null/missing means applies to all conversation types.
+          oneOf:
+            - type: array
+              items:
+                type: string
+                format: uuid
+            - type: 'null'
+    BehaviorDef:
+      type: object
+      required:
+        - behavior_uuid
+        - name
+        - short_description
+        - detailed_description
+      properties:
+        behavior_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+        applies_to_conversation_type_uuids:
+          oneOf:
+            - type: array
+              items:
+                type: string
+                format: uuid
+            - type: 'null'
+        applies_to_participant_role_uuids:
+          oneOf:
+            - type: array
+              items:
+                type: string
+                format: uuid
+            - type: 'null'
+    STTOptions:
+      type: object
+      properties:
+        speaker_diarization:
+          type: boolean
+          default: true
+        emotion_signal:
+          type: boolean
+          default: false
+        accent_signal:
+          type: boolean
+          default: false
+        deepfake_signal:
+          type: boolean
+          default: false
+        pii_phi_tagging:
+          type: boolean
+          default: false
+        language:
+          description: |
+            Optional language hint as a case-insensitive ISO 639-1 code (e.g.
+            "en", "fr"). BCP 47 region/script subtags (e.g. "en-US") are
+            accepted; only the primary language subtag is used. When omitted or
+            null, the language is detected automatically for each clip.
+          oneOf:
+            - type: string
+              pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
+            - type: 'null'
+        custom_terms:
+          description: >-
+            Optional custom vocabulary to bias transcription toward domain terms
+            and names. Each entry is either a plain string (the term) or a
+            CustomTerm object. Blank terms and blank pronunciations are dropped.
+            At most 1000 entries, and the term strings serialized together as
+            JSON must total under 8000 characters. Null or omitted means no
+            biasing.
+          oneOf:
+            - type: 'null'
+            - type: array
+              maxItems: 1000
+              items:
+                oneOf:
+                  - type: string
+                  - $ref: '#/components/schemas/CustomTerm'
+    CustomTerm:
+      type: object
+      required:
+        - term
+      properties:
+        term:
+          type: string
+          minLength: 1
+          description: The vocabulary term to bias transcription toward.
+        definition:
+          type: string
+          maxLength: 256
+          description: Optional short definition of the term.
+        pronunciations:
+          type: array
+          maxItems: 16
+          items:
+            type: string
+            maxLength: 128
+          description: >-
+            Optional pronunciation hints, as X-SAMPA notation or
+            hyphen-separated ASCII respelling with the stressed syllable in
+            capitals (e.g. GOO-guhl). Printable ASCII only.
+    BatchConfig:
+      type: object
+      properties:
+        conversation_types:
+          description: |
+            Candidate conversation types. If this key is omitted, the
+            built-in default conversation types are used; pass an empty
+            array to provide no candidates.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversationTypeDef'
+        participant_roles:
+          description: |
+            Candidate participant roles. If this key is omitted, the
+            built-in default participant roles are used; pass an empty
+            array to provide no candidates.
+          type: array
+          items:
+            $ref: '#/components/schemas/ParticipantRoleDef'
+        behaviors:
+          description: |
+            Each entry is either a full BehaviorDef object or a preset
+            reference string matching `preset:<identifier>` (e.g.
+            `preset:complaints`). Preset references are expanded into
+            full BehaviorDef objects before processing. Use the
+            list-presets endpoint to discover available identifiers.
+            If this key is omitted, no behaviors are evaluated.
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/BehaviorDef'
+              - type: string
+                pattern: ^preset:.+$
+        stt:
+          $ref: '#/components/schemas/STTOptions'
+        produce_topics:
+          type: boolean
+          default: true
+        produce_topic_sentiments:
+          type: boolean
+          default: true
+        produce_summary:
+          type: boolean
+          default: true
+        default_conversation_type:
+          description: |
+            Fallback conversation type used when no candidate
+            conversation type applies. If this key is omitted, a
+            built-in fallback is supplied automatically; set it to null
+            to disable the fallback.
+          oneOf:
+            - $ref: '#/components/schemas/ConversationTypeDef'
+            - type: 'null'
+        default_participant_role:
+          description: |
+            Fallback participant role used when no candidate participant
+            role applies to a speaker. If this key is omitted, a
+            built-in fallback is supplied automatically; set it to null
+            to disable the fallback.
+          oneOf:
+            - $ref: '#/components/schemas/ParticipantRoleDef'
+            - type: 'null'
+    SelectionSource:
+      type: string
+      enum:
+        - inferred
+        - auto_selected_single_option
+        - default
+    ConversationTypePick:
+      type: object
+      required:
+        - conversation_type_uuid
+        - name
+        - confidence
+        - selection_source
+        - detail
+      properties:
+        conversation_type_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+        selection_source:
+          $ref: '#/components/schemas/SelectionSource'
+        detail:
+          type: string
+        reasoning:
+          oneOf:
+            - type: string
+            - type: 'null'
+    ParticipantRolePick:
+      type: object
+      required:
+        - speaker_label
+        - participant_role_uuid
+        - name
+        - confidence
+        - selection_source
+        - detail
+      properties:
+        speaker_label:
+          type: string
+        participant_role_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+        selection_source:
+          $ref: '#/components/schemas/SelectionSource'
+        detail:
+          type: string
+        reasoning:
+          oneOf:
+            - type: string
+            - type: 'null'
+    Clip:
+      type: object
+      required:
+        - clip_uuid
+        - text
+        - start_ms
+        - duration_ms
+        - speaker_label
+        - language
+      properties:
+        clip_uuid:
+          type: string
+          format: uuid
+        text:
+          type: string
+        start_ms:
+          type: integer
+          minimum: 0
+        duration_ms:
+          type: integer
+          minimum: 0
+        speaker_label:
+          type: string
+        language:
+          type: string
+        emotion:
+          description: >-
+            Predicted emotion label for the clip, or null when the emotion
+            signal is not enabled for the request.
+          oneOf:
+            - type: string
+            - type: 'null'
+        accent:
+          description: >-
+            Predicted accent label for the clip, or null when the accent signal
+            is not enabled for the request.
+          oneOf:
+            - type: string
+            - type: 'null'
+        deepfake_score:
+          oneOf:
+            - type: number
+              format: double
+              minimum: 0
+              maximum: 1
+            - type: 'null'
+    BehaviorDetection:
+      type: object
+      required:
+        - behavior_uuid
+        - behavior_name
+        - speaker_label
+        - detected
+      properties:
+        behavior_uuid:
+          type: string
+          format: uuid
+        behavior_name:
+          type: string
+        speaker_label:
+          oneOf:
+            - type: string
+            - type: 'null'
+        detected:
+          type: boolean
+        confidence:
+          oneOf:
+            - type: number
+              format: double
+              minimum: 0
+              maximum: 1
+            - type: 'null'
+        evidence_clip_uuids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        definitive_clip_uuid:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: 'null'
+        reasoning:
+          oneOf:
+            - type: string
+            - type: 'null'
+    TopicSentiment:
+      type: object
+      required:
+        - topic
+        - speaker_label
+        - sentiment_score
+        - sentiment_label
+      properties:
+        topic:
+          type: string
+        speaker_label:
+          type: string
+        sentiment_score:
+          type: number
+          format: double
+          minimum: -1
+          maximum: 1
+        sentiment_label:
+          type: string
+    BehaviorPresetListing:
+      type: object
+      required:
+        - identifier
+        - name
+        - short_description
+        - detailed_description
+      properties:
+        identifier:
+          type: string
+          description: |
+            The preset identifier to use in a `preset:<identifier>`
+            behavior reference.
+        name:
+          type: string
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+    ListPresetsResponse:
+      type: object
+      required:
+        - presets
+      properties:
+        presets:
+          type: array
+          items:
+            $ref: '#/components/schemas/BehaviorPresetListing'
+    BatchResponse:
+      type: object
+      required:
+        - duration_ms
+        - clips
+        - behaviors
+      properties:
+        duration_ms:
+          type: integer
+          minimum: 0
+        clips:
+          type: array
+          items:
+            $ref: '#/components/schemas/Clip'
+        conversation_type_pick:
+          oneOf:
+            - $ref: '#/components/schemas/ConversationTypePick'
+            - type: 'null'
+        participant_role_picks:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParticipantRolePick'
+        behaviors:
+          type: array
+          items:
+            $ref: '#/components/schemas/BehaviorDetection'
+        topics:
+          type: array
+          items:
+            type: string
+        topic_sentiments:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicSentiment'
+        summary:
+          oneOf:
+            - type: string
+            - type: 'null'

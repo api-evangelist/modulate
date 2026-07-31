@@ -1,0 +1,477 @@
+asyncapi: 3.0.0
+info:
+  title: Velma 2 AI Music Detection Streaming API
+  version: 0.0.0
+  description: |
+    Real-time AI music detection over WebSocket. The client streams audio and
+    receives per-window vocal AI verdicts as they become available, followed
+    by a final clip-level summary including instrumental AI detection on
+    completion.
+
+    ## Performance Notes
+
+    - Per-window results produced from a small amount of streamed audio may be
+      lower accuracy.
+    - Heavily processed or high-production songs may be incorrectly labeled as
+      AI-generated; this is a known gap targeted by future updates to this
+      model.
+servers:
+  production:
+    host: platform.modulate.ai
+    protocol: wss
+    description: Modulate AI Music Detection Streaming Server
+channels:
+  streaming-detection:
+    address: /api/velma-2-ai-music-detection-streaming
+    description: |
+      ## WebSocket Close Codes
+      - `1000`: Normal closure after the `done` message, or after the
+        connection completes.
+      - `1003`: Invalid or missing query parameters (unknown `audio_format`,
+        invalid `sample_rate` or `num_channels`, a raw format missing
+        `sample_rate`/`num_channels`, `sample_rate`/`num_channels` supplied
+        without `audio_format`, or `audio_format` omitted). An `error` message
+        is sent before the close.
+      - `4002`: The audio could not be decoded, or does not match the
+        declared raw `audio_format`. An `error` message is sent before the
+        close.
+      - `4003`: The request could not be validated, or the request is not
+        permitted. An `error` message is sent before the close.
+      - `4029`: The request could not be completed due to insufficient credits.
+        An `error` message is sent before the close.
+    bindings:
+      ws:
+        query:
+          type: object
+          required:
+            - api_key
+            - audio_format
+          properties:
+            api_key:
+              type: string
+              description: API key used for authentication and usage tracking.
+            audio_format:
+              type: string
+              description: |
+                Audio encoding format. Required for all connections. Raw formats
+                (headerless samples) also require `sample_rate` and
+                `num_channels`; container formats carry that metadata in the
+                stream, so those parameters must not be supplied.
+              enum:
+                - s8
+                - s16le
+                - s16be
+                - s24le
+                - s24be
+                - s32le
+                - s32be
+                - u8
+                - u16le
+                - u16be
+                - u24le
+                - u24be
+                - u32le
+                - u32be
+                - f32le
+                - f32be
+                - f64le
+                - f64be
+                - mulaw
+                - alaw
+                - wav
+                - mp3
+                - ogg
+                - flac
+                - webm
+                - aac
+                - aiff
+              examples:
+                - s16le
+                - f32le
+                - mulaw
+                - webm
+            sample_rate:
+              type: integer
+              description: |
+                Sample rate in Hz. **Required** when `audio_format` is a raw
+                format. Not required and ignored for container formats. Must
+                not be specified without `audio_format`.
+              enum:
+                - 8000
+                - 11025
+                - 16000
+                - 22050
+                - 32000
+                - 44100
+                - 48000
+                - 96000
+              examples:
+                - 16000
+                - 48000
+            num_channels:
+              type: integer
+              description: |
+                Number of audio channels. **Required** when `audio_format` is
+                a raw format. Must be between 1 and 8. Must not be specified
+                for container formats, and must not be specified without
+                `audio_format`.
+              minimum: 1
+              maximum: 8
+              examples:
+                - 1
+                - 2
+    messages:
+      audioData:
+        $ref: '#/components/messages/audioData'
+      endOfStream:
+        $ref: '#/components/messages/endOfStream'
+      windowResult:
+        $ref: '#/components/messages/windowResult'
+      done:
+        $ref: '#/components/messages/done'
+      error:
+        $ref: '#/components/messages/error'
+operations:
+  sendAudio:
+    action: send
+    channel:
+      $ref: '#/channels/streaming-detection'
+    summary: Stream audio data to the server.
+    description: |
+      Send binary frames containing audio data in the format declared by
+      the `audio_format` query parameter. Frames can be any size; the
+      server buffers and windows internally.
+    messages:
+      - $ref: '#/channels/streaming-detection/messages/audioData'
+  signalEnd:
+    action: send
+    channel:
+      $ref: '#/channels/streaming-detection'
+    summary: Signal end of audio stream.
+    description: |
+      Send an empty text frame (`""`) to indicate all audio has been sent.
+      The server will process any remaining buffered audio, emit outstanding
+      `window` messages, run instrumental AI detection, and send a `done`
+      message.
+    messages:
+      - $ref: '#/channels/streaming-detection/messages/endOfStream'
+  receiveWindowResult:
+    action: receive
+    channel:
+      $ref: '#/channels/streaming-detection'
+    summary: Receive a per-window detection result.
+    description: |
+      Emitted for each completed 4-second window. Results arrive in
+      chronological order as each window is analysed. The `vocal_ai_*`
+      fields are populated for windows with sufficient vocal content;
+      non-vocal windows report `vocal_ai_percentage: 0`.
+    messages:
+      - $ref: '#/channels/streaming-detection/messages/windowResult'
+  receiveDone:
+    action: receive
+    channel:
+      $ref: '#/channels/streaming-detection'
+    summary: Receive the final clip-level summary when analysis is complete.
+    description: |
+      Sent after all window results have been delivered, in response to
+      the client's end-of-stream signal. Includes the clip-level verdict
+      and instrumental AI detection results. The server closes the
+      connection after this message.
+    messages:
+      - $ref: '#/channels/streaming-detection/messages/done'
+  receiveError:
+    action: receive
+    channel:
+      $ref: '#/channels/streaming-detection'
+    summary: Receive an error notification.
+    description: |
+      Sent if the connection parameters are invalid, the audio data does
+      not match the declared format, inference fails, or the server
+      encounters an internal error. The server closes the connection after
+      this message.
+    messages:
+      - $ref: '#/channels/streaming-detection/messages/error'
+components:
+  messages:
+    audioData:
+      name: audioData
+      title: Audio Data
+      summary: A binary frame containing audio samples.
+      contentType: application/octet-stream
+      payload:
+        type: string
+        format: binary
+        description: |
+          Audio data in the format declared by the `audio_format` query
+          parameter. For raw formats this is headerless samples; for
+          container formats this is the encoded byte stream. Frames may
+          be any size; the server buffers internally.
+    endOfStream:
+      name: endOfStream
+      title: End of Stream
+      summary: >-
+        An empty text frame signalling that the client has finished sending
+        audio.
+      contentType: text/plain
+      payload:
+        type: string
+        const: ''
+    windowResult:
+      name: windowResult
+      title: Window Result
+      summary: A single 4-second window detection result.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/WindowResultMessage'
+    done:
+      name: done
+      title: Done
+      summary: Analysis complete - final clip-level verdict has been computed.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/DoneMessage'
+    error:
+      name: error
+      title: Error
+      summary: An error occurred during connection or analysis.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    WindowResultMessage:
+      type: object
+      required:
+        - type
+        - window
+      properties:
+        type:
+          type: string
+          const: window
+        window:
+          $ref: '#/components/schemas/WindowResult'
+    WindowResult:
+      type: object
+      required:
+        - start_time_ms
+        - end_time_ms
+        - vocal_percentage
+        - vocal_ai_percentage
+        - vocal_ai_confidence
+        - instrumental_percentage
+        - silence_percentage
+      properties:
+        start_time_ms:
+          type: integer
+          minimum: 0
+          description: Window start time in the audio stream, in milliseconds.
+          examples:
+            - 0
+        end_time_ms:
+          type: integer
+          minimum: 0
+          description: Window end time in the audio stream, in milliseconds.
+          examples:
+            - 4000
+        vocal_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: |
+            Percentage of this window that contains vocal content.
+          examples:
+            - 87.5
+        vocal_ai_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: >
+            `100` if this window is classified as AI-generated vocals; `0`
+            otherwise. Always `0` for windows without sufficient vocal content.
+          examples:
+            - 100
+        vocal_ai_confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: >
+            Confidence that this window contains AI-generated vocals. `0` for
+            windows without sufficient vocal content.
+          examples:
+            - 0.97
+        instrumental_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: |
+            Percentage of this window that contains instrumental music content.
+          examples:
+            - 64.3
+        silence_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: >
+            Percentage of this window that contains neither vocal nor
+            instrumental content.
+          examples:
+            - 3.5
+    DoneMessage:
+      type: object
+      required:
+        - type
+        - duration_ms
+        - window_count
+        - primary_verdict
+        - vocal_percentage
+        - vocal_ai_percentage
+        - vocal_ai_confidence
+        - instrumental_percentage
+        - instrumental_ai_percentage
+        - instrumental_ai_confidence
+        - silence_percentage
+      properties:
+        type:
+          type: string
+          const: done
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: Total duration of the streamed audio in milliseconds.
+          examples:
+            - 89280
+        window_count:
+          type: integer
+          minimum: 0
+          description: Total number of windows analysed during the session.
+          examples:
+            - 22
+        primary_verdict:
+          type: string
+          enum:
+            - ai-vocal-music
+            - ai-instrumental
+            - not-ai-music
+          description: |
+            Clip-level classification:
+            - `ai-vocal-music` - AI-generated music with a detected synthetic
+              voice.
+            - `ai-instrumental` - AI-generated instrumental music with no
+              detectable synthetic voice.
+            - `not-ai-music` - the clip does not appear to contain
+              AI-generated music.
+          examples:
+            - ai-vocal-music
+        vocal_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: >
+            Average percentage of the audio that contains vocal content, across
+            all windows.
+          examples:
+            - 87.5
+        vocal_ai_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: >
+            Percentage of the clip duration classified as AI-generated vocals.
+            Computed as (seconds of audio classified as AI vocals) / (total clip
+            seconds) * 100. May differ from what the per-window messages
+            suggest, since it is a clip-level measure.
+          examples:
+            - 56.5
+        vocal_ai_confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: >
+            Average confidence that the vocal windows contain AI-generated
+            vocals, across all windows with vocal content.
+          examples:
+            - 0.96
+        instrumental_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: >
+            Average percentage of the audio that contains instrumental music
+            content, across all windows.
+          examples:
+            - 64.3
+        instrumental_ai_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: >
+            AI detection score for the clip's instrumental content, on a 0-100
+            scale.
+          examples:
+            - 42
+        instrumental_ai_confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: |
+            Confidence in the instrumental AI assessment for the full clip.
+          examples:
+            - 0.95
+        silence_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: >
+            Average percentage of the audio that contains neither vocal nor
+            instrumental content, across all windows.
+          examples:
+            - 3.51
+    ErrorResponse:
+      type: object
+      required:
+        - type
+        - error
+      properties:
+        type:
+          type: string
+          const: error
+        error:
+          type: string
+          description: Human-readable error description.
+          examples:
+            - Internal server error
+            - This request is not permitted.
+            - Insufficient credits.
+            - Unable to validate request. Please try again.
+            - Audio data does not match the declared audio_format.
+            - >-
+              The audio could not be processed. It may be corrupted or in an
+              unsupported format.
+            - >-
+              Invalid audio_format='mp4'. Valid values: ['aac', 'aiff', 'alaw',
+              'f32be', 'f32le', 'f64be', 'f64le', 'flac', 'mp3', 'mulaw', 'ogg',
+              's16be', 's16le', 's24be', 's24le', 's32be', 's32le', 's8',
+              'u16be', 'u16le', 'u24be', 'u24le', 'u32be', 'u32le', 'u8', 'wav',
+              'webm']
+            - >-
+              Raw audio formats require sample_rate and num_channels query
+              parameters
+            - sample_rate and num_channels require audio_format to be specified
+            - >-
+              Invalid sample_rate=50000. Valid values: [8000, 11025, 16000,
+              22050, 32000, 44100, 48000, 96000]
+            - Invalid num_channels=12. Must be between 1 and 8
+            - >-
+              audio_format query parameter is required. Example:
+              audio_format=s16le&sample_rate=16000&num_channels=1

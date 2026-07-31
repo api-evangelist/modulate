@@ -1,0 +1,292 @@
+openapi: 3.1.0
+info:
+  title: Velma 2 Music Detection Batch API
+  description: >
+    Batch endpoint for detecting and classifying audio content as music, speech,
+
+    or neither, via HTTP POST. The response contains an ordered list of
+    per-frame
+
+    music and speech probabilities - each frame covers a fixed window of
+
+    approximately 192 milliseconds, with contiguous timestamps spanning the full
+
+    duration of the audio - plus an overall primary label and a percentage
+
+    breakdown of how much of the clip is music versus speech.
+  version: 0.0.0
+servers:
+  - url: https://platform.modulate.ai
+    description: Modulate Music Detection Batch Server
+security:
+  - ApiKeyAuth: []
+paths:
+  /api/velma-2-music-detection-batch:
+    post:
+      operationId: detectMusic
+      summary: Detect music and speech in an audio file
+      description: |
+        Accepts an audio file and returns frame-level music and speech
+        probabilities, an overall primary label, and percentage breakdowns of
+        content type across the clip.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - upload_file
+              properties:
+                upload_file:
+                  type: string
+                  format: binary
+                  description: |
+                    Audio file to analyse. Must be non-empty. Supported formats:
+                    `.aac`, `.flac`, `.m4a`, `.mp3`, `.mp4`, `.ogg`, `.opus`,
+                    `.wav`. Maximum file size: 100 MB.
+      responses:
+        '200':
+          description: Detection completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MusicDetectionResponse'
+              example:
+                filename: my_audio.wav
+                duration_s: 5.76
+                primary_label: speech
+                music_pct: 0
+                speech_pct: 86.7
+                latency_ms: 1243.5
+                frames:
+                  - start_time_ms: 0
+                    end_time_ms: 192
+                    music_prob: 0.0213
+                    speech_prob: 0.9888
+                  - start_time_ms: 192
+                    end_time_ms: 384
+                    music_prob: 0.0204
+                    speech_prob: 0.9931
+        '400':
+          description: >
+            Bad request - the uploaded file is empty or its format is not
+            supported.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_format:
+                  summary: Invalid file format
+                  value:
+                    detail: >-
+                      Unsupported file format. Supported formats: .aac, .flac,
+                      .m4a, .mp3, .mp4, .ogg, .opus, .wav.
+                empty_file:
+                  summary: Empty file
+                  value:
+                    detail: The uploaded file is empty.
+                bad_value:
+                  summary: Malformed request value
+                  value:
+                    detail: Invalid request.
+        '403':
+          description: Forbidden - the request is not permitted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: This request is not permitted.
+        '422':
+          description: >
+            Unprocessable entity - a required request parameter is missing or
+            invalid (for example, the `X-API-Key` header or the `upload_file`
+            field).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '429':
+          description: >-
+            Too many requests - the request could not be completed due to
+            insufficient credits.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Insufficient credits.
+        '500':
+          description: Internal server error during processing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Internal server error
+        '502':
+          description: Bad gateway - the request could not be validated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: Unable to validate request. Please try again.
+        '503':
+          description: Service unavailable - the service is temporarily unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: >-
+                  The service is temporarily unavailable. Please try again
+                  later.
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key used for authentication and usage tracking.
+  schemas:
+    MusicDetectionResponse:
+      type: object
+      required:
+        - filename
+        - duration_s
+        - primary_label
+        - music_pct
+        - speech_pct
+        - latency_ms
+        - frames
+      properties:
+        filename:
+          type: string
+          description: >
+            Name of the submitted audio file. Empty string if no filename was
+            provided in the upload.
+          example: my_audio.wav
+        duration_s:
+          type: number
+          format: double
+          minimum: 0
+          description: Total duration of the analysed audio in seconds.
+          example: 5.76
+        primary_label:
+          type: string
+          enum:
+            - music
+            - speech
+            - neither
+            - unknown
+          description: |
+            Overall classification of the clip:
+            - `music` - music covers at least as much of the clip as
+              speech, and more than zero.
+            - `speech` - speech covers more of the clip than music, and
+              more than zero.
+            - `neither` - neither music nor speech reached the dominant
+              threshold for any portion of the clip.
+            - `unknown` - no frames could be produced from the audio.
+          example: speech
+        music_pct:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: |
+            Percentage of the clip classified as containing music.
+          example: 0
+        speech_pct:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: |
+            Percentage of the clip classified as containing speech.
+          example: 86.7
+        latency_ms:
+          type: number
+          format: double
+          minimum: 0
+          description: End-to-end inference time in milliseconds.
+          example: 1243.5
+        frames:
+          type: array
+          description: >
+            Ordered list of per-frame classification results covering the full
+            duration of the clip.
+          items:
+            $ref: '#/components/schemas/FrameResult'
+    FrameResult:
+      type: object
+      required:
+        - start_time_ms
+        - end_time_ms
+        - music_prob
+        - speech_prob
+      properties:
+        start_time_ms:
+          type: integer
+          minimum: 0
+          description: Frame start time in milliseconds.
+          example: 0
+        end_time_ms:
+          type: integer
+          minimum: 0
+          description: Frame end time in milliseconds.
+          example: 192
+        music_prob:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: Probability that this frame contains music.
+          example: 0.0213
+        speech_prob:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: >
+            Probability that this frame contains speech. Music and speech are
+            not mutually exclusive - both probabilities can be high for the same
+            frame.
+          example: 0.9888
+    ErrorResponse:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message.
+    ValidationError:
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'

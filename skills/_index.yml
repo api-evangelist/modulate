@@ -1,0 +1,16 @@
+generated: '2026-07-20'
+method: generated
+source: Grounded in openapi/*.yml operationIds + conventions/ + errors/
+skills:
+- file: modulate-analyze-conversation.md
+  name: Analyze a voice conversation with Velma-2
+  api: openapi/velma-2-batch-openapi-original.yml
+  operations: [velma2BatchListPresets, velma2Batch]
+- file: modulate-transcribe-and-redact.md
+  name: Transcribe audio and redact PII/PHI
+  api: openapi/stt-batch-openapi-original.yml
+  operations: [transcribeMultilingualBatch, redactPiiPhiBatch]
+- file: modulate-detect-deepfake.md
+  name: Detect deepfake (synthetic) voice
+  api: openapi/synthetic-voice-detection-batch-openapi-original.yml
+  operations: [detectSyntheticVoice]

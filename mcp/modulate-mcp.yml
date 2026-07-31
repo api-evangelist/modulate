@@ -1,0 +1,51 @@
+generated: '2026-07-20'
+method: derived
+status: candidate
+source: >-
+  Derived from openapi/*.yml operations. No official hosted/remote Modulate MCP
+  server was found on the docs, npm (@modelcontextprotocol), or public MCP registries
+  as of the generated date.
+server:
+  name: modulate
+  transport: http
+  auth:
+    type: apiKey
+    header: X-API-Key
+  base_url: https://platform.modulate.ai
+tools:
+- name: velma_conversation_analysis
+  description: Run full Velma-2 conversation analysis on an uploaded audio file — transcription, conversation type, participant roles, behaviors, topics, sentiment, and summary.
+  source_operation: openapi/velma-2-batch-openapi-original.yml#velma2Batch
+- name: list_behavior_presets
+  description: List the catalog of Velma behavior presets referenceable via preset:<identifier>.
+  source_operation: openapi/velma-2-batch-openapi-original.yml#velma2BatchListPresets
+- name: transcribe_multilingual
+  description: Multilingual batch transcription with diarization, emotion/accent detection and PII/PHI tagging.
+  source_operation: openapi/stt-batch-openapi-original.yml#transcribeMultilingualBatch
+- name: transcribe_multilingual_fast
+  description: Fast multilingual batch transcription with optional language declaration.
+  source_operation: openapi/stt-batch-multilingual-vfast-openapi-original.yml#transcribeMultilingual
+- name: transcribe_english_fast
+  description: Low-cost fast English-only batch transcription (Opus input).
+  source_operation: openapi/stt-batch-english-vfast-openapi-original.yml#transcribeEnglishVfast2
+- name: redact_pii_phi
+  description: Transcribe and redact PII/PHI from both transcript text and returned audio.
+  source_operation: openapi/pii-phi-redaction-batch-openapi-original.yml#redactPiiPhiBatch
+- name: detect_emotion
+  description: Classify the emotional tone of an audio file (whole-file label plus per-window series).
+  source_operation: openapi/emotion-batch-openapi-original.yml#detectEmotionBatch
+- name: detect_accent
+  description: Classify the speaker accent of an audio file.
+  source_operation: openapi/accent-batch-openapi-original.yml#detectAccentBatch
+- name: detect_deepfake
+  description: Detect synthetic (AI-generated) voice with per-frame deepfake scores.
+  source_operation: openapi/synthetic-voice-detection-batch-openapi-original.yml#detectSyntheticVoice
+- name: detect_music_speech
+  description: Classify audio as music, speech, or neither with frame-level probabilities.
+  source_operation: openapi/music-detection-batch-openapi-original.yml#detectMusic
+- name: detect_language
+  description: Identify the spoken language of an audio file across 100 languages.
+  source_operation: openapi/language-detection-batch-openapi-original.yml#detectLanguageBatch
+- name: detect_ai_music
+  description: Detect AI-generated music with clip-level verdict and per-window vocal/instrumental breakdown.
+  source_operation: openapi/ai-music-detection-batch-openapi-original.yml#detectAIMusic

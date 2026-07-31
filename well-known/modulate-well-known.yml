@@ -1,0 +1,31 @@
+generated: '2026-07-20'
+method: searched
+source: live probe of /.well-known/ on Modulate hosts
+hosts:
+- host: https://platform.modulate.ai
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+- host: https://docs.modulate.ai
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+- host: https://modulate.ai
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+- host: https://www.modulate.ai
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+note: >-
+  No /.well-known/ discovery documents are published on any Modulate host as of the
+  probe date. Absence recorded as valid negative data.

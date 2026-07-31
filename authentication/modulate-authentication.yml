@@ -1,0 +1,31 @@
+generated: '2026-07-20'
+method: derived
+source: openapi/accent-batch-openapi-original.yml, openapi/ai-music-detection-batch-openapi-original.yml,
+  openapi/emotion-batch-openapi-original.yml, openapi/language-detection-batch-openapi-original.yml,
+  openapi/music-detection-batch-openapi-original.yml, openapi/pii-phi-redaction-batch-openapi-original.yml,
+  openapi/stt-batch-english-vfast-openapi-original.yml, openapi/stt-batch-multilingual-vfast-openapi-original.yml,
+  openapi/stt-batch-openapi-original.yml, openapi/synthetic-voice-detection-batch-openapi-original.yml,
+  openapi/velma-2-batch-openapi-original.yml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-API-Key
+  description: API key used for authentication and usage tracking.
+  sources:
+  - openapi/accent-batch-openapi-original.yml
+  - openapi/ai-music-detection-batch-openapi-original.yml
+  - openapi/emotion-batch-openapi-original.yml
+  - openapi/language-detection-batch-openapi-original.yml
+  - openapi/music-detection-batch-openapi-original.yml
+  - openapi/pii-phi-redaction-batch-openapi-original.yml
+  - openapi/stt-batch-english-vfast-openapi-original.yml
+  - openapi/stt-batch-multilingual-vfast-openapi-original.yml
+  - openapi/stt-batch-openapi-original.yml
+  - openapi/synthetic-voice-detection-batch-openapi-original.yml
+  - openapi/velma-2-batch-openapi-original.yml

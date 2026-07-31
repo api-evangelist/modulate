@@ -1,0 +1,60 @@
+generated: '2026-07-20'
+method: searched
+source: >-
+  https://docs.modulate.ai/guides/authentication, https://docs.modulate.ai/quickstart,
+  https://docs.modulate.ai/faq, and derived from openapi/*.yml + asyncapi/*.yml
+authentication:
+  style: api-key
+  rest_header: X-API-Key
+  websocket_param: api_key
+  websocket_location: query
+  docs: https://docs.modulate.ai/guides/authentication
+  cross_ref: authentication/modulate-authentication.yml
+transports:
+  rest:
+    style: multipart-upload
+    description: >-
+      Batch endpoints accept a multipart/form-data upload with an audio file
+      (upload_file) and, for Velma, a JSON config blob. Synchronous — the full
+      result is returned in one response.
+    max_upload_bytes: 104857600
+    timeout_seconds: 60
+  websocket:
+    scheme: wss
+    host: platform.modulate.ai
+    description: >-
+      Streaming endpoints are WebSocket connections. Send audio chunks as binary
+      frames; signal end-of-stream with an empty text frame. Server drains buffered
+      audio, delivers outstanding results, sends a `done` message, then closes.
+    end_of_stream_signal: empty text frame ("")
+    partial_results: >-
+      When partial_results=true, the server emits partial_utterance messages that are
+      each superseded by the final utterance message.
+pagination:
+  supported: false
+  note: Model endpoints are single-shot per audio file; no collection pagination.
+idempotency:
+  supported: false
+  note: >-
+    Audio-processing operations are stateless single-shot inferences with no documented
+    idempotency-key contract.
+versioning:
+  scheme: model-name-in-path
+  note: >-
+    API versioning is expressed through the model name in the path (e.g. velma-2-*),
+    not a global version segment or header. No dated-version or version header is documented.
+error_envelope:
+  format: json
+  schema: ErrorResponse
+  cross_ref: errors/modulate-error-codes.yml
+rate_limit_signaling:
+  documented_headers: false
+  rest_statuses: [403, 429]
+  websocket_close_code: 4029
+  cross_ref: rate-limits/modulate-rate-limits.yml
+data_retention:
+  default: no audio stored by default
+  stored_retention_days: 35
+  note: >-
+    Audio marked for storage is retained 35 days then permanently deleted. Enterprise
+    customers can negotiate custom retention.

@@ -1,0 +1,41 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.modulate.ai/guides/authentication
+docs: https://docs.modulate.ai/guides/authentication
+summary: >-
+  Rate limits are enforced per organization, per model. Two primary limits apply:
+  a concurrency limit (maximum simultaneous in-flight requests or active WebSocket
+  connections) and a monthly usage quota (maximum audio hours processed per calendar
+  month). An optional organization-wide monthly credit (spend) cap can also be set,
+  disabled by default. New accounts start at 1-5 concurrent streams per model,
+  self-service adjustable up to 25; higher limits via support@modulate.ai.
+limits:
+- name: concurrency
+  scope: per-organization-per-model
+  description: Maximum simultaneous in-flight requests or active WebSocket connections.
+  default_min: 1
+  default_max: 5
+  self_service_ceiling: 25
+- name: monthly-usage
+  scope: per-organization-per-model
+  unit: audio-hours
+  description: Maximum audio hours processed per calendar month, set by Modulate per model.
+- name: monthly-credit
+  scope: per-organization
+  description: Optional organization-wide monthly spend cap. Disabled by default.
+responses:
+- transport: rest
+  status: 403
+  meaning: Monthly usage quota exceeded, or model access not enabled.
+- transport: rest
+  status: 429
+  meaning: Too many concurrent requests (concurrency limit hit).
+- transport: websocket
+  close_code: 4029
+  meaning: Rate limit exceeded — monthly quota or concurrency limit hit at handshake.
+retry_guidance: >-
+  Implement exponential backoff with jitter on 429. Concurrency limits are per-model,
+  so distributing load across models can help avoid hitting them. Monthly quota
+  exhaustion requires waiting for the period reset or contacting support.
+headers_documented: false
+usage_dashboard: https://platform.modulate.ai/dashboard/usage

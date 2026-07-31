@@ -1,27 +1,591 @@
 aid: modulate
 name: Modulate
-description: 'Modulate is a company surfaced as a portfolio company of sierra-ventures and added to the
-  API Evangelist network as a stub for enrichment. Sector: ai. This profile is a lead awaiting the enrichment
-  pipeline.'
+description: 'Modulate is a voice AI company based in Cambridge, Massachusetts, building
+  audio-native voice intelligence for trust, safety, and conversation understanding.
+  Its Velma-2 platform exposes a suite of REST (batch) and WebSocket (streaming) model
+  APIs — multilingual and English speech-to-text transcription with speaker diarization,
+  deepfake (synthetic voice) detection, emotion and accent detection, PII/PHI tagging
+  and redaction, language detection, and music/speech and AI-music detection — alongside
+  Velma conversation analysis (behaviors, topics, sentiment, participant roles) and
+  the ToxMod voice-safety product for gaming and social platforms. Authentication is
+  via an X-API-Key header (an api_key query parameter for WebSocket streams), billed
+  per hour of audio processed. Backed by Sierra Ventures.'
 url: https://raw.githubusercontent.com/api-evangelist/modulate/refs/heads/main/apis.yml
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://cdn.prod.website-files.com/67ed675f8e30d86d14c51adb/6a0c34c788a0bb22111adc3a_Modulate%20Thumbnail%20master.png
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - sierra-ventures
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: profiled
+x-tier-reason: enriched-from-portfolio-lead
+x-enrichment:
+  date: '2026-07-20'
+  status: enriched
+  artifacts_added: 36
+  pass: local-v1
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-20'
 tags:
 - Company
 - Ai
-apis: []
+- Voice AI
+- Speech to Text
+- Transcription
+- Deepfake Detection
+- Content Moderation
+- Trust and Safety
+- Audio
+- Machine Learning
+- PII Redaction
+- Voice Intelligence
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- aid: modulate:modulate-velma-2-accent-batch-api
+  name: Modulate Velma 2 Accent Batch API
+  description: The Velma 2 Accent Batch API from Modulate — 1 operation(s) for velma 2 accent batch.
+  humanURL: https://docs.modulate.ai/api-reference/velma/overview
+  baseURL: https://platform.modulate.ai
+  tags:
+  - Velma 2 Accent Batch
+  properties:
+  - type: OpenAPI
+    url: openapi/modulate-velma-2-accent-batch-api-openapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/velma/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-asyncapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-english-v2-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/stt/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-synthetic-voice-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/svd/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-pii-phi-redaction-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/redaction/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/emotion/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/accent/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/language-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/music-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-ai-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/ai-music-detection/overview
+- aid: modulate:modulate-velma-2-ai-music-detection-batch-api
+  name: Modulate Velma 2 Ai Music Detection Batch API
+  description: >-
+    The Velma 2 Ai Music Detection Batch API from Modulate — 1 operation(s) for velma 2 ai music detection
+    batch.
+  humanURL: https://docs.modulate.ai/api-reference/velma/overview
+  baseURL: https://platform.modulate.ai
+  tags:
+  - Velma 2 Ai Music Detection Batch
+  properties:
+  - type: OpenAPI
+    url: openapi/modulate-velma-2-ai-music-detection-batch-api-openapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/velma/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-asyncapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-english-v2-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/stt/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-synthetic-voice-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/svd/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-pii-phi-redaction-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/redaction/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/emotion/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/accent/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/language-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/music-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-ai-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/ai-music-detection/overview
+- aid: modulate:modulate-velma-2-batch-api
+  name: Modulate Velma 2 Batch API
+  description: The Velma 2 Batch API from Modulate — 2 operation(s) for velma 2 batch.
+  humanURL: https://docs.modulate.ai/api-reference/velma/overview
+  baseURL: https://platform.modulate.ai
+  tags:
+  - Velma 2 Batch
+  properties:
+  - type: OpenAPI
+    url: openapi/modulate-velma-2-batch-api-openapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/velma/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-asyncapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-english-v2-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/stt/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-synthetic-voice-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/svd/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-pii-phi-redaction-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/redaction/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/emotion/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/accent/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/language-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/music-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-ai-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/ai-music-detection/overview
+- aid: modulate:modulate-velma-2-emotion-batch-api
+  name: Modulate Velma 2 Emotion Batch API
+  description: The Velma 2 Emotion Batch API from Modulate — 1 operation(s) for velma 2 emotion batch.
+  humanURL: https://docs.modulate.ai/api-reference/velma/overview
+  baseURL: https://platform.modulate.ai
+  tags:
+  - Velma 2 Emotion Batch
+  properties:
+  - type: OpenAPI
+    url: openapi/modulate-velma-2-emotion-batch-api-openapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/velma/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-asyncapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-english-v2-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/stt/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-synthetic-voice-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/svd/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-pii-phi-redaction-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/redaction/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/emotion/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/accent/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/language-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/music-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-ai-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/ai-music-detection/overview
+- aid: modulate:modulate-velma-2-language-detection-batch-api
+  name: Modulate Velma 2 Language Detection Batch API
+  description: >-
+    The Velma 2 Language Detection Batch API from Modulate — 1 operation(s) for velma 2 language detection
+    batch.
+  humanURL: https://docs.modulate.ai/api-reference/velma/overview
+  baseURL: https://platform.modulate.ai
+  tags:
+  - Velma 2 Language Detection Batch
+  properties:
+  - type: OpenAPI
+    url: openapi/modulate-velma-2-language-detection-batch-api-openapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/velma/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-asyncapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-english-v2-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/stt/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-synthetic-voice-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/svd/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-pii-phi-redaction-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/redaction/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/emotion/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/accent/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/language-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/music-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-ai-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/ai-music-detection/overview
+- aid: modulate:modulate-velma-2-music-detection-batch-api
+  name: Modulate Velma 2 Music Detection Batch API
+  description: >-
+    The Velma 2 Music Detection Batch API from Modulate — 1 operation(s) for velma 2 music detection batch.
+  humanURL: https://docs.modulate.ai/api-reference/velma/overview
+  baseURL: https://platform.modulate.ai
+  tags:
+  - Velma 2 Music Detection Batch
+  properties:
+  - type: OpenAPI
+    url: openapi/modulate-velma-2-music-detection-batch-api-openapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/velma/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-asyncapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-english-v2-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/stt/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-synthetic-voice-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/svd/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-pii-phi-redaction-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/redaction/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/emotion/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/accent/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/language-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/music-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-ai-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/ai-music-detection/overview
+- aid: modulate:modulate-velma-2-pii-phi-redaction-batch-api
+  name: Modulate Velma 2 Pii Phi Redaction Batch API
+  description: >-
+    The Velma 2 Pii Phi Redaction Batch API from Modulate — 1 operation(s) for velma 2 pii phi redaction
+    batch.
+  humanURL: https://docs.modulate.ai/api-reference/velma/overview
+  baseURL: https://platform.modulate.ai
+  tags:
+  - Velma 2 Pii Phi Redaction Batch
+  properties:
+  - type: OpenAPI
+    url: openapi/modulate-velma-2-pii-phi-redaction-batch-api-openapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/velma/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-asyncapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-english-v2-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/stt/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-synthetic-voice-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/svd/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-pii-phi-redaction-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/redaction/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/emotion/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/accent/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/language-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/music-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-ai-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/ai-music-detection/overview
+- aid: modulate:modulate-velma-2-stt-batch-api
+  name: Modulate Velma 2 Stt Batch API
+  description: The Velma 2 Stt Batch API from Modulate — 1 operation(s) for velma 2 stt batch.
+  humanURL: https://docs.modulate.ai/api-reference/velma/overview
+  baseURL: https://platform.modulate.ai
+  tags:
+  - Velma 2 Stt Batch
+  properties:
+  - type: OpenAPI
+    url: openapi/modulate-velma-2-stt-batch-api-openapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/velma/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-asyncapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-english-v2-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/stt/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-synthetic-voice-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/svd/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-pii-phi-redaction-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/redaction/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/emotion/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/accent/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/language-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/music-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-ai-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/ai-music-detection/overview
+- aid: modulate:modulate-velma-2-stt-batch-english-vfast-api
+  name: Modulate Velma 2 Stt Batch English Vfast API
+  description: >-
+    The Velma 2 Stt Batch English Vfast API from Modulate — 1 operation(s) for velma 2 stt batch english
+    vfast.
+  humanURL: https://docs.modulate.ai/api-reference/velma/overview
+  baseURL: https://platform.modulate.ai
+  tags:
+  - Velma 2 Stt Batch English Vfast
+  properties:
+  - type: OpenAPI
+    url: openapi/modulate-velma-2-stt-batch-english-vfast-api-openapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/velma/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-asyncapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-english-v2-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/stt/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-synthetic-voice-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/svd/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-pii-phi-redaction-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/redaction/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/emotion/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/accent/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/language-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/music-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-ai-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/ai-music-detection/overview
+- aid: modulate:modulate-velma-2-stt-batch-multilingual-vfast-api
+  name: Modulate Velma 2 Stt Batch Multilingual Vfast API
+  description: >-
+    The Velma 2 Stt Batch Multilingual Vfast API from Modulate — 1 operation(s) for velma 2 stt batch
+    multilingual vfast.
+  humanURL: https://docs.modulate.ai/api-reference/velma/overview
+  baseURL: https://platform.modulate.ai
+  tags:
+  - Velma 2 Stt Batch Multilingual Vfast
+  properties:
+  - type: OpenAPI
+    url: openapi/modulate-velma-2-stt-batch-multilingual-vfast-api-openapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/velma/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-asyncapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-english-v2-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/stt/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-synthetic-voice-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/svd/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-pii-phi-redaction-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/redaction/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/emotion/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/accent/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/language-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/music-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-ai-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/ai-music-detection/overview
+- aid: modulate:modulate-velma-2-synthetic-voice-detection-batch-api
+  name: Modulate Velma 2 Synthetic Voice Detection Batch API
+  description: >-
+    The Velma 2 Synthetic Voice Detection Batch API from Modulate — 1 operation(s) for velma 2 synthetic
+    voice detection batch.
+  humanURL: https://docs.modulate.ai/api-reference/velma/overview
+  baseURL: https://platform.modulate.ai
+  tags:
+  - Velma 2 Synthetic Voice Detection Batch
+  properties:
+  - type: OpenAPI
+    url: openapi/modulate-velma-2-synthetic-voice-detection-batch-api-openapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/velma/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-asyncapi.yml
+  - type: AsyncAPI
+    url: asyncapi/modulate-stt-streaming-english-v2-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/stt/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-synthetic-voice-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/svd/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-pii-phi-redaction-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/redaction/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/emotion/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/accent/overview
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/language-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/music-detection/overview
+  - type: AsyncAPI
+    url: asyncapi/modulate-ai-music-detection-streaming-asyncapi.yml
+  - type: Documentation
+    url: https://docs.modulate.ai/api-reference/ai-music-detection/overview
 common:
+- type: TrustCenter
+  url: security/modulate-trust-center.yml
+- type: Compliance
+  url: https://www.modulate.ai/compliance
+- type: DomainSecurity
+  url: security/modulate-domain-security.yml
+- type: Authentication
+  url: authentication/modulate-authentication.yml
 - type: Website
   url: https://modulate.ai/
+- type: DeveloperPortal
+  url: https://docs.modulate.ai/
+- type: Documentation
+  url: https://docs.modulate.ai/
+- type: APIReference
+  url: https://docs.modulate.ai/api-reference/velma/overview
+- type: GettingStarted
+  url: https://docs.modulate.ai/quickstart
+- type: Support
+  url: https://docs.modulate.ai/support
+- type: Blog
+  url: https://www.modulate.ai/blog
+- type: Pricing
+  url: https://www.modulate.ai/api-pricing
+- type: SignUp
+  url: https://platform.modulate.ai/signup-request
+- type: Login
+  url: https://platform.modulate.ai/dashboard/api-keys
+- type: TermsOfService
+  url: https://www.modulate.ai/terms-and-conditions
+- type: PrivacyPolicy
+  url: https://www.modulate.ai/privacy-policy
+- type: GitHubOrganization
+  url: https://github.com/modulateai
+- type: LLMsTxt
+  url: llms/modulate-llms.txt
+- type: MCPServer
+  url: mcp/modulate-mcp.yml
+- type: Conventions
+  url: conventions/modulate-conventions.yml
+- type: ErrorCatalog
+  url: errors/modulate-error-codes.yml
+- type: Lifecycle
+  url: lifecycle/modulate-lifecycle.yml
+- type: Conformance
+  url: conformance/modulate-conformance.yml
+- type: DataModel
+  url: data-model/modulate-data-model.yml
+- type: Sandbox
+  url: sandbox/modulate-sandbox.yml
+- type: RateLimits
+  url: rate-limits/modulate-rate-limits.yml
+- type: AsyncAPI
+  url: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+- type: AgentSkill
+  url: skills/_index.yml

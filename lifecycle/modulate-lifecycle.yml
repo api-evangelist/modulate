@@ -1,0 +1,32 @@
+generated: '2026-07-20'
+method: searched
+source: >-
+  https://docs.modulate.ai/faq, https://docs.modulate.ai/api-reference/velma/overview,
+  and derived from openapi/*.yml
+versioning:
+  scheme: model-name-in-path
+  current: velma-2
+  note: >-
+    The active model generation is Velma-2, expressed in each endpoint path (e.g.
+    /api/velma-2-stt-batch). No global version segment, version header, or dated
+    versioning policy is documented.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: No formal deprecation policy or RFC 8594 Sunset/Deprecation header support is documented.
+sla:
+  url: null
+  uptime_target: null
+  note: >-
+    No public SLA / uptime target is documented for the self-service platform.
+    Enterprise agreements are negotiated separately.
+status_page: null
+status_page_note: >-
+  No configured public status page was found (modulate.statuspage.io resolves to an
+  unconfigured Atlassian Statuspage default and is not treated as a live status page).
+deprecated_operations: []
+roadmap:
+  note: >-
+    Roadmap items are referenced informally in the FAQ (e.g. configurable PII/PHI tag
+    selection, planned Audio Event Detection, Medical and Agentic Transcription) but
+    no dedicated public roadmap page was found.

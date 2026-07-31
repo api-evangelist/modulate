@@ -1,0 +1,28 @@
+generated: '2026-07-20'
+method: searched
+source: >-
+  https://docs.modulate.ai/quickstart, https://docs.modulate.ai/faq,
+  https://preview.modulate.ai/
+free_tier:
+  available: true
+  description: >-
+    Free credits are included when you create an account — no credit card required
+    to get started. Usage is credit-based, priced per hour of audio processed.
+  signup: https://platform.modulate.ai/signup-request
+playground:
+  name: Velma Preview
+  url: https://preview.modulate.ai/
+  description: >-
+    Browser-based preview to explore voice analysis without writing code — try the
+    models interactively before integrating.
+test_mode:
+  separate_test_keys: false
+  note: >-
+    There is no separate test/live key split. A single organization API key is used;
+    testing is done against the live models within the free-credit allowance.
+test_values:
+  note: >-
+    No magic/fixture test values (test cards, synthetic identifiers) are published —
+    this is an audio-inference API. Provide real audio files in a supported format
+    (AAC, AIFF, FLAC, MOV, MP3, MP4, OGG, Opus, WAV, WebM; batch max 100 MB).
+usage_dashboard: https://platform.modulate.ai/dashboard/usage

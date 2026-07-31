@@ -1,0 +1,381 @@
+asyncapi: 3.0.0
+info:
+  title: Velma 2 Music Detection Streaming API
+  version: 0.0.0
+  description: |
+    Real-time frame-level music and speech classification over WebSocket.
+    The client streams audio and receives per-frame probabilities as they
+    become available, followed by a final summary on completion.
+servers:
+  production:
+    host: platform.modulate.ai
+    protocol: wss
+    description: Modulate Music Detection Streaming Server
+channels:
+  streaming-detection:
+    address: /api/velma-2-music-detection-streaming
+    description: |
+      ## WebSocket Close Codes
+      - `1000`: Normal closure after the `done` message, or after the
+        connection completes.
+      - `1003`: Invalid or missing query parameters (unknown `audio_format`,
+        invalid `sample_rate` or `num_channels`, a raw format missing
+        `sample_rate`/`num_channels`, `sample_rate`/`num_channels` supplied
+        without `audio_format`, or `audio_format` omitted). An `error` message
+        is sent before the close.
+      - `4002`: The audio could not be decoded, or does not match the
+        declared raw `audio_format`. An `error` message is sent before the
+        close.
+      - `4003`: The request could not be validated, or the request is not
+        permitted. An `error` message is sent before the close.
+      - `4029`: The request could not be completed due to insufficient credits.
+        An `error` message is sent before the close.
+    bindings:
+      ws:
+        query:
+          type: object
+          required:
+            - api_key
+            - audio_format
+          properties:
+            api_key:
+              type: string
+              description: API key used for authentication and usage tracking.
+            audio_format:
+              type: string
+              description: |
+                Audio encoding format. Required for all connections. Raw formats
+                (headerless samples) also require `sample_rate` and
+                `num_channels`; container formats carry that metadata in the
+                stream, so those parameters must not be supplied.
+              enum:
+                - s8
+                - s16le
+                - s16be
+                - s24le
+                - s24be
+                - s32le
+                - s32be
+                - u8
+                - u16le
+                - u16be
+                - u24le
+                - u24be
+                - u32le
+                - u32be
+                - f32le
+                - f32be
+                - f64le
+                - f64be
+                - mulaw
+                - alaw
+                - wav
+                - mp3
+                - ogg
+                - flac
+                - webm
+                - aac
+                - aiff
+              examples:
+                - s16le
+                - f32le
+                - mulaw
+                - webm
+            sample_rate:
+              type: integer
+              description: |
+                Sample rate in Hz. **Required** when `audio_format` is a raw
+                format. Not required and ignored for container formats. Must
+                not be specified without `audio_format`.
+              enum:
+                - 8000
+                - 11025
+                - 16000
+                - 22050
+                - 32000
+                - 44100
+                - 48000
+                - 96000
+              examples:
+                - 16000
+                - 48000
+            num_channels:
+              type: integer
+              description: |
+                Number of audio channels. **Required** when `audio_format` is
+                a raw format. Must be between 1 and 8. Must not be specified
+                for container formats, and must not be specified without
+                `audio_format`.
+              minimum: 1
+              maximum: 8
+              examples:
+                - 1
+                - 2
+    messages:
+      audioData:
+        $ref: '#/components/messages/audioData'
+      endOfStream:
+        $ref: '#/components/messages/endOfStream'
+      frameResult:
+        $ref: '#/components/messages/frameResult'
+      done:
+        $ref: '#/components/messages/done'
+      error:
+        $ref: '#/components/messages/error'
+operations:
+  sendAudio:
+    action: send
+    channel:
+      $ref: '#/channels/streaming-detection'
+    summary: Stream audio data to the server.
+    description: |
+      Send binary frames containing audio data in the format declared by
+      the `audio_format` query parameter. Frames can be any size; the
+      server buffers and windows internally.
+    messages:
+      - $ref: '#/channels/streaming-detection/messages/audioData'
+  signalEnd:
+    action: send
+    channel:
+      $ref: '#/channels/streaming-detection'
+    summary: Signal end of audio stream.
+    description: |
+      Send an empty text frame (`""`) to indicate all audio has been sent.
+      The server will process any remaining buffered audio, deliver final
+      frame results, and send a `done` message.
+    messages:
+      - $ref: '#/channels/streaming-detection/messages/endOfStream'
+  receiveFrameResult:
+    action: receive
+    channel:
+      $ref: '#/channels/streaming-detection'
+    summary: Receive a per-frame detection result.
+    description: |
+      Emitted for each completed 192-millisecond frame. Results arrive in
+      chronological order but are streamed incrementally as inference
+      completes.
+    messages:
+      - $ref: '#/channels/streaming-detection/messages/frameResult'
+  receiveDone:
+    action: receive
+    channel:
+      $ref: '#/channels/streaming-detection'
+    summary: Receive the final summary when analysis is complete.
+    description: |
+      Sent after all frame results have been delivered, in response to the
+      client's end-of-stream signal. The server closes the connection after
+      this message.
+    messages:
+      - $ref: '#/channels/streaming-detection/messages/done'
+  receiveError:
+    action: receive
+    channel:
+      $ref: '#/channels/streaming-detection'
+    summary: Receive an error notification.
+    description: |
+      Sent if the connection parameters are invalid, the audio data does
+      not match the declared format, inference fails, or the server
+      encounters an internal error. The server closes the connection after
+      this message.
+    messages:
+      - $ref: '#/channels/streaming-detection/messages/error'
+components:
+  messages:
+    audioData:
+      name: audioData
+      title: Audio Data
+      summary: A binary frame containing audio samples.
+      contentType: application/octet-stream
+      payload:
+        type: string
+        format: binary
+        description: |
+          Audio data in the format declared by the `audio_format` query
+          parameter. For raw formats this is headerless samples; for
+          container formats this is the encoded byte stream. Frames may
+          be any size; the server buffers internally.
+    endOfStream:
+      name: endOfStream
+      title: End of Stream
+      summary: >-
+        An empty text frame signalling that the client has finished sending
+        audio.
+      contentType: text/plain
+      payload:
+        type: string
+        const: ''
+    frameResult:
+      name: frameResult
+      title: Frame Result
+      summary: A single 192-millisecond frame detection result.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/FrameResultMessage'
+    done:
+      name: done
+      title: Done
+      summary: Analysis complete - all frame results have been delivered.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/DoneMessage'
+    error:
+      name: error
+      title: Error
+      summary: An error occurred during connection or analysis.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    FrameResultMessage:
+      type: object
+      required:
+        - type
+        - frame
+      properties:
+        type:
+          type: string
+          const: frame
+        frame:
+          $ref: '#/components/schemas/Frame'
+    Frame:
+      type: object
+      required:
+        - start_time_ms
+        - end_time_ms
+        - music_prob
+        - speech_prob
+      properties:
+        start_time_ms:
+          type: integer
+          minimum: 0
+          description: Frame start time in the original audio stream, in milliseconds.
+          examples:
+            - 0
+        end_time_ms:
+          type: integer
+          minimum: 0
+          description: |
+            Frame end time in the original audio stream, in milliseconds.
+            Each frame spans 192 milliseconds.
+          examples:
+            - 192
+        music_prob:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: |
+            Probability that this frame contains music, rounded to four
+            decimal places. Independent of `speech_prob`.
+          examples:
+            - 0.0213
+        speech_prob:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: |
+            Probability that this frame contains speech, rounded to four
+            decimal places. Independent of `music_prob`; music and speech
+            are not mutually exclusive (e.g. music with vocals).
+          examples:
+            - 0.9888
+    DoneMessage:
+      type: object
+      required:
+        - type
+        - duration_ms
+        - frame_count
+        - music_pct
+        - speech_pct
+        - primary_label
+      properties:
+        type:
+          type: string
+          const: done
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: Total duration of the streamed audio processed, in milliseconds.
+          examples:
+            - 15360
+        frame_count:
+          type: integer
+          minimum: 0
+          description: Total number of frame results delivered during the session.
+          examples:
+            - 80
+        music_pct:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: |
+            Percentage of the analysed duration classified as music,
+            rounded to one decimal place. `0.0` when no audio was analysed.
+          examples:
+            - 42.5
+        speech_pct:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: |
+            Percentage of the analysed duration classified as speech,
+            rounded to one decimal place. `0.0` when no audio was analysed.
+          examples:
+            - 57.5
+        primary_label:
+          type: string
+          enum:
+            - music
+            - speech
+            - neither
+            - unknown
+          description: |
+            The dominant classification across the analysed audio.
+
+            - `music` - music covers at least as much of the audio as
+              speech, and more than zero.
+            - `speech` - speech covers more of the audio than music, and
+              more than zero.
+            - `neither` - neither music nor speech reached the dominant
+              threshold for any portion of the audio.
+            - `unknown` - no audio was analysed (no frames produced).
+          examples:
+            - speech
+    ErrorResponse:
+      type: object
+      required:
+        - type
+        - error
+      properties:
+        type:
+          type: string
+          const: error
+        error:
+          type: string
+          description: Human-readable error description.
+          examples:
+            - Internal server error
+            - This request is not permitted.
+            - Insufficient credits.
+            - Unable to validate request. Please try again.
+            - Audio data does not match the declared audio_format.
+            - >-
+              Invalid audio_format='mp4'. Valid values: ['aac', 'aiff', 'alaw',
+              'f32be', 'f32le', 'f64be', 'f64le', 'flac', 'mp3', 'mulaw', 'ogg',
+              's16be', 's16le', 's24be', 's24le', 's32be', 's32le', 's8',
+              'u16be', 'u16le', 'u24be', 'u24le', 'u32be', 'u32le', 'u8', 'wav',
+              'webm']
+            - >-
+              Raw audio formats require sample_rate and num_channels query
+              parameters
+            - sample_rate and num_channels require audio_format to be specified
+            - >-
+              Invalid sample_rate=50000. Valid values: [8000, 11025, 16000,
+              22050, 32000, 44100, 48000, 96000]
+            - Invalid num_channels=12. Must be between 1 and 8
+            - >-
+              audio_format query parameter is required. Example:
+              audio_format=s16le&sample_rate=16000&num_channels=1

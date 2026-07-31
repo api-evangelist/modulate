@@ -1,0 +1,19 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Modulate Velma-2 Batch
+  version: 1.0.0
+extends: openapi/velma-2-batch-openapi-original.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: modulate
+    x-apievangelist-product: Velma-2 Voice Intelligence
+    x-apievangelist-auth: X-API-Key header
+    x-apievangelist-rate-limits: rate-limits/modulate-rate-limits.yml
+    x-apievangelist-errors: errors/modulate-error-codes.yml
+    x-apievangelist-conventions: conventions/modulate-conventions.yml
+- target: $.info
+  update:
+    x-apievangelist-streaming-companion: asyncapi/modulate-velma-2-streaming-asyncapi.yml
+    x-apievangelist-max-upload-bytes: 104857600
+    x-apievangelist-batch-timeout-seconds: 60

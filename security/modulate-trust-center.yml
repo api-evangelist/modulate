@@ -1,0 +1,15 @@
+generated: '2026-07-20'
+method: searched
+probe: true
+source: https://www.modulate.ai/compliance
+url: https://www.modulate.ai/compliance
+certifications:
+- SOC 2
+- ISO 27001
+- GDPR
+evidence:
+- source: https://www.modulate.ai/compliance
+  keywords:
+  - soc 2
+  - iso 27001
+  - gdpr

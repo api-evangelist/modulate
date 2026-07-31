@@ -1,0 +1,95 @@
+generated: '2026-07-20'
+method: derived
+source: openapi/velma-2-batch-openapi-original.yml
+note: >-
+  Entity-relationship graph derived from the Velma-2 batch OpenAPI schemas — the
+  richest object model in the surface. Other model endpoints (STT, deepfake,
+  emotion, accent, language, music) return flatter response objects. Identifiers
+  are UUIDs (format: uuid); there is no id-prefix scheme.
+entities:
+- name: BatchConfig
+  role: request
+  id_field: null
+  key_fields: [conversation_types, participant_roles, behaviors, stt]
+  relationships:
+  - has_many: ConversationTypeDef
+    via: conversation_types
+  - has_many: ParticipantRoleDef
+    via: participant_roles
+  - has_many: BehaviorDef
+    via: behaviors
+  - has_one: STTOptions
+    via: stt
+  - has_one: ConversationTypeDef
+    via: default_conversation_type
+  - has_one: ParticipantRoleDef
+    via: default_participant_role
+- name: STTOptions
+  role: config
+  relationships:
+  - has_many: CustomTerm
+    via: custom_terms
+- name: ConversationTypeDef
+  id_field: conversation_type_uuid
+- name: ParticipantRoleDef
+  id_field: participant_role_uuid
+  relationships:
+  - references: ConversationTypeDef
+    via: applies_to_conversation_type_uuids
+    cardinality: has_many
+- name: BehaviorDef
+  id_field: behavior_uuid
+  relationships:
+  - references: ConversationTypeDef
+    via: applies_to_conversation_type_uuids
+    cardinality: has_many
+  - references: ParticipantRoleDef
+    via: applies_to_participant_role_uuids
+    cardinality: has_many
+- name: BatchResponse
+  role: response
+  relationships:
+  - has_many: Clip
+    via: clips
+  - has_one: ConversationTypePick
+    via: conversation_type_pick
+  - has_many: ParticipantRolePick
+    via: participant_role_picks
+  - has_many: BehaviorDetection
+    via: behaviors
+  - has_many: TopicSentiment
+    via: topic_sentiments
+- name: Clip
+  id_field: clip_uuid
+  key_fields: [text, start_ms, duration_ms, speaker_label, language, emotion, accent, deepfake_score]
+- name: ConversationTypePick
+  relationships:
+  - references: ConversationTypeDef
+    via: conversation_type_uuid
+    cardinality: belongs_to
+  - has_one: SelectionSource
+    via: selection_source
+- name: ParticipantRolePick
+  relationships:
+  - references: ParticipantRoleDef
+    via: participant_role_uuid
+    cardinality: belongs_to
+  - has_one: SelectionSource
+    via: selection_source
+- name: BehaviorDetection
+  relationships:
+  - references: BehaviorDef
+    via: behavior_uuid
+    cardinality: belongs_to
+  - references: Clip
+    via: evidence_clip_uuids
+    cardinality: has_many
+  - references: Clip
+    via: definitive_clip_uuid
+    cardinality: has_one
+- name: TopicSentiment
+  key_fields: [topic, speaker_label, sentiment_score, sentiment_label]
+- name: BehaviorPresetListing
+  id_field: identifier
+enums:
+  SelectionSource: [inferred, auto_selected_single_option, default]

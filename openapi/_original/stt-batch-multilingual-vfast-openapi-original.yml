@@ -1,0 +1,103 @@
+openapi: 3.1.0
+info:
+  title: Modulate Multilingual Speech-to-Text (Batch)
+  description: >
+    Transcribe an audio file in any supported language. Optionally declare the
+    spoken language for direct, fastest-path transcription; if omitted, the
+    language is detected automatically. Returns one transcript and audio
+    duration metadata. Supports files up to 100 MB.
+  version: 1.0.0
+servers:
+  - url: https://platform.modulate.ai
+paths:
+  /api/velma-2-stt-batch-multilingual-vfast:
+    post:
+      summary: Transcribe a multilingual audio file
+      operationId: transcribeMultilingual
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - upload_file
+              properties:
+                upload_file:
+                  type: string
+                  format: binary
+                  description: >
+                    The audio file to transcribe. Supported formats: aac, aiff,
+                    flac, mp3, mp4, mov, ogg, opus, wav, webm. Maximum size 100
+                    MB.
+                language:
+                  type: string
+                  description: >
+                    Optional. The spoken language as a short code (e.g. "en",
+                    "es", "fr", "ja"). When provided, the audio is transcribed
+                    directly in that language. When omitted, the language is
+                    detected automatically.
+                  example: es
+      responses:
+        '200':
+          description: Successful transcription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranscriptionResponse'
+        '400':
+          description: Bad request (unsupported format, empty file, or unprocessable audio)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '502':
+          description: Transcription temporarily unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '504':
+          description: Request timed out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    TranscriptionResponse:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The transcribed text.
+        duration_ms:
+          type: integer
+          description: Duration of the processed audio in milliseconds.
+      required:
+        - text
+        - duration_ms
+    ErrorResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: >
+            A generic, human-readable description of the error. Internal details
+            (which transcriber failed, routing decisions) are never included;
+            the exact cause is available only in server logs.
+      required:
+        - detail
