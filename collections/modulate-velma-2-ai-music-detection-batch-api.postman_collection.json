@@ -1,0 +1,514 @@
+{
+  "item": [
+    {
+      "id": "38a88a2b-42b4-4286-929e-e3093f16f82d",
+      "name": "Velma 2 Ai Music Detection Batch",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "d21902e7-b44d-4def-91fc-b19d6ae97fde",
+          "name": "Detect AI-generated music in an audio file",
+          "request": {
+            "name": "Detect AI-generated music in an audio file",
+            "description": {
+              "content": "Accepts an audio file and returns a clip-level verdict on whether the\ncontent contains AI-generated music, along with a per-window breakdown\nof how each segment was classified.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "velma-2-ai-music-detection-batch"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "upload_file",
+                  "type": "file",
+                  "description": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.aac`, `.flac`, `.m4a`, `.mp3`, `.mp4`, `.ogg`, `.opus`,\n`.wav`. Maximum file size: 100 MB.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "3c5207f6-4281-485b-a9cb-d8a4e9576a22",
+              "name": "Detection completed successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-ai-music-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.aac`, `.flac`, `.m4a`, `.mp3`, `.mp4`, `.ogg`, `.opus`,\n`.wav`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"filename\": \"my_audio.mp3\",\n  \"duration_s\": 89.28,\n  \"primary_verdict\": \"ai-vocal-music\",\n  \"vocal_percentage\": 87.5,\n  \"vocal_ai_percentage\": 56.5,\n  \"vocal_ai_confidence\": 0.96,\n  \"instrumental_percentage\": 64.3,\n  \"instrumental_ai_percentage\": 10.5,\n  \"instrumental_ai_confidence\": 0.95,\n  \"silence_percentage\": 3.51,\n  \"windows\": [\n    {\n      \"start_time_ms\": 0,\n      \"end_time_ms\": 4000,\n      \"vocal_percentage\": 100,\n      \"vocal_ai_percentage\": 100,\n      \"vocal_ai_confidence\": 0.97,\n      \"instrumental_percentage\": 79,\n      \"instrumental_ai_percentage\": 0,\n      \"instrumental_ai_confidence\": 0,\n      \"silence_percentage\": 0\n    },\n    {\n      \"start_time_ms\": 4000,\n      \"end_time_ms\": 8000,\n      \"vocal_percentage\": 0,\n      \"vocal_ai_percentage\": 0,\n      \"vocal_ai_confidence\": 0,\n      \"instrumental_percentage\": 82,\n      \"instrumental_ai_percentage\": 0,\n      \"instrumental_ai_confidence\": 0.76,\n      \"silence_percentage\": 18\n    }\n  ],\n  \"latency_ms\": 1333\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "12b5c871-6c29-4724-9614-ddb0c8b87bed",
+              "name": "Bad request - the uploaded file is empty or its format is not supported.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-ai-music-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.aac`, `.flac`, `.m4a`, `.mp3`, `.mp4`, `.ogg`, `.opus`,\n`.wav`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"The uploaded file is empty.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e48f2e7c-93d5-40ad-93fb-a60c95923179",
+              "name": "Forbidden - the request is not permitted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-ai-music-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.aac`, `.flac`, `.m4a`, `.mp3`, `.mp4`, `.ogg`, `.opus`,\n`.wav`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"This request is not permitted.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3217e4c1-3e45-4db5-9240-aac4aef829d9",
+              "name": "Unprocessable entity - a required request parameter is missing or invalid. A missing `X-API-Key` header returns an `ErrorResponse` with detail \"Invalid request.\"; a missing or invalid `upload_file` field returns the framework validation body.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-ai-music-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.aac`, `.flac`, `.m4a`, `.mp3`, `.mp4`, `.ogg`, `.opus`,\n`.wav`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Invalid request.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dc8f4caa-37af-4ae6-93d5-309865703299",
+              "name": "Too many requests - the request could not be completed due to insufficient credits.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-ai-music-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.aac`, `.flac`, `.m4a`, `.mp3`, `.mp4`, `.ogg`, `.opus`,\n`.wav`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Insufficient credits.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3ad5dfd0-1dc6-42f9-bd95-55a2040e108f",
+              "name": "Internal server error during processing.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-ai-music-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.aac`, `.flac`, `.m4a`, `.mp3`, `.mp4`, `.ogg`, `.opus`,\n`.wav`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Internal server error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "74346d92-941e-4067-a465-a66176dca794",
+              "name": "Bad gateway - the request could not be validated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-ai-music-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.aac`, `.flac`, `.m4a`, `.mp3`, `.mp4`, `.ogg`, `.opus`,\n`.wav`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Unable to validate request. Please try again.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://platform.modulate.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-API-Key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "b4dae018-c736-4ae6-a10f-9c700aa8d0bf",
+    "name": "Velma 2 Accent Batch Velma 2 Ai Music Detection Batch API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n",
+      "type": "text/plain"
+    }
+  }
+}

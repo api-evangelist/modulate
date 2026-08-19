@@ -1,0 +1,989 @@
+{
+  "item": [
+    {
+      "id": "7d9da4d9-db36-4c21-ab41-3427ca50fbf8",
+      "name": "Velma 2 Stt Batch",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "765c0972-9549-422c-a089-1c5b9c1033d0",
+          "name": "Transcribe audio file with automatic language detection",
+          "request": {
+            "name": "Transcribe audio file with automatic language detection",
+            "description": {
+              "content": "Transcribe an audio file and return the full transcript with per-utterance\nmetadata. Language is detected automatically for each utterance, so different\nutterances in the same file may be identified as different languages when\ncode-switching occurs.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "velma-2-stt-batch"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "upload_file",
+                  "type": "file",
+                  "description": "(Required) Audio file to transcribe. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n"
+                },
+                {
+                  "key": "speaker_diarization",
+                  "value": "true",
+                  "type": "text",
+                  "description": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n"
+                },
+                {
+                  "key": "emotion_signal",
+                  "value": "false",
+                  "type": "text",
+                  "description": "Emotion detection for each utterance. When enabled, each utterance\nincludes an emotion signal detected from the speaker's voice.\n"
+                },
+                {
+                  "key": "accent_signal",
+                  "value": "false",
+                  "type": "text",
+                  "description": "Accent detection for each utterance. When enabled, each utterance\nincludes an accent signal detected from the speaker's voice.\n"
+                },
+                {
+                  "key": "deepfake_signal",
+                  "value": "false",
+                  "type": "text",
+                  "description": "Synthetic voice (deepfake) detection for each utterance. When enabled,\neach utterance includes a deepfake_score indicating the likelihood that\nthe speech is AI-generated. The score ranges from 0.0 (likely natural)\nto 1.0 (likely synthetic).\n"
+                },
+                {
+                  "key": "pii_phi_tagging",
+                  "value": "false",
+                  "type": "text",
+                  "description": "PII/PHI tagging in utterance text. When enabled, personally\nidentifiable information and personal health information are wrapped\nwith appropriate tags in the transcription text.\n"
+                },
+                {
+                  "key": "language",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n"
+                },
+                {
+                  "key": "config",
+                  "value": "<string>",
+                  "type": "text",
+                  "contentType": "application/json",
+                  "description": "Optional JSON-encoded STT configuration. When present, a\nfield in this object overrides the matching top-level form\nparameter; an omitted field falls back to the form parameter.\nCarries custom_terms plus the per-request STT flags. Sent as a\nstring form field because multipart/form-data has no\nfirst-class object type.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "2cf5b7af-9f42-43c4-8dab-3914aa029b0b",
+              "name": "Transcription completed successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-stt-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Emotion detection for each utterance. When enabled, each utterance\nincludes an emotion signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "emotion_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Accent detection for each utterance. When enabled, each utterance\nincludes an accent signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "accent_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Synthetic voice (deepfake) detection for each utterance. When enabled,\neach utterance includes a deepfake_score indicating the likelihood that\nthe speech is AI-generated. The score ranges from 0.0 (likely natural)\nto 1.0 (likely synthetic).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "deepfake_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "PII/PHI tagging in utterance text. When enabled, personally\nidentifiable information and personal health information are wrapped\nwith appropriate tags in the transcription text.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "pii_phi_tagging",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional JSON-encoded STT configuration. When present, a\nfield in this object overrides the matching top-level form\nparameter; an omitted field falls back to the form parameter.\nCarries custom_terms plus the per-request STT flags. Sent as a\nstring form field because multipart/form-data has no\nfirst-class object type.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "<string>",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"text\": \"Hello, how are you? Bonjour, ça va?\",\n  \"duration_ms\": 5000,\n  \"utterances\": [\n    {\n      \"utterance_uuid\": \"e5f6a7b8-c9d0-1234-efab-345678901234\",\n      \"text\": \"Hello, how are you?\",\n      \"start_ms\": 0,\n      \"duration_ms\": 2000,\n      \"speaker\": 1,\n      \"language\": \"en\",\n      \"emotion\": \"Neutral\",\n      \"accent\": \"American\",\n      \"deepfake_score\": null\n    },\n    {\n      \"utterance_uuid\": \"f6a7b8c9-d0e1-2345-fabc-456789012345\",\n      \"text\": \"Bonjour, ça va?\",\n      \"start_ms\": 2500,\n      \"duration_ms\": 2500,\n      \"speaker\": 2,\n      \"language\": \"fr\",\n      \"emotion\": \"Happy\",\n      \"accent\": \"British\",\n      \"deepfake_score\": null\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "daeb798e-dd71-4aa2-9e58-0a2e97acf9c2",
+              "name": "Bad request - The submitted audio was rejected: an unsupported file\nextension, an empty file, or audio that could not be processed (for\nexample, corrupted data or content that does not match a supported\nformat); or a request parameter value was invalid (for example,\n`language`).\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-stt-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Emotion detection for each utterance. When enabled, each utterance\nincludes an emotion signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "emotion_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Accent detection for each utterance. When enabled, each utterance\nincludes an accent signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "accent_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Synthetic voice (deepfake) detection for each utterance. When enabled,\neach utterance includes a deepfake_score indicating the likelihood that\nthe speech is AI-generated. The score ranges from 0.0 (likely natural)\nto 1.0 (likely synthetic).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "deepfake_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "PII/PHI tagging in utterance text. When enabled, personally\nidentifiable information and personal health information are wrapped\nwith appropriate tags in the transcription text.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "pii_phi_tagging",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional JSON-encoded STT configuration. When present, a\nfield in this object overrides the matching top-level form\nparameter; an omitted field falls back to the form parameter.\nCarries custom_terms plus the per-request STT flags. Sent as a\nstring form field because multipart/form-data has no\nfirst-class object type.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "<string>",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Unsupported file format. Supported formats: .aac, .aiff, .flac, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ecc99755-b1ca-471e-a4c6-0414a4f0206e",
+              "name": "Forbidden - the request is not permitted",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-stt-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Emotion detection for each utterance. When enabled, each utterance\nincludes an emotion signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "emotion_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Accent detection for each utterance. When enabled, each utterance\nincludes an accent signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "accent_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Synthetic voice (deepfake) detection for each utterance. When enabled,\neach utterance includes a deepfake_score indicating the likelihood that\nthe speech is AI-generated. The score ranges from 0.0 (likely natural)\nto 1.0 (likely synthetic).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "deepfake_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "PII/PHI tagging in utterance text. When enabled, personally\nidentifiable information and personal health information are wrapped\nwith appropriate tags in the transcription text.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "pii_phi_tagging",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional JSON-encoded STT configuration. When present, a\nfield in this object overrides the matching top-level form\nparameter; an omitted field falls back to the form parameter.\nCarries custom_terms plus the per-request STT flags. Sent as a\nstring form field because multipart/form-data has no\nfirst-class object type.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "<string>",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"This request is not permitted.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "31d941d6-f74d-4934-9fc6-8984ec4fe03b",
+              "name": "Unprocessable Entity - a required request field is missing or malformed (for example, the `X-API-Key` header or the `upload_file` part).\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-stt-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Emotion detection for each utterance. When enabled, each utterance\nincludes an emotion signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "emotion_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Accent detection for each utterance. When enabled, each utterance\nincludes an accent signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "accent_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Synthetic voice (deepfake) detection for each utterance. When enabled,\neach utterance includes a deepfake_score indicating the likelihood that\nthe speech is AI-generated. The score ranges from 0.0 (likely natural)\nto 1.0 (likely synthetic).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "deepfake_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "PII/PHI tagging in utterance text. When enabled, personally\nidentifiable information and personal health information are wrapped\nwith appropriate tags in the transcription text.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "pii_phi_tagging",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional JSON-encoded STT configuration. When present, a\nfield in this object overrides the matching top-level form\nparameter; an omitted field falls back to the form parameter.\nCarries custom_terms plus the per-request STT flags. Sent as a\nstring form field because multipart/form-data has no\nfirst-class object type.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "<string>",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "539cdb32-e720-4a25-a983-e4311b67f5b6",
+              "name": "Too many requests - the request could not be completed due to insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-stt-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Emotion detection for each utterance. When enabled, each utterance\nincludes an emotion signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "emotion_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Accent detection for each utterance. When enabled, each utterance\nincludes an accent signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "accent_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Synthetic voice (deepfake) detection for each utterance. When enabled,\neach utterance includes a deepfake_score indicating the likelihood that\nthe speech is AI-generated. The score ranges from 0.0 (likely natural)\nto 1.0 (likely synthetic).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "deepfake_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "PII/PHI tagging in utterance text. When enabled, personally\nidentifiable information and personal health information are wrapped\nwith appropriate tags in the transcription text.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "pii_phi_tagging",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional JSON-encoded STT configuration. When present, a\nfield in this object overrides the matching top-level form\nparameter; an omitted field falls back to the form parameter.\nCarries custom_terms plus the per-request STT flags. Sent as a\nstring form field because multipart/form-data has no\nfirst-class object type.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "<string>",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Insufficient credits.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "639fe54a-b9c9-4f4b-8af5-d33710242e47",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-stt-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Emotion detection for each utterance. When enabled, each utterance\nincludes an emotion signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "emotion_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Accent detection for each utterance. When enabled, each utterance\nincludes an accent signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "accent_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Synthetic voice (deepfake) detection for each utterance. When enabled,\neach utterance includes a deepfake_score indicating the likelihood that\nthe speech is AI-generated. The score ranges from 0.0 (likely natural)\nto 1.0 (likely synthetic).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "deepfake_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "PII/PHI tagging in utterance text. When enabled, personally\nidentifiable information and personal health information are wrapped\nwith appropriate tags in the transcription text.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "pii_phi_tagging",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional JSON-encoded STT configuration. When present, a\nfield in this object overrides the matching top-level form\nparameter; an omitted field falls back to the form parameter.\nCarries custom_terms plus the per-request STT flags. Sent as a\nstring form field because multipart/form-data has no\nfirst-class object type.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "<string>",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Internal server error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fbcf13f2-741b-4b81-bc79-100a1501d368",
+              "name": "Bad gateway - the request could not be validated or completed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-stt-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Emotion detection for each utterance. When enabled, each utterance\nincludes an emotion signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "emotion_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Accent detection for each utterance. When enabled, each utterance\nincludes an accent signal detected from the speaker's voice.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "accent_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Synthetic voice (deepfake) detection for each utterance. When enabled,\neach utterance includes a deepfake_score indicating the likelihood that\nthe speech is AI-generated. The score ranges from 0.0 (likely natural)\nto 1.0 (likely synthetic).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "deepfake_signal",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "PII/PHI tagging in utterance text. When enabled, personally\nidentifiable information and personal health information are wrapped\nwith appropriate tags in the transcription text.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "pii_phi_tagging",
+                      "value": "false",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional JSON-encoded STT configuration. When present, a\nfield in this object overrides the matching top-level form\nparameter; an omitted field falls back to the form parameter.\nCarries custom_terms plus the per-request STT flags. Sent as a\nstring form field because multipart/form-data has no\nfirst-class object type.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "<string>",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Unable to validate request. Please try again.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://platform.modulate.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-API-Key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "2dedd3ac-a3e1-4ab1-bc8e-17ebfe491de9",
+    "name": "Velma 2 Accent Batch Velma 2 Stt Batch API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n",
+      "type": "text/plain"
+    }
+  }
+}

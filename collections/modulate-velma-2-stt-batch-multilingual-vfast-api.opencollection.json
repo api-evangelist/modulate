@@ -1,0 +1,58 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Velma 2 Accent Batch Velma 2 Stt Batch Multilingual Vfast API",
+    "version": "0.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-API-Key",
+      "value": "{{X-API-Key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Velma 2 Stt Batch Multilingual Vfast",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Transcribe a multilingual audio file",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://platform.modulate.ai/api/velma-2-stt-batch-multilingual-vfast",
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "upload_file",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "language",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Transcribe a multilingual audio file"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

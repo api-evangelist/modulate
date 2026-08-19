@@ -1,0 +1,82 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Velma 2 Accent Batch Velma 2 Stt Batch API",
+    "version": "0.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-API-Key",
+      "value": "{{X-API-Key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Velma 2 Stt Batch",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Transcribe audio file with automatic language detection",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://platform.modulate.ai/api/velma-2-stt-batch",
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "upload_file",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "speaker_diarization",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "emotion_signal",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "accent_signal",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "deepfake_signal",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "pii_phi_tagging",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "language",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "config",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Transcribe an audio file and return the full transcript with per-utterance\nmetadata. Language is detected automatically for each utterance, so different\nutterances in the same file may be identified as different languages when\ncode-switching occurs.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

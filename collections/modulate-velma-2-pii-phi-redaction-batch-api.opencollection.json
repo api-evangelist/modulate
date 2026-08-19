@@ -1,0 +1,67 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Velma 2 Accent Batch Velma 2 Pii Phi Redaction Batch API",
+    "version": "0.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-API-Key",
+      "value": "{{X-API-Key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Velma 2 Pii Phi Redaction Batch",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Transcribe and redact PII/PHI from an audio file",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://platform.modulate.ai/api/velma-2-pii-phi-redaction-batch",
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "upload_file",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "speaker_diarization",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "start_redaction_padding_ms",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "end_redaction_padding_ms",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "language",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Transcribe an audio file, detect PII/PHI in the transcript, redact the text, and\nsilence the corresponding audio ranges. Returns a multipart response containing\nredacted metadata (JSON) and redacted audio (MP3).\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

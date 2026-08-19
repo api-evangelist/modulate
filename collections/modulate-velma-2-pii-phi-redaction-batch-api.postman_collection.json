@@ -1,0 +1,774 @@
+{
+  "item": [
+    {
+      "id": "b7887cec-5680-40d8-93d9-1fa691a3d417",
+      "name": "Velma 2 Pii Phi Redaction Batch",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "d700dc84-737b-428c-86af-81a5c1080ac0",
+          "name": "Transcribe and redact PII/PHI from an audio file",
+          "request": {
+            "name": "Transcribe and redact PII/PHI from an audio file",
+            "description": {
+              "content": "Transcribe an audio file, detect PII/PHI in the transcript, redact the text, and\nsilence the corresponding audio ranges. Returns a multipart response containing\nredacted metadata (JSON) and redacted audio (MP3).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "velma-2-pii-phi-redaction-batch"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "multipart/form-data"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "upload_file",
+                  "type": "file",
+                  "description": "(Required) Audio file to transcribe and redact. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n"
+                },
+                {
+                  "key": "speaker_diarization",
+                  "value": "true",
+                  "type": "text",
+                  "description": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n"
+                },
+                {
+                  "key": "start_redaction_padding_ms",
+                  "value": "100",
+                  "type": "text",
+                  "description": "Additional silence in milliseconds to prepend before each redacted\naudio range. Extends the silenced region earlier in time to provide\na buffer before PII/PHI content.\n"
+                },
+                {
+                  "key": "end_redaction_padding_ms",
+                  "value": "0",
+                  "type": "text",
+                  "description": "Additional silence in milliseconds to append after each redacted\naudio range. Extends the silenced region later in time to provide\na buffer after PII/PHI content.\n"
+                },
+                {
+                  "key": "language",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "00c2bff0-8a60-49f4-a3f6-47f41d7fd55f",
+              "name": "Redaction completed successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-pii-phi-redaction-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "multipart/form-data"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe and redact. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to prepend before each redacted\naudio range. Extends the silenced region earlier in time to provide\na buffer before PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "start_redaction_padding_ms",
+                      "value": "100",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to append after each redacted\naudio range. Extends the silenced region later in time to provide\na buffer after PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "end_redaction_padding_ms",
+                      "value": "0",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "multipart/form-data"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "27364cf1-f78b-4cd9-8aac-198608c26a91",
+              "name": "Bad request - Invalid input",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-pii-phi-redaction-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe and redact. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to prepend before each redacted\naudio range. Extends the silenced region earlier in time to provide\na buffer before PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "start_redaction_padding_ms",
+                      "value": "100",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to append after each redacted\naudio range. Extends the silenced region later in time to provide\na buffer after PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "end_redaction_padding_ms",
+                      "value": "0",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Unsupported file format. Supported formats: .aac, .aiff, .flac, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "453427d6-7edd-43c3-a610-50c92bb6320c",
+              "name": "Forbidden - the request is not permitted",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-pii-phi-redaction-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe and redact. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to prepend before each redacted\naudio range. Extends the silenced region earlier in time to provide\na buffer before PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "start_redaction_padding_ms",
+                      "value": "100",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to append after each redacted\naudio range. Extends the silenced region later in time to provide\na buffer after PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "end_redaction_padding_ms",
+                      "value": "0",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"This request is not permitted.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a21b9a63-2fb5-4155-b4f9-0073d63fb6a5",
+              "name": "Unprocessable Entity - A required request field is missing or malformed (e.g. the API key header or the audio file)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-pii-phi-redaction-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe and redact. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to prepend before each redacted\naudio range. Extends the silenced region earlier in time to provide\na buffer before PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "start_redaction_padding_ms",
+                      "value": "100",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to append after each redacted\naudio range. Extends the silenced region later in time to provide\na buffer after PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "end_redaction_padding_ms",
+                      "value": "0",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"header\",\n        \"X-API-Key\"\n      ],\n      \"msg\": \"Field required\",\n      \"type\": \"missing\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "33f5d77c-5622-4205-ac45-8f79b3b16e51",
+              "name": "Too many requests - the request could not be completed due to insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-pii-phi-redaction-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe and redact. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to prepend before each redacted\naudio range. Extends the silenced region earlier in time to provide\na buffer before PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "start_redaction_padding_ms",
+                      "value": "100",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to append after each redacted\naudio range. Extends the silenced region later in time to provide\na buffer after PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "end_redaction_padding_ms",
+                      "value": "0",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Insufficient credits.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cc0aeed6-e3e6-45ac-a8f9-dbf35868098f",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-pii-phi-redaction-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe and redact. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to prepend before each redacted\naudio range. Extends the silenced region earlier in time to provide\na buffer before PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "start_redaction_padding_ms",
+                      "value": "100",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to append after each redacted\naudio range. Extends the silenced region later in time to provide\na buffer after PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "end_redaction_padding_ms",
+                      "value": "0",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Internal server error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1ec280fb-c1a9-4065-bd89-a0df1e104029",
+              "name": "Bad gateway - the request could not be validated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-pii-phi-redaction-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to transcribe and redact. Supported formats: AAC, AIFF, FLAC, MP3, MP4, MOV, OGG, Opus, WAV, WebM.\nMaximum file size: 100MB.\nEmpty files are rejected.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Speaker diarization identifies different speakers in the audio.\nWhen enabled, each utterance includes a speaker identifier (e.g., 1, 2).\n",
+                        "type": "text/plain"
+                      },
+                      "key": "speaker_diarization",
+                      "value": "true",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to prepend before each redacted\naudio range. Extends the silenced region earlier in time to provide\na buffer before PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "start_redaction_padding_ms",
+                      "value": "100",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Additional silence in milliseconds to append after each redacted\naudio range. Extends the silenced region later in time to provide\na buffer after PII/PHI content.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "end_redaction_padding_ms",
+                      "value": "0",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional language hint as a case-insensitive ISO 639-1 code\n(e.g. \"en\", \"fr\"). BCP 47 region/script subtags (e.g. \"en-US\")\nare accepted; only the primary language subtag is used. When\nomitted, the language is detected automatically for each utterance.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Unable to validate request. Please try again.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://platform.modulate.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-API-Key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "b166377d-10a0-40c2-bfc1-56b76916f9e9",
+    "name": "Velma 2 Accent Batch Velma 2 Pii Phi Redaction Batch API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n",
+      "type": "text/plain"
+    }
+  }
+}

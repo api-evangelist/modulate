@@ -1,0 +1,53 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Velma 2 Accent Batch Velma 2 Ai Music Detection Batch API",
+    "version": "0.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-API-Key",
+      "value": "{{X-API-Key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Velma 2 Ai Music Detection Batch",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Detect AI-generated music in an audio file",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://platform.modulate.ai/api/velma-2-ai-music-detection-batch",
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "upload_file",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Accepts an audio file and returns a clip-level verdict on whether the\ncontent contains AI-generated music, along with a per-window breakdown\nof how each segment was classified.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

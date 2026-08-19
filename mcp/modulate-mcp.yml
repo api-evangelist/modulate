@@ -1,10 +1,8 @@
 generated: '2026-07-20'
 method: derived
 status: candidate
-source: >-
-  Derived from openapi/*.yml operations. No official hosted/remote Modulate MCP
-  server was found on the docs, npm (@modelcontextprotocol), or public MCP registries
-  as of the generated date.
+source: Derived from openapi/*.yml operations. No official hosted/remote Modulate MCP server was found
+  on the docs, npm (@modelcontextprotocol), or public MCP registries as of the generated date.
 server:
   name: modulate
   transport: http
@@ -14,13 +12,15 @@ server:
   base_url: https://platform.modulate.ai
 tools:
 - name: velma_conversation_analysis
-  description: Run full Velma-2 conversation analysis on an uploaded audio file — transcription, conversation type, participant roles, behaviors, topics, sentiment, and summary.
+  description: Run full Velma-2 conversation analysis on an uploaded audio file — transcription, conversation
+    type, participant roles, behaviors, topics, sentiment, and summary.
   source_operation: openapi/velma-2-batch-openapi-original.yml#velma2Batch
 - name: list_behavior_presets
   description: List the catalog of Velma behavior presets referenceable via preset:<identifier>.
   source_operation: openapi/velma-2-batch-openapi-original.yml#velma2BatchListPresets
 - name: transcribe_multilingual
-  description: Multilingual batch transcription with diarization, emotion/accent detection and PII/PHI tagging.
+  description: Multilingual batch transcription with diarization, emotion/accent detection and PII/PHI
+    tagging.
   source_operation: openapi/stt-batch-openapi-original.yml#transcribeMultilingualBatch
 - name: transcribe_multilingual_fast
   description: Fast multilingual batch transcription with optional language declaration.
@@ -49,3 +49,9 @@ tools:
 - name: detect_ai_music
   description: Detect AI-generated music with clip-level verdict and per-window vocal/instrumental breakdown.
   source_operation: openapi/ai-music-detection-batch-openapi-original.yml#detectAIMusic
+deployment:
+  mode: none
+  verified: derived
+  tools: 12
+  checked: '2026-08-12'
+  source: catalog MCP census

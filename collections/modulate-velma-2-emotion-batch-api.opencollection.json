@@ -1,0 +1,57 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Velma 2 Accent Batch Velma 2 Emotion Batch API",
+    "version": "0.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-API-Key",
+      "value": "{{X-API-Key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Velma 2 Emotion Batch",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Detect emotion in an audio file",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://platform.modulate.ai/api/velma-2-emotion-batch",
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "upload_file",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "training_permitted",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "use_ensemble",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Analyze an audio file and return a whole-file emotion label plus a\nper-window emotion time series.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

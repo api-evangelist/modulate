@@ -1,0 +1,448 @@
+{
+  "item": [
+    {
+      "id": "a6111432-91f4-41f1-98c1-d38582b5c9f5",
+      "name": "Velma 2 Stt Batch Multilingual Vfast",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "9fb04a65-412e-4634-8855-e6ed271c2908",
+          "name": "Transcribe a multilingual audio file",
+          "request": {
+            "name": "Transcribe a multilingual audio file",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "velma-2-stt-batch-multilingual-vfast"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "upload_file",
+                  "type": "file",
+                  "description": "(Required) The audio file to transcribe. Supported formats: aac, aiff, flac, mp3, mp4, mov, ogg, opus, wav, webm. Maximum size 100 MB.\n"
+                },
+                {
+                  "key": "language",
+                  "value": "<string>",
+                  "type": "text",
+                  "description": "Optional. The spoken language as a short code (e.g. \"en\", \"es\", \"fr\", \"ja\"). When provided, the audio is transcribed directly in that language. When omitted, the language is detected automatically.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "6e3ac73b-f2e0-46d4-8848-0c14d7f8f209",
+              "name": "Successful transcription",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-stt-batch-multilingual-vfast"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The audio file to transcribe. Supported formats: aac, aiff, flac, mp3, mp4, mov, ogg, opus, wav, webm. Maximum size 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional. The spoken language as a short code (e.g. \"en\", \"es\", \"fr\", \"ja\"). When provided, the audio is transcribed directly in that language. When omitted, the language is detected automatically.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "es",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"text\": \"string\",\n  \"duration_ms\": 7886\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bcc45e61-e506-4d75-9a6f-c97c1f5788a2",
+              "name": "Bad request (unsupported format, empty file, or unprocessable audio)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-stt-batch-multilingual-vfast"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The audio file to transcribe. Supported formats: aac, aiff, flac, mp3, mp4, mov, ogg, opus, wav, webm. Maximum size 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional. The spoken language as a short code (e.g. \"en\", \"es\", \"fr\", \"ja\"). When provided, the audio is transcribed directly in that language. When omitted, the language is detected automatically.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "es",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7ce9af9b-62b2-40d4-ba96-fb68603c0716",
+              "name": "Missing or invalid API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-stt-batch-multilingual-vfast"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The audio file to transcribe. Supported formats: aac, aiff, flac, mp3, mp4, mov, ogg, opus, wav, webm. Maximum size 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional. The spoken language as a short code (e.g. \"en\", \"es\", \"fr\", \"ja\"). When provided, the audio is transcribed directly in that language. When omitted, the language is detected automatically.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "es",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "19cbe606-6326-448f-9875-f65eacd5b3bd",
+              "name": "Transcription temporarily unavailable",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-stt-batch-multilingual-vfast"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The audio file to transcribe. Supported formats: aac, aiff, flac, mp3, mp4, mov, ogg, opus, wav, webm. Maximum size 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional. The spoken language as a short code (e.g. \"en\", \"es\", \"fr\", \"ja\"). When provided, the audio is transcribed directly in that language. When omitted, the language is detected automatically.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "es",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "38c35546-df50-4d38-8c5b-89ab36c3aa51",
+              "name": "Request timed out",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-stt-batch-multilingual-vfast"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The audio file to transcribe. Supported formats: aac, aiff, flac, mp3, mp4, mov, ogg, opus, wav, webm. Maximum size 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    },
+                    {
+                      "description": {
+                        "content": "Optional. The spoken language as a short code (e.g. \"en\", \"es\", \"fr\", \"ja\"). When provided, the audio is transcribed directly in that language. When omitted, the language is detected automatically.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "language",
+                      "value": "es",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Gateway Timeout",
+              "code": 504,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://platform.modulate.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-API-Key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "fcc0f681-bef5-43d2-8c55-a2c6c5116c5f",
+    "name": "Velma 2 Accent Batch Velma 2 Stt Batch Multilingual Vfast API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n",
+      "type": "text/plain"
+    }
+  }
+}

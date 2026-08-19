@@ -1,0 +1,797 @@
+{
+  "item": [
+    {
+      "id": "aabe331c-7755-4451-b91c-77d05bf8de6c",
+      "name": "Velma 2 Batch",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "f21ac75d-03be-43a0-bfe3-8184019fb6af",
+          "name": "Run velma-2 batch analysis on an uploaded audio file.",
+          "request": {
+            "name": "Run velma-2 batch analysis on an uploaded audio file.",
+            "description": {},
+            "url": {
+              "path": [
+                "api",
+                "velma-2-batch"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "upload_file",
+                  "type": "file",
+                  "contentType": "application/octet-stream",
+                  "description": "(Required) Audio file. Max 100 MB. Supported extensions: aac, aiff,\nflac, mp3, mp4, mov, ogg, opus, wav, webm.\n"
+                },
+                {
+                  "key": "config",
+                  "value": "default",
+                  "type": "text",
+                  "contentType": "application/json",
+                  "description": "Either the literal string `default` (which loads a\nbuilt-in default configuration) or a JSON-encoded\nBatchConfig object (whose structure is given by\n`contentSchema`). When omitted the default\nconfiguration is used. Sent as a string form field\nbecause multipart/form-data has no first-class object\ntype.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "edb23d53-d4cc-4aa0-8019-9829d236c928",
+              "name": "Batch processing completed.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file. Max 100 MB. Supported extensions: aac, aiff,\nflac, mp3, mp4, mov, ogg, opus, wav, webm.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text",
+                      "contentType": "application/octet-stream"
+                    },
+                    {
+                      "description": {
+                        "content": "Either the literal string `default` (which loads a\nbuilt-in default configuration) or a JSON-encoded\nBatchConfig object (whose structure is given by\n`contentSchema`). When omitted the default\nconfiguration is used. Sent as a string form field\nbecause multipart/form-data has no first-class object\ntype.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "default",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"duration_ms\": 2560,\n  \"clips\": [\n    {\n      \"clip_uuid\": \"0c751dcb-5e91-fc09-6bb5-16e92b4fed5d\",\n      \"text\": \"string\",\n      \"start_ms\": 7733,\n      \"duration_ms\": 5852,\n      \"speaker_label\": \"string\",\n      \"language\": \"string\",\n      \"emotion\": \"string\",\n      \"accent\": \"string\",\n      \"deepfake_score\": 0.6719792129015167\n    },\n    {\n      \"clip_uuid\": \"ee58025f-95b7-f8d0-ece5-d6ebbab9b253\",\n      \"text\": \"string\",\n      \"start_ms\": 8530,\n      \"duration_ms\": 2470,\n      \"speaker_label\": \"string\",\n      \"language\": \"string\",\n      \"emotion\": \"string\",\n      \"accent\": \"string\",\n      \"deepfake_score\": 0.09180084180150017\n    }\n  ],\n  \"behaviors\": [\n    {\n      \"behavior_uuid\": \"a0fb5919-b28c-9362-0045-665a8ab313cb\",\n      \"behavior_name\": \"string\",\n      \"speaker_label\": \"string\",\n      \"detected\": true,\n      \"confidence\": 0.8983952847979801,\n      \"evidence_clip_uuids\": [\n        \"79812d3d-f3cb-6309-4f4c-4b48fd249c9c\",\n        \"afb7bb65-fe60-1ee3-bb92-200c91ff137c\"\n      ],\n      \"definitive_clip_uuid\": \"fa1d952a-4995-035b-d30c-74a82530c011\",\n      \"reasoning\": \"string\"\n    },\n    {\n      \"behavior_uuid\": \"893e3d1d-a7bc-f9db-b39b-848123067b7c\",\n      \"behavior_name\": \"string\",\n      \"speaker_label\": \"string\",\n      \"detected\": false,\n      \"confidence\": 0.4361339194795504,\n      \"evidence_clip_uuids\": [\n        \"96d8868a-b436-60e4-085b-50d9b740c2e4\",\n        \"1ec4bd77-298a-4a8e-c551-948532822441\"\n      ],\n      \"definitive_clip_uuid\": \"0a5df5b8-9874-c3bf-70bf-b19033141e4c\",\n      \"reasoning\": \"string\"\n    }\n  ],\n  \"conversation_type_pick\": {\n    \"conversation_type_uuid\": \"cfe5e272-ef3f-36f5-afb1-280d89e74bb6\",\n    \"name\": \"string\",\n    \"confidence\": 0.7733783435649741,\n    \"selection_source\": \"default\",\n    \"detail\": \"string\",\n    \"reasoning\": \"string\"\n  },\n  \"participant_role_picks\": [\n    {\n      \"speaker_label\": \"string\",\n      \"participant_role_uuid\": \"4dcf8e2c-3656-7d8c-120b-98f33c8f399d\",\n      \"name\": \"string\",\n      \"confidence\": 0.4970373910294643,\n      \"selection_source\": \"inferred\",\n      \"detail\": \"string\",\n      \"reasoning\": \"string\"\n    },\n    {\n      \"speaker_label\": \"string\",\n      \"participant_role_uuid\": \"9b50202d-4ca1-6cd9-34e9-840da8145f57\",\n      \"name\": \"string\",\n      \"confidence\": 0.7935328426331464,\n      \"selection_source\": \"default\",\n      \"detail\": \"string\",\n      \"reasoning\": \"string\"\n    }\n  ],\n  \"topics\": [\n    \"string\",\n    \"string\"\n  ],\n  \"topic_sentiments\": [\n    {\n      \"topic\": \"string\",\n      \"speaker_label\": \"string\",\n      \"sentiment_score\": 0.20725056970097788,\n      \"sentiment_label\": \"string\"\n    },\n    {\n      \"topic\": \"string\",\n      \"speaker_label\": \"string\",\n      \"sentiment_score\": 0.25123577500128746,\n      \"sentiment_label\": \"string\"\n    }\n  ],\n  \"summary\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "af08c48f-4e6f-4fb8-91aa-c2f4c37de207",
+              "name": "Bad request - The submitted audio was rejected: an unsupported file\nextension, an empty file, or a request that could not be processed.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file. Max 100 MB. Supported extensions: aac, aiff,\nflac, mp3, mp4, mov, ogg, opus, wav, webm.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text",
+                      "contentType": "application/octet-stream"
+                    },
+                    {
+                      "description": {
+                        "content": "Either the literal string `default` (which loads a\nbuilt-in default configuration) or a JSON-encoded\nBatchConfig object (whose structure is given by\n`contentSchema`). When omitted the default\nconfiguration is used. Sent as a string form field\nbecause multipart/form-data has no first-class object\ntype.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "default",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Unsupported file format. Supported formats: .aac, .aiff, .flac, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bd62904c-27a9-4eb4-9358-c4d9f716352b",
+              "name": "Forbidden - the request is not permitted",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file. Max 100 MB. Supported extensions: aac, aiff,\nflac, mp3, mp4, mov, ogg, opus, wav, webm.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text",
+                      "contentType": "application/octet-stream"
+                    },
+                    {
+                      "description": {
+                        "content": "Either the literal string `default` (which loads a\nbuilt-in default configuration) or a JSON-encoded\nBatchConfig object (whose structure is given by\n`contentSchema`). When omitted the default\nconfiguration is used. Sent as a string form field\nbecause multipart/form-data has no first-class object\ntype.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "default",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"This request is not permitted.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9c1a13ce-66bc-418f-af77-7e01062def2c",
+              "name": "Unprocessable Entity. Either the `config` value was malformed\n(invalid JSON, an invalid preset reference, or a definition\nmissing a required field), returning an\nErrorResponse body; or a required request field was missing or\nthe wrong type (for example, the `X-API-Key` header or the\n`upload_file` part), returning the framework HTTPValidationError\nbody.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file. Max 100 MB. Supported extensions: aac, aiff,\nflac, mp3, mp4, mov, ogg, opus, wav, webm.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text",
+                      "contentType": "application/octet-stream"
+                    },
+                    {
+                      "description": {
+                        "content": "Either the literal string `default` (which loads a\nbuilt-in default configuration) or a JSON-encoded\nBatchConfig object (whose structure is given by\n`contentSchema`). When omitted the default\nconfiguration is used. Sent as a string form field\nbecause multipart/form-data has no first-class object\ntype.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "default",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Invalid configuration.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3dbecc5c-7727-42b3-b197-b63293854917",
+              "name": "Too many requests - the request could not be completed due to insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file. Max 100 MB. Supported extensions: aac, aiff,\nflac, mp3, mp4, mov, ogg, opus, wav, webm.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text",
+                      "contentType": "application/octet-stream"
+                    },
+                    {
+                      "description": {
+                        "content": "Either the literal string `default` (which loads a\nbuilt-in default configuration) or a JSON-encoded\nBatchConfig object (whose structure is given by\n`contentSchema`). When omitted the default\nconfiguration is used. Sent as a string form field\nbecause multipart/form-data has no first-class object\ntype.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "default",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Insufficient credits.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f7eaf897-208d-40de-a69c-0400839c5df3",
+              "name": "Internal server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file. Max 100 MB. Supported extensions: aac, aiff,\nflac, mp3, mp4, mov, ogg, opus, wav, webm.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text",
+                      "contentType": "application/octet-stream"
+                    },
+                    {
+                      "description": {
+                        "content": "Either the literal string `default` (which loads a\nbuilt-in default configuration) or a JSON-encoded\nBatchConfig object (whose structure is given by\n`contentSchema`). When omitted the default\nconfiguration is used. Sent as a string form field\nbecause multipart/form-data has no first-class object\ntype.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "default",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Internal server error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "27f9fbab-82d7-46c8-b33d-2595dafda8a3",
+              "name": "Bad gateway - the request could not be validated or completed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file. Max 100 MB. Supported extensions: aac, aiff,\nflac, mp3, mp4, mov, ogg, opus, wav, webm.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text",
+                      "contentType": "application/octet-stream"
+                    },
+                    {
+                      "description": {
+                        "content": "Either the literal string `default` (which loads a\nbuilt-in default configuration) or a JSON-encoded\nBatchConfig object (whose structure is given by\n`contentSchema`). When omitted the default\nconfiguration is used. Sent as a string form field\nbecause multipart/form-data has no first-class object\ntype.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "config",
+                      "value": "default",
+                      "type": "text",
+                      "contentType": "application/json"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Unable to validate request. Please try again.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "61dee994-52dc-4398-b009-afc54ed91b49",
+          "name": "List available behavior presets.",
+          "request": {
+            "name": "List available behavior presets.",
+            "description": {
+              "content": "Returns the catalog of behavior presets that can be referenced\nfrom the `behaviors` array in a BatchConfig using the\n`preset:<identifier>` syntax. Each entry includes the preset\n`identifier`, `name`, `short_description`, and\n`detailed_description`.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "velma-2-batch",
+                "list-presets"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "f6c000f0-b391-4e46-bd12-361beeaecd5a",
+              "name": "List of premade presets.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-batch",
+                    "list-presets"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"presets\": [\n    {\n      \"identifier\": \"string\",\n      \"name\": \"string\",\n      \"short_description\": \"string\",\n      \"detailed_description\": \"string\"\n    },\n    {\n      \"identifier\": \"string\",\n      \"name\": \"string\",\n      \"short_description\": \"string\",\n      \"detailed_description\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c08f262f-3781-4739-ad23-c1133f6520cf",
+              "name": "Forbidden - the request is not permitted",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-batch",
+                    "list-presets"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"This request is not permitted.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "57fb55d3-9a1d-4203-80e4-a9e78da2f8f7",
+              "name": "Too many requests - the request could not be completed due to insufficient credits",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-batch",
+                    "list-presets"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Insufficient credits.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "054bf7e8-f7df-46c2-a1db-1f6f7bc0ae93",
+              "name": "Bad gateway - the request could not be validated",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-batch",
+                    "list-presets"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Unable to validate request. Please try again.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://platform.modulate.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-API-Key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "8d7e7957-56a9-4d37-90c1-e8f36a9bf3fb",
+    "name": "Velma 2 Accent Batch Velma 2 Batch API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n",
+      "type": "text/plain"
+    }
+  }
+}

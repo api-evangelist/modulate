@@ -1,0 +1,571 @@
+{
+  "item": [
+    {
+      "id": "7a3f6dbd-c61d-413f-861c-4848bae9190c",
+      "name": "Velma 2 Synthetic Voice Detection Batch",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "372ad8d2-be31-48f3-a5f9-2730e6735ef5",
+          "name": "Detect synthetic voice in an audio file",
+          "request": {
+            "name": "Detect synthetic voice in an audio file",
+            "description": {
+              "content": "Accepts a single audio file and returns a per-frame synthetic-voice\nclassification across the clip as a synchronous JSON response.\nRecommended audio length: 4-60 seconds; files shorter than 0.5 seconds\nare rejected with a 422.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "velma-2-synthetic-voice-detection-batch"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-API-Key"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "upload_file",
+                  "type": "file",
+                  "description": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.3gp`, `.3gpp`, `.aac`, `.aiff`, `.amr`, `.au`, `.flac`,\n`.m4a`, `.mov`, `.mp3`, `.mp4`, `.ogg`, `.opus`, `.wav`,\n`.webm`, `.wma`. Maximum file size: 100 MB.\n"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "c23519ad-6f23-4171-962d-7d38fd1529f1",
+              "name": "Detection completed successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-synthetic-voice-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.3gp`, `.3gpp`, `.aac`, `.aiff`, `.amr`, `.au`, `.flac`,\n`.m4a`, `.mov`, `.mp3`, `.mp4`, `.ogg`, `.opus`, `.wav`,\n`.webm`, `.wma`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"filename\": \"string\",\n  \"frames\": [\n    {\n      \"start_time_ms\": 0,\n      \"end_time_ms\": 3000,\n      \"verdict\": \"synthetic\",\n      \"confidence\": 0.9732\n    },\n    {\n      \"start_time_ms\": 0,\n      \"end_time_ms\": 3000,\n      \"verdict\": \"synthetic\",\n      \"confidence\": 0.9732\n    }\n  ],\n  \"duration_ms\": 34500\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fbd61b7b-72c0-48da-9124-21679500ff89",
+              "name": "Bad request - the uploaded file is empty or its format is not supported.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-synthetic-voice-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.3gp`, `.3gpp`, `.aac`, `.aiff`, `.amr`, `.au`, `.flac`,\n`.m4a`, `.mov`, `.mp3`, `.mp4`, `.ogg`, `.opus`, `.wav`,\n`.webm`, `.wma`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Unsupported file format. Supported formats: .3gp, .3gpp, .aac, .aiff, .amr, .au, .flac, .m4a, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm, .wma.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "aaa47a12-42e8-457d-9ced-2760af5d94ac",
+              "name": "Forbidden - the request is not permitted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-synthetic-voice-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.3gp`, `.3gpp`, `.aac`, `.aiff`, `.amr`, `.au`, `.flac`,\n`.m4a`, `.mov`, `.mp3`, `.mp4`, `.ogg`, `.opus`, `.wav`,\n`.webm`, `.wma`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"This request is not permitted.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1e16c77e-b3af-40ce-91d8-801b7304596c",
+              "name": "Unprocessable entity - the audio is too short to analyze, could not\nbe processed, or a required request parameter is missing or invalid\n(for example, the `X-API-Key` header or the `upload_file` field).\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-synthetic-voice-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.3gp`, `.3gpp`, `.aac`, `.aiff`, `.amr`, `.au`, `.flac`,\n`.m4a`, `.mov`, `.mp3`, `.mp4`, `.ogg`, `.opus`, `.wav`,\n`.webm`, `.wma`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"The audio is too short to analyze.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8ed4fbe3-6f66-4ce9-acba-cdde56e95992",
+              "name": "Too many requests - the request could not be completed due to insufficient credits.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-synthetic-voice-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.3gp`, `.3gpp`, `.aac`, `.aiff`, `.amr`, `.au`, `.flac`,\n`.m4a`, `.mov`, `.mp3`, `.mp4`, `.ogg`, `.opus`, `.wav`,\n`.webm`, `.wma`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Insufficient credits.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1fcca222-5a99-4b1b-98f6-a674ccc014da",
+              "name": "Internal server error during inference.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-synthetic-voice-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.3gp`, `.3gpp`, `.aac`, `.aiff`, `.amr`, `.au`, `.flac`,\n`.m4a`, `.mov`, `.mp3`, `.mp4`, `.ogg`, `.opus`, `.wav`,\n`.webm`, `.wma`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Internal server error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "98e4aa1d-a44a-4fa4-9d57-20e60c0f415a",
+              "name": "Bad gateway - the request could not be validated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-synthetic-voice-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.3gp`, `.3gpp`, `.aac`, `.aiff`, `.amr`, `.au`, `.flac`,\n`.m4a`, `.mov`, `.mp3`, `.mp4`, `.ogg`, `.opus`, `.wav`,\n`.webm`, `.wma`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Gateway",
+              "code": 502,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"Unable to validate request. Please try again.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9647500e-56ae-4ca0-9507-0c2eafc35281",
+              "name": "Gateway timeout - inference did not complete in time.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "velma-2-synthetic-voice-detection-batch"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-API-Key",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) Audio file to analyse. Must be non-empty. Supported formats:\n`.3gp`, `.3gpp`, `.aac`, `.aiff`, `.amr`, `.au`, `.flac`,\n`.m4a`, `.mov`, `.mp3`, `.mp4`, `.ogg`, `.opus`, `.wav`,\n`.webm`, `.wma`. Maximum file size: 100 MB.\n",
+                        "type": "text/plain"
+                      },
+                      "key": "upload_file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Gateway Timeout",
+              "code": 504,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"The request timed out. Please try again.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://platform.modulate.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-API-Key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "5571ccac-f764-4e4c-b9a5-938849004892",
+    "name": "Velma 2 Accent Batch Velma 2 Synthetic Voice Detection Batch API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n",
+      "type": "text/plain"
+    }
+  }
+}
