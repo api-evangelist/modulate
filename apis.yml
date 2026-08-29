@@ -11,6 +11,18 @@ description: 'Modulate is a voice AI company based in Cambridge, Massachusetts, 
   via an X-API-Key header (an api_key query parameter for WebSocket streams), billed
   per hour of audio processed. Backed by Sierra Ventures.'
 url: https://raw.githubusercontent.com/api-evangelist/modulate/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: unknown
   onboarding: self-serve
