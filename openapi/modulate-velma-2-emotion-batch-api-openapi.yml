@@ -1,11 +1,11 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Velma 2 Accent Batch Velma 2 Emotion Batch API
+  title: Velma 2 Emotion Batch API
   version: 0.0.0
-  description: "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n"
+  description: Batch emotion detection on an audio file via HTTP POST.
 servers:
 - url: https://platform.modulate.ai
-  description: Modulate Accent Batch Server
+  description: Modulate Emotion Batch Server
 security:
 - ApiKeyAuth: []
 tags:
@@ -16,9 +16,7 @@ paths:
       summary: Detect emotion in an audio file
       description: 'Analyze an audio file and return a whole-file emotion label plus a
 
-        per-window emotion time series.
-
-        '
+        per-window emotion time series.'
       operationId: detectEmotionBatch
       requestBody:
         required: true
@@ -188,6 +186,22 @@ components:
             '
           items:
             $ref: '#/components/schemas/EmotionWindow'
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message describing what went wrong
+          example: The audio could not be processed. It may be corrupted or in an unsupported format.
     EmotionWindow:
       type: object
       required:
@@ -211,22 +225,6 @@ components:
           type: string
           description: The emotion label for this window.
           example: Happy
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
-    ErrorResponse:
-      type: object
-      required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: Human-readable error message describing what went wrong
-          example: The audio could not be processed. It may be corrupted or in an unsupported format.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

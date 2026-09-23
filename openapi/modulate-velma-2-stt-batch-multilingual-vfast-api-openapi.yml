@@ -1,13 +1,10 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Velma 2 Accent Batch Velma 2 Stt Batch Multilingual Vfast API
-  version: 0.0.0
-  description: "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n"
+  title: Modulate Multilingual Speech-to-Text (Batch) Velma 2 Stt…
+  description: Transcribe an audio file in any supported language. Optionally declare the spoken language for direct, fastest-path transcription; if omitted, the language is detected automatically. Returns one transcript and audio duration metadata. Supports files up to 100 MB.
+  version: 1.0.0
 servers:
 - url: https://platform.modulate.ai
-  description: Modulate Accent Batch Server
-security:
-- ApiKeyAuth: []
 tags:
 - name: Velma 2 Stt Batch Multilingual Vfast
 paths:
@@ -73,6 +70,16 @@ paths:
       - Velma 2 Stt Batch Multilingual Vfast
 components:
   schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: 'A generic, human-readable description of the error. Internal details (which transcriber failed, routing decisions) are never included; the exact cause is available only in server logs.
+
+            '
+      required:
+      - detail
     TranscriptionResponse:
       type: object
       properties:
@@ -85,19 +92,8 @@ components:
       required:
       - text
       - duration_ms
-    ErrorResponse:
-      type: object
-      properties:
-        detail:
-          type: string
-          description: 'A generic, human-readable description of the error. Internal details (which transcriber failed, routing decisions) are never included; the exact cause is available only in server logs.
-
-            '
-      required:
-      - detail
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
       in: header
       name: X-API-Key
-      description: API key used for authentication and usage tracking.

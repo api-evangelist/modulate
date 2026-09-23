@@ -1,11 +1,13 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Velma 2 Accent Batch Velma 2 Synthetic Voice Detection Batch API
+  title: Velma 2 Synthetic Voice Detection Batch API
+  description: 'Batch endpoint for detecting synthetic (AI-generated) speech in
+
+    single-speaker audio files via HTTP POST.'
   version: 0.0.0
-  description: "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n"
 servers:
 - url: https://platform.modulate.ai
-  description: Modulate Accent Batch Server
+  description: Modulate Synthetic Voice Detection Batch Server
 security:
 - ApiKeyAuth: []
 tags:
@@ -21,9 +23,7 @@ paths:
 
         Recommended audio length: 4-60 seconds; files shorter than 0.5 seconds
 
-        are rejected with a 422.
-
-        '
+        are rejected with a 422.'
       security:
       - ApiKeyAuth: []
       requestBody:
@@ -157,6 +157,29 @@ components:
           type: string
         type:
           type: string
+    DetectionAPIResponse:
+      type: object
+      required:
+      - filename
+      - frames
+      - duration_ms
+      properties:
+        filename:
+          oneOf:
+          - type: string
+          - type: 'null'
+          description: Original filename of the uploaded audio.
+          example: recording.wav
+        frames:
+          type: array
+          description: Ordered list of per-frame detection results covering the full audio duration.
+          items:
+            $ref: '#/components/schemas/FrameResult'
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: Total duration of the audio in milliseconds.
+          example: 34500
     HTTPValidationError:
       type: object
       properties:
@@ -213,29 +236,6 @@ components:
           maximum: 1
           description: Confidence in the stated verdict, from 0 (lowest) to 1 (highest).
           example: 0.9732
-    DetectionAPIResponse:
-      type: object
-      required:
-      - filename
-      - frames
-      - duration_ms
-      properties:
-        filename:
-          oneOf:
-          - type: string
-          - type: 'null'
-          description: Original filename of the uploaded audio.
-          example: recording.wav
-        frames:
-          type: array
-          description: Ordered list of per-frame detection results covering the full audio duration.
-          items:
-            $ref: '#/components/schemas/FrameResult'
-        duration_ms:
-          type: integer
-          minimum: 0
-          description: Total duration of the audio in milliseconds.
-          example: 34500
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

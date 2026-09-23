@@ -1,0 +1,34 @@
+# Front Door AI Index — modulate — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: modulate
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: modulate.ai
+  final_host: www.modulate.ai
+  ownership: own
+  owner: modulate
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 34
+  host_score: 34
+  density: 21.37
+  words: 1591
+  tiers:
+    agentic: 6
+    core: 19
+    model: 9
+  ambiguous: 21
+  top_terms:
+    AI: 17
+    agent: 16
+    Gemini: 6
+    intelligence: 5
+    AI agent: 3
+    Hugging Face: 3
+    LLMs: 2
+    conversational AI: 1
+    inference: 1
+    prompts: 1

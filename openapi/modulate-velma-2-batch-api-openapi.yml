@@ -1,11 +1,21 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Velma 2 Accent Batch Velma 2 Batch API
+  title: Modulate Velma-2 Batch Server Velma 2 Batch API
   version: 0.0.0
-  description: "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n"
+  description: 'Batch endpoint for the velma-2 service. Accepts a multipart upload with an
+
+    audio file and a JSON `config` blob describing the conversation types,
+
+    participant roles, and behaviors to use for analysis. Returns the full
+
+    transcribed-and-analyzed conversation in one response (clips,
+
+    conversation-type pick, participant-role picks, behaviors, topics, topic
+
+    sentiments, and an optional summary).'
 servers:
 - url: https://platform.modulate.ai
-  description: Modulate Accent Batch Server
+  description: Modulate Velma-2 Batch Server
 security:
 - ApiKeyAuth: []
 tags:
@@ -13,7 +23,7 @@ tags:
 paths:
   /api/velma-2-batch:
     post:
-      summary: Run velma-2 batch analysis on an uploaded audio file.
+      summary: Run velma-2 batch analysis on an uploaded audio file
       operationId: velma2Batch
       requestBody:
         required: true
@@ -167,18 +177,16 @@ paths:
       - Velma 2 Batch
   /api/velma-2-batch/list-presets:
     get:
-      summary: List available behavior presets.
+      summary: List available behavior presets
       description: 'Returns the catalog of behavior presets that can be referenced
 
         from the `behaviors` array in a BatchConfig using the
 
-        `preset:<identifier>` syntax. Each entry includes the preset
+        `preset:` syntax. Each entry includes the preset
 
         `identifier`, `name`, `short_description`, and
 
-        `detailed_description`.
-
-        '
+        `detailed_description`.'
       operationId: velma2BatchListPresets
       responses:
         '200':
@@ -215,6 +223,375 @@ paths:
       - Velma 2 Batch
 components:
   schemas:
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    ConversationTypeDef:
+      type: object
+      required:
+      - conversation_type_uuid
+      - name
+      - short_description
+      - detailed_description
+      properties:
+        conversation_type_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+    ListPresetsResponse:
+      type: object
+      required:
+      - presets
+      properties:
+        presets:
+          type: array
+          items:
+            $ref: '#/components/schemas/BehaviorPresetListing'
+    STTOptions:
+      type: object
+      properties:
+        speaker_diarization:
+          type: boolean
+          default: true
+        emotion_signal:
+          type: boolean
+          default: false
+        accent_signal:
+          type: boolean
+          default: false
+        deepfake_signal:
+          type: boolean
+          default: false
+        pii_phi_tagging:
+          type: boolean
+          default: false
+        language:
+          description: 'Optional language hint as a case-insensitive ISO 639-1 code (e.g.
+
+            "en", "fr"). BCP 47 region/script subtags (e.g. "en-US") are
+
+            accepted; only the primary language subtag is used. When omitted or
+
+            null, the language is detected automatically for each clip.
+
+            '
+          oneOf:
+          - type: string
+            pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
+          - type: 'null'
+        custom_terms:
+          description: Optional custom vocabulary to bias transcription toward domain terms and names. Each entry is either a plain string (the term) or a CustomTerm object. Blank terms and blank pronunciations are dropped. At most 1000 entries, and the term strings serialized together as JSON must total under 8000 characters. Null or omitted means no biasing.
+          oneOf:
+          - type: 'null'
+          - type: array
+            maxItems: 1000
+            items:
+              oneOf:
+              - type: string
+              - $ref: '#/components/schemas/CustomTerm'
+    ParticipantRoleDef:
+      type: object
+      required:
+      - participant_role_uuid
+      - name
+      - short_description
+      - detailed_description
+      properties:
+        participant_role_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+        applies_to_conversation_type_uuids:
+          description: Null/missing means applies to all conversation types.
+          oneOf:
+          - type: array
+            items:
+              type: string
+              format: uuid
+          - type: 'null'
+    BehaviorDetection:
+      type: object
+      required:
+      - behavior_uuid
+      - behavior_name
+      - speaker_label
+      - detected
+      properties:
+        behavior_uuid:
+          type: string
+          format: uuid
+        behavior_name:
+          type: string
+        speaker_label:
+          oneOf:
+          - type: string
+          - type: 'null'
+        detected:
+          type: boolean
+        confidence:
+          oneOf:
+          - type: number
+            format: double
+            minimum: 0
+            maximum: 1
+          - type: 'null'
+        evidence_clip_uuids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        definitive_clip_uuid:
+          oneOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+        reasoning:
+          oneOf:
+          - type: string
+          - type: 'null'
+    Clip:
+      type: object
+      required:
+      - clip_uuid
+      - text
+      - start_ms
+      - duration_ms
+      - speaker_label
+      - language
+      properties:
+        clip_uuid:
+          type: string
+          format: uuid
+        text:
+          type: string
+        start_ms:
+          type: integer
+          minimum: 0
+        duration_ms:
+          type: integer
+          minimum: 0
+        speaker_label:
+          type: string
+        language:
+          type: string
+        emotion:
+          description: Predicted emotion label for the clip, or null when the emotion signal is not enabled for the request.
+          oneOf:
+          - type: string
+          - type: 'null'
+        accent:
+          description: Predicted accent label for the clip, or null when the accent signal is not enabled for the request.
+          oneOf:
+          - type: string
+          - type: 'null'
+        deepfake_score:
+          oneOf:
+          - type: number
+            format: double
+            minimum: 0
+            maximum: 1
+          - type: 'null'
+    BatchResponse:
+      type: object
+      required:
+      - duration_ms
+      - clips
+      - behaviors
+      properties:
+        duration_ms:
+          type: integer
+          minimum: 0
+        clips:
+          type: array
+          items:
+            $ref: '#/components/schemas/Clip'
+        conversation_type_pick:
+          oneOf:
+          - $ref: '#/components/schemas/ConversationTypePick'
+          - type: 'null'
+        participant_role_picks:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParticipantRolePick'
+        behaviors:
+          type: array
+          items:
+            $ref: '#/components/schemas/BehaviorDetection'
+        topics:
+          type: array
+          items:
+            type: string
+        topic_sentiments:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicSentiment'
+        summary:
+          oneOf:
+          - type: string
+          - type: 'null'
+    BehaviorPresetListing:
+      type: object
+      required:
+      - identifier
+      - name
+      - short_description
+      - detailed_description
+      properties:
+        identifier:
+          type: string
+          description: 'The preset identifier to use in a `preset:<identifier>`
+
+            behavior reference.
+
+            '
+        name:
+          type: string
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message describing what went wrong
+    TopicSentiment:
+      type: object
+      required:
+      - topic
+      - speaker_label
+      - sentiment_score
+      - sentiment_label
+      properties:
+        topic:
+          type: string
+        speaker_label:
+          type: string
+        sentiment_score:
+          type: number
+          format: double
+          minimum: -1
+          maximum: 1
+        sentiment_label:
+          type: string
+    BehaviorDef:
+      type: object
+      required:
+      - behavior_uuid
+      - name
+      - short_description
+      - detailed_description
+      properties:
+        behavior_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+        applies_to_conversation_type_uuids:
+          oneOf:
+          - type: array
+            items:
+              type: string
+              format: uuid
+          - type: 'null'
+        applies_to_participant_role_uuids:
+          oneOf:
+          - type: array
+            items:
+              type: string
+              format: uuid
+          - type: 'null'
+    CustomTerm:
+      type: object
+      required:
+      - term
+      properties:
+        term:
+          type: string
+          minLength: 1
+          description: The vocabulary term to bias transcription toward.
+        definition:
+          type: string
+          maxLength: 256
+          description: Optional short definition of the term.
+        pronunciations:
+          type: array
+          maxItems: 16
+          items:
+            type: string
+            maxLength: 128
+          description: Optional pronunciation hints, as X-SAMPA notation or hyphen-separated ASCII respelling with the stressed syllable in capitals (e.g. GOO-guhl). Printable ASCII only.
+    ParticipantRolePick:
+      type: object
+      required:
+      - speaker_label
+      - participant_role_uuid
+      - name
+      - confidence
+      - selection_source
+      - detail
+      properties:
+        speaker_label:
+          type: string
+        participant_role_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+        selection_source:
+          $ref: '#/components/schemas/SelectionSource'
+        detail:
+          type: string
+        reasoning:
+          oneOf:
+          - type: string
+          - type: 'null'
     BatchConfig:
       type: object
       properties:
@@ -297,114 +674,6 @@ components:
           oneOf:
           - $ref: '#/components/schemas/ParticipantRoleDef'
           - type: 'null'
-    ListPresetsResponse:
-      type: object
-      required:
-      - presets
-      properties:
-        presets:
-          type: array
-          items:
-            $ref: '#/components/schemas/BehaviorPresetListing'
-    ValidationError:
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      properties:
-        loc:
-          type: array
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    ParticipantRolePick:
-      type: object
-      required:
-      - speaker_label
-      - participant_role_uuid
-      - name
-      - confidence
-      - selection_source
-      - detail
-      properties:
-        speaker_label:
-          type: string
-        participant_role_uuid:
-          type: string
-          format: uuid
-        name:
-          type: string
-        confidence:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 1
-        selection_source:
-          $ref: '#/components/schemas/SelectionSource'
-        detail:
-          type: string
-        reasoning:
-          oneOf:
-          - type: string
-          - type: 'null'
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
-    ParticipantRoleDef:
-      type: object
-      required:
-      - participant_role_uuid
-      - name
-      - short_description
-      - detailed_description
-      properties:
-        participant_role_uuid:
-          type: string
-          format: uuid
-        name:
-          type: string
-          minLength: 1
-        short_description:
-          type: string
-        detailed_description:
-          type: string
-        applies_to_conversation_type_uuids:
-          description: Null/missing means applies to all conversation types.
-          oneOf:
-          - type: array
-            items:
-              type: string
-              format: uuid
-          - type: 'null'
-    TopicSentiment:
-      type: object
-      required:
-      - topic
-      - speaker_label
-      - sentiment_score
-      - sentiment_label
-      properties:
-        topic:
-          type: string
-        speaker_label:
-          type: string
-        sentiment_score:
-          type: number
-          format: double
-          minimum: -1
-          maximum: 1
-        sentiment_label:
-          type: string
     SelectionSource:
       type: string
       enum:
@@ -438,267 +707,6 @@ components:
           oneOf:
           - type: string
           - type: 'null'
-    ErrorResponse:
-      type: object
-      required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: Human-readable error message describing what went wrong
-    BehaviorPresetListing:
-      type: object
-      required:
-      - identifier
-      - name
-      - short_description
-      - detailed_description
-      properties:
-        identifier:
-          type: string
-          description: 'The preset identifier to use in a `preset:<identifier>`
-
-            behavior reference.
-
-            '
-        name:
-          type: string
-        short_description:
-          type: string
-        detailed_description:
-          type: string
-    CustomTerm:
-      type: object
-      required:
-      - term
-      properties:
-        term:
-          type: string
-          minLength: 1
-          description: The vocabulary term to bias transcription toward.
-        definition:
-          type: string
-          maxLength: 256
-          description: Optional short definition of the term.
-        pronunciations:
-          type: array
-          maxItems: 16
-          items:
-            type: string
-            maxLength: 128
-          description: Optional pronunciation hints, as X-SAMPA notation or hyphen-separated ASCII respelling with the stressed syllable in capitals (e.g. GOO-guhl). Printable ASCII only.
-    BatchResponse:
-      type: object
-      required:
-      - duration_ms
-      - clips
-      - behaviors
-      properties:
-        duration_ms:
-          type: integer
-          minimum: 0
-        clips:
-          type: array
-          items:
-            $ref: '#/components/schemas/Clip'
-        conversation_type_pick:
-          oneOf:
-          - $ref: '#/components/schemas/ConversationTypePick'
-          - type: 'null'
-        participant_role_picks:
-          type: array
-          items:
-            $ref: '#/components/schemas/ParticipantRolePick'
-        behaviors:
-          type: array
-          items:
-            $ref: '#/components/schemas/BehaviorDetection'
-        topics:
-          type: array
-          items:
-            type: string
-        topic_sentiments:
-          type: array
-          items:
-            $ref: '#/components/schemas/TopicSentiment'
-        summary:
-          oneOf:
-          - type: string
-          - type: 'null'
-    BehaviorDef:
-      type: object
-      required:
-      - behavior_uuid
-      - name
-      - short_description
-      - detailed_description
-      properties:
-        behavior_uuid:
-          type: string
-          format: uuid
-        name:
-          type: string
-          minLength: 1
-        short_description:
-          type: string
-        detailed_description:
-          type: string
-        applies_to_conversation_type_uuids:
-          oneOf:
-          - type: array
-            items:
-              type: string
-              format: uuid
-          - type: 'null'
-        applies_to_participant_role_uuids:
-          oneOf:
-          - type: array
-            items:
-              type: string
-              format: uuid
-          - type: 'null'
-    ConversationTypeDef:
-      type: object
-      required:
-      - conversation_type_uuid
-      - name
-      - short_description
-      - detailed_description
-      properties:
-        conversation_type_uuid:
-          type: string
-          format: uuid
-        name:
-          type: string
-          minLength: 1
-        short_description:
-          type: string
-        detailed_description:
-          type: string
-    Clip:
-      type: object
-      required:
-      - clip_uuid
-      - text
-      - start_ms
-      - duration_ms
-      - speaker_label
-      - language
-      properties:
-        clip_uuid:
-          type: string
-          format: uuid
-        text:
-          type: string
-        start_ms:
-          type: integer
-          minimum: 0
-        duration_ms:
-          type: integer
-          minimum: 0
-        speaker_label:
-          type: string
-        language:
-          type: string
-        emotion:
-          description: Predicted emotion label for the clip, or null when the emotion signal is not enabled for the request.
-          oneOf:
-          - type: string
-          - type: 'null'
-        accent:
-          description: Predicted accent label for the clip, or null when the accent signal is not enabled for the request.
-          oneOf:
-          - type: string
-          - type: 'null'
-        deepfake_score:
-          oneOf:
-          - type: number
-            format: double
-            minimum: 0
-            maximum: 1
-          - type: 'null'
-    BehaviorDetection:
-      type: object
-      required:
-      - behavior_uuid
-      - behavior_name
-      - speaker_label
-      - detected
-      properties:
-        behavior_uuid:
-          type: string
-          format: uuid
-        behavior_name:
-          type: string
-        speaker_label:
-          oneOf:
-          - type: string
-          - type: 'null'
-        detected:
-          type: boolean
-        confidence:
-          oneOf:
-          - type: number
-            format: double
-            minimum: 0
-            maximum: 1
-          - type: 'null'
-        evidence_clip_uuids:
-          type: array
-          items:
-            type: string
-            format: uuid
-        definitive_clip_uuid:
-          oneOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-        reasoning:
-          oneOf:
-          - type: string
-          - type: 'null'
-    STTOptions:
-      type: object
-      properties:
-        speaker_diarization:
-          type: boolean
-          default: true
-        emotion_signal:
-          type: boolean
-          default: false
-        accent_signal:
-          type: boolean
-          default: false
-        deepfake_signal:
-          type: boolean
-          default: false
-        pii_phi_tagging:
-          type: boolean
-          default: false
-        language:
-          description: 'Optional language hint as a case-insensitive ISO 639-1 code (e.g.
-
-            "en", "fr"). BCP 47 region/script subtags (e.g. "en-US") are
-
-            accepted; only the primary language subtag is used. When omitted or
-
-            null, the language is detected automatically for each clip.
-
-            '
-          oneOf:
-          - type: string
-            pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
-          - type: 'null'
-        custom_terms:
-          description: Optional custom vocabulary to bias transcription toward domain terms and names. Each entry is either a plain string (the term) or a CustomTerm object. Blank terms and blank pronunciations are dropped. At most 1000 entries, and the term strings serialized together as JSON must total under 8000 characters. Null or omitted means no biasing.
-          oneOf:
-          - type: 'null'
-          - type: array
-            maxItems: 1000
-            items:
-              oneOf:
-              - type: string
-              - $ref: '#/components/schemas/CustomTerm'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

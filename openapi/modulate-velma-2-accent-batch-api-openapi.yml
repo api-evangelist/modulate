@@ -1,8 +1,8 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   title: Velma 2 Accent Batch API
   version: 0.0.0
-  description: "Batch accent detection on an audio file via HTTP POST. Returns a single\nwhole-file accent label plus a time series of fixed-length windows, each\nwith its own accent label.\n\n## Behavior Notes\n- The `time_series` entries are consecutive, fixed-length windows over the\n  file; each entry's `start_ms` and `duration_ms` delimit its span. A\n  trailing remainder shorter than one full window is omitted.\n- A file shorter than one window returns an empty `time_series`; the\n  whole-file `accent` is still returned.\n- `accent` is always a non-null string.\n"
+  description: Batch accent detection on an audio file via HTTP POST.
 servers:
 - url: https://platform.modulate.ai
   description: Modulate Accent Batch Server
@@ -16,9 +16,7 @@ paths:
       summary: Detect accent in an audio file
       description: 'Analyze an audio file and return a whole-file accent label plus a
 
-        per-window accent time series.
-
-        '
+        per-window accent time series.'
       operationId: detectAccentBatch
       requestBody:
         required: true
@@ -150,6 +148,60 @@ paths:
       - Velma 2 Accent Batch
 components:
   schemas:
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    AccentResponse:
+      type: object
+      required:
+      - accent
+      - time_series
+      properties:
+        accent:
+          type: string
+          description: 'The accent label for the whole file. Always present and non-null.
+
+            '
+          example: British
+        time_series:
+          type: array
+          description: 'Consecutive fixed-length windows over the file, each with its own
+
+            accent label. Empty when the file is shorter than one window.
+
+            '
+          items:
+            $ref: '#/components/schemas/AccentWindow'
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message describing what went wrong
+          example: The audio could not be processed. It may be corrupted or in an unsupported format.
     AccentWindow:
       type: object
       required:
@@ -173,60 +225,6 @@ components:
           type: string
           description: The accent label for this window.
           example: British
-    ValidationError:
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      properties:
-        loc:
-          type: array
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
-    ErrorResponse:
-      type: object
-      required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: Human-readable error message describing what went wrong
-          example: The audio could not be processed. It may be corrupted or in an unsupported format.
-    AccentResponse:
-      type: object
-      required:
-      - accent
-      - time_series
-      properties:
-        accent:
-          type: string
-          description: 'The accent label for the whole file. Always present and non-null.
-
-            '
-          example: British
-        time_series:
-          type: array
-          description: 'Consecutive fixed-length windows over the file, each with its own
-
-            accent label. Empty when the file is shorter than one window.
-
-            '
-          items:
-            $ref: '#/components/schemas/AccentWindow'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
