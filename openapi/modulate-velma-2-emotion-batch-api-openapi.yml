@@ -148,51 +148,6 @@ paths:
       - Velma 2 Emotion Batch
 components:
   schemas:
-    ValidationError:
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      properties:
-        loc:
-          type: array
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    EmotionResponse:
-      type: object
-      required:
-      - emotion
-      - time_series
-      properties:
-        emotion:
-          type: string
-          description: 'The emotion label for the whole file. Always present and non-null.
-
-            '
-          example: Happy
-        time_series:
-          type: array
-          description: 'Consecutive fixed-length windows over the file, each with its own
-
-            emotion label. Empty when the file is shorter than one window.
-
-            '
-          items:
-            $ref: '#/components/schemas/EmotionWindow'
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
     ErrorResponse:
       type: object
       required:
@@ -225,6 +180,51 @@ components:
           type: string
           description: The emotion label for this window.
           example: Happy
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    EmotionResponse:
+      type: object
+      required:
+      - emotion
+      - time_series
+      properties:
+        emotion:
+          type: string
+          description: 'The emotion label for the whole file. Always present and non-null.
+
+            '
+          example: Happy
+        time_series:
+          type: array
+          description: 'Consecutive fixed-length windows over the file, each with its own
+
+            emotion label. Empty when the file is shorter than one window.
+
+            '
+          items:
+            $ref: '#/components/schemas/EmotionWindow'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

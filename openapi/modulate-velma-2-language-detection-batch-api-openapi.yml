@@ -153,13 +153,6 @@ paths:
       - Velma 2 Language Detection Batch
 components:
   schemas:
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
     ErrorResponse:
       type: object
       required:
@@ -221,6 +214,13 @@ components:
           type: string
         type:
           type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

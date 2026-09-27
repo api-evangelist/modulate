@@ -140,53 +140,6 @@ paths:
       - Velma 2 Synthetic Voice Detection Batch
 components:
   schemas:
-    ValidationError:
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      properties:
-        loc:
-          type: array
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    DetectionAPIResponse:
-      type: object
-      required:
-      - filename
-      - frames
-      - duration_ms
-      properties:
-        filename:
-          oneOf:
-          - type: string
-          - type: 'null'
-          description: Original filename of the uploaded audio.
-          example: recording.wav
-        frames:
-          type: array
-          description: Ordered list of per-frame detection results covering the full audio duration.
-          items:
-            $ref: '#/components/schemas/FrameResult'
-        duration_ms:
-          type: integer
-          minimum: 0
-          description: Total duration of the audio in milliseconds.
-          example: 34500
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
     ErrorResponse:
       type: object
       required:
@@ -236,6 +189,53 @@ components:
           maximum: 1
           description: Confidence in the stated verdict, from 0 (lowest) to 1 (highest).
           example: 0.9732
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    DetectionAPIResponse:
+      type: object
+      required:
+      - filename
+      - frames
+      - duration_ms
+      properties:
+        filename:
+          oneOf:
+          - type: string
+          - type: 'null'
+          description: Original filename of the uploaded audio.
+          example: recording.wav
+        frames:
+          type: array
+          description: Ordered list of per-frame detection results covering the full audio duration.
+          items:
+            $ref: '#/components/schemas/FrameResult'
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: Total duration of the audio in milliseconds.
+          example: 34500
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

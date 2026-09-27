@@ -147,116 +147,6 @@ paths:
       - Velma 2 Ai Music Detection Batch
 components:
   schemas:
-    ValidationError:
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      properties:
-        loc:
-          type: array
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    WindowPrediction:
-      type: object
-      required:
-      - start_time_ms
-      - end_time_ms
-      - vocal_percentage
-      - vocal_ai_percentage
-      - vocal_ai_confidence
-      - instrumental_percentage
-      - instrumental_ai_percentage
-      - instrumental_ai_confidence
-      - silence_percentage
-      properties:
-        start_time_ms:
-          type: integer
-          minimum: 0
-          description: Window start time in milliseconds.
-          example: 0
-        end_time_ms:
-          type: integer
-          minimum: 0
-          description: Window end time in milliseconds.
-          example: 4000
-        vocal_percentage:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 100
-          description: 'Percentage of this window that contains vocal content.
-
-            '
-          example: 100
-        vocal_ai_percentage:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 100
-          description: '`100` if this window is classified as containing AI-generated vocals; `0` otherwise. Only meaningful for vocal windows; always `0` for windows without sufficient vocal content.
-
-            '
-          example: 100
-        vocal_ai_confidence:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 1
-          description: 'Confidence that this window contains AI-generated vocals. Present only for vocal windows; `0` for windows without sufficient vocal content.
-
-            '
-          example: 0.97
-        instrumental_percentage:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 100
-          description: 'Percentage of this window that contains instrumental music content.
-
-            '
-          example: 79
-        instrumental_ai_percentage:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 100
-          description: '`100` if this window is classified as AI-generated instrumental content; `0` otherwise. Only meaningful for non-vocal windows; always `0` for vocal windows.
-
-            '
-          example: 0
-        instrumental_ai_confidence:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 1
-          description: 'Confidence that this window contains AI-generated instrumental content. Present only for non-vocal windows; `0` for vocal windows.
-
-            '
-          example: 0
-        silence_percentage:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 100
-          description: 'Percentage of this window that contains neither vocal nor instrumental content.
-
-            '
-          example: 0
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
     ErrorResponse:
       type: object
       required:
@@ -375,6 +265,116 @@ components:
           minimum: 0
           description: End-to-end inference time in milliseconds.
           example: 1333
+    WindowPrediction:
+      type: object
+      required:
+      - start_time_ms
+      - end_time_ms
+      - vocal_percentage
+      - vocal_ai_percentage
+      - vocal_ai_confidence
+      - instrumental_percentage
+      - instrumental_ai_percentage
+      - instrumental_ai_confidence
+      - silence_percentage
+      properties:
+        start_time_ms:
+          type: integer
+          minimum: 0
+          description: Window start time in milliseconds.
+          example: 0
+        end_time_ms:
+          type: integer
+          minimum: 0
+          description: Window end time in milliseconds.
+          example: 4000
+        vocal_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: 'Percentage of this window that contains vocal content.
+
+            '
+          example: 100
+        vocal_ai_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: '`100` if this window is classified as containing AI-generated vocals; `0` otherwise. Only meaningful for vocal windows; always `0` for windows without sufficient vocal content.
+
+            '
+          example: 100
+        vocal_ai_confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: 'Confidence that this window contains AI-generated vocals. Present only for vocal windows; `0` for windows without sufficient vocal content.
+
+            '
+          example: 0.97
+        instrumental_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: 'Percentage of this window that contains instrumental music content.
+
+            '
+          example: 79
+        instrumental_ai_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: '`100` if this window is classified as AI-generated instrumental content; `0` otherwise. Only meaningful for non-vocal windows; always `0` for vocal windows.
+
+            '
+          example: 0
+        instrumental_ai_confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: 'Confidence that this window contains AI-generated instrumental content. Present only for non-vocal windows; `0` for vocal windows.
+
+            '
+          example: 0
+        silence_percentage:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 100
+          description: 'Percentage of this window that contains neither vocal nor instrumental content.
+
+            '
+          example: 0
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -148,60 +148,6 @@ paths:
       - Velma 2 Accent Batch
 components:
   schemas:
-    ValidationError:
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      properties:
-        loc:
-          type: array
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    AccentResponse:
-      type: object
-      required:
-      - accent
-      - time_series
-      properties:
-        accent:
-          type: string
-          description: 'The accent label for the whole file. Always present and non-null.
-
-            '
-          example: British
-        time_series:
-          type: array
-          description: 'Consecutive fixed-length windows over the file, each with its own
-
-            accent label. Empty when the file is shorter than one window.
-
-            '
-          items:
-            $ref: '#/components/schemas/AccentWindow'
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
-    ErrorResponse:
-      type: object
-      required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: Human-readable error message describing what went wrong
-          example: The audio could not be processed. It may be corrupted or in an unsupported format.
     AccentWindow:
       type: object
       required:
@@ -225,6 +171,60 @@ components:
           type: string
           description: The accent label for this window.
           example: British
+    ErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message describing what went wrong
+          example: The audio could not be processed. It may be corrupted or in an unsupported format.
+    AccentResponse:
+      type: object
+      required:
+      - accent
+      - time_series
+      properties:
+        accent:
+          type: string
+          description: 'The accent label for the whole file. Always present and non-null.
+
+            '
+          example: British
+        time_series:
+          type: array
+          description: 'Consecutive fixed-length windows over the file, each with its own
+
+            accent label. Empty when the file is shorter than one window.
+
+            '
+          items:
+            $ref: '#/components/schemas/AccentWindow'
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

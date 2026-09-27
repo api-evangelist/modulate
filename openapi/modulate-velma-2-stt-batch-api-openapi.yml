@@ -254,59 +254,6 @@ paths:
       - Velma 2 Stt Batch
 components:
   schemas:
-    ValidationError:
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      properties:
-        loc:
-          type: array
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    STTConfig:
-      type: object
-      description: Per-request STT configuration. Every field is optional; a field present here overrides the matching top-level form parameter, and an omitted field falls back to the form parameter.
-      properties:
-        speaker_diarization:
-          type: boolean
-        emotion_signal:
-          type: boolean
-        accent_signal:
-          type: boolean
-        deepfake_signal:
-          type: boolean
-        pii_phi_tagging:
-          type: boolean
-        language:
-          oneOf:
-          - type: string
-            pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
-          - type: 'null'
-        custom_terms:
-          description: Optional custom vocabulary to bias transcription toward domain terms and names. Each entry is either a plain string (the term) or a CustomTerm object. Blank terms and blank pronunciations are dropped. At most 1000 entries, and the term strings serialized together as JSON must total under 8000 characters. Null or omitted means no biasing.
-          oneOf:
-          - type: 'null'
-          - type: array
-            maxItems: 1000
-            items:
-              oneOf:
-              - type: string
-              - $ref: '#/components/schemas/CustomTerm'
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
     ErrorResponse:
       type: object
       required:
@@ -482,6 +429,59 @@ components:
 
             '
           example: 0.05
+    STTConfig:
+      type: object
+      description: Per-request STT configuration. Every field is optional; a field present here overrides the matching top-level form parameter, and an omitted field falls back to the form parameter.
+      properties:
+        speaker_diarization:
+          type: boolean
+        emotion_signal:
+          type: boolean
+        accent_signal:
+          type: boolean
+        deepfake_signal:
+          type: boolean
+        pii_phi_tagging:
+          type: boolean
+        language:
+          oneOf:
+          - type: string
+            pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
+          - type: 'null'
+        custom_terms:
+          description: Optional custom vocabulary to bias transcription toward domain terms and names. Each entry is either a plain string (the term) or a CustomTerm object. Blank terms and blank pronunciations are dropped. At most 1000 entries, and the term strings serialized together as JSON must total under 8000 characters. Null or omitted means no biasing.
+          oneOf:
+          - type: 'null'
+          - type: array
+            maxItems: 1000
+            items:
+              oneOf:
+              - type: string
+              - $ref: '#/components/schemas/CustomTerm'
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

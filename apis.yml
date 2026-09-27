@@ -63,9 +63,10 @@ tags:
 - Content Moderation
 - Trust and Safety
 - Audio
-- Machine-Learning
+- Machine Learning
 - PII Redaction
 - Voice Intelligence
+- Real-Time
 tags_raw:
 - Company
 - Ai
@@ -79,6 +80,8 @@ tags_raw:
 - Machine Learning
 - PII Redaction
 - Voice Intelligence
+- Machine-Learning
+- Real-Time
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
