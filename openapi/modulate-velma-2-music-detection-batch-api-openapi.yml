@@ -147,48 +147,6 @@ paths:
       - Velma 2 Music Detection Batch
 components:
   schemas:
-    ErrorResponse:
-      type: object
-      required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: Human-readable error message.
-    FrameResult:
-      type: object
-      required:
-      - start_time_ms
-      - end_time_ms
-      - music_prob
-      - speech_prob
-      properties:
-        start_time_ms:
-          type: integer
-          minimum: 0
-          description: Frame start time in milliseconds.
-          example: 0
-        end_time_ms:
-          type: integer
-          minimum: 0
-          description: Frame end time in milliseconds.
-          example: 192
-        music_prob:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 1
-          description: Probability that this frame contains music.
-          example: 0.0213
-        speech_prob:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 1
-          description: 'Probability that this frame contains speech. Music and speech are not mutually exclusive - both probabilities can be high for the same frame.
-
-            '
-          example: 0.9888
     MusicDetectionResponse:
       type: object
       required:
@@ -269,6 +227,14 @@ components:
           type: string
         type:
           type: string
+    ErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message.
     HTTPValidationError:
       type: object
       properties:
@@ -276,6 +242,40 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ValidationError'
+    FrameResult:
+      type: object
+      required:
+      - start_time_ms
+      - end_time_ms
+      - music_prob
+      - speech_prob
+      properties:
+        start_time_ms:
+          type: integer
+          minimum: 0
+          description: Frame start time in milliseconds.
+          example: 0
+        end_time_ms:
+          type: integer
+          minimum: 0
+          description: Frame end time in milliseconds.
+          example: 192
+        music_prob:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: Probability that this frame contains music.
+          example: 0.0213
+        speech_prob:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: 'Probability that this frame contains speech. Music and speech are not mutually exclusive - both probabilities can be high for the same frame.
+
+            '
+          example: 0.9888
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

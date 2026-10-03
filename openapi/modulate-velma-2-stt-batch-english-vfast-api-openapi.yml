@@ -148,29 +148,13 @@ paths:
       - Velma 2 Stt Batch English Vfast
 components:
   schemas:
-    TranscriptionResponse:
+    HTTPValidationError:
       type: object
-      required:
-      - text
-      - duration_ms
       properties:
-        text:
-          type: string
-          description: 'The complete transcribed text from the audio file. Text includes
-
-            automatic capitalization and punctuation. May be an empty string
-
-            if no speech was recognized.
-
-            '
-          example: Hello, how are you doing today?
-        duration_ms:
-          type: integer
-          minimum: 0
-          description: 'The total duration of the processed audio in milliseconds.
-
-            '
-          example: 14253
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
     ErrorResponse:
       type: object
       required:
@@ -196,13 +180,29 @@ components:
           type: string
         type:
           type: string
-    HTTPValidationError:
+    TranscriptionResponse:
       type: object
+      required:
+      - text
+      - duration_ms
       properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
+        text:
+          type: string
+          description: 'The complete transcribed text from the audio file. Text includes
+
+            automatic capitalization and punctuation. May be an empty string
+
+            if no speech was recognized.
+
+            '
+          example: Hello, how are you doing today?
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: 'The total duration of the processed audio in milliseconds.
+
+            '
+          example: 14253
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

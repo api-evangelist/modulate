@@ -148,15 +148,44 @@ paths:
       - Velma 2 Emotion Batch
 components:
   schemas:
-    ErrorResponse:
+    EmotionResponse:
       type: object
       required:
-      - detail
+      - emotion
+      - time_series
       properties:
-        detail:
+        emotion:
           type: string
-          description: Human-readable error message describing what went wrong
-          example: The audio could not be processed. It may be corrupted or in an unsupported format.
+          description: 'The emotion label for the whole file. Always present and non-null.
+
+            '
+          example: Happy
+        time_series:
+          type: array
+          description: 'Consecutive fixed-length windows over the file, each with its own
+
+            emotion label. Empty when the file is shorter than one window.
+
+            '
+          items:
+            $ref: '#/components/schemas/EmotionWindow'
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
     EmotionWindow:
       type: object
       required:
@@ -180,23 +209,15 @@ components:
           type: string
           description: The emotion label for this window.
           example: Happy
-    ValidationError:
+    ErrorResponse:
       type: object
       required:
-      - loc
-      - msg
-      - type
+      - detail
       properties:
-        loc:
-          type: array
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-        msg:
+        detail:
           type: string
-        type:
-          type: string
+          description: Human-readable error message describing what went wrong
+          example: The audio could not be processed. It may be corrupted or in an unsupported format.
     HTTPValidationError:
       type: object
       properties:
@@ -204,27 +225,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ValidationError'
-    EmotionResponse:
-      type: object
-      required:
-      - emotion
-      - time_series
-      properties:
-        emotion:
-          type: string
-          description: 'The emotion label for the whole file. Always present and non-null.
-
-            '
-          example: Happy
-        time_series:
-          type: array
-          description: 'Consecutive fixed-length windows over the file, each with its own
-
-            emotion label. Empty when the file is shorter than one window.
-
-            '
-          items:
-            $ref: '#/components/schemas/EmotionWindow'
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
