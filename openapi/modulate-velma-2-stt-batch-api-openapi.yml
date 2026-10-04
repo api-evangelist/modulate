@@ -254,52 +254,45 @@ paths:
       - Velma 2 Stt Batch
 components:
   schemas:
-    ValidationError:
+    TranscriptionResponse:
       type: object
       required:
-      - loc
-      - msg
-      - type
+      - text
+      - duration_ms
+      - utterances
       properties:
-        loc:
+        text:
+          type: string
+          description: 'The complete transcribed text from the audio file, containing all utterances
+
+            concatenated together. This provides a full transcript of the audio content.
+
+            Always present; may be an empty string when no speech was recognized.
+
+            '
+          example: Hello everyone. Welcome to the meeting.
+        duration_ms:
+          type: integer
+          minimum: 0
+          description: 'The total duration of the processed audio in milliseconds. This value represents
+
+            the actual audio duration and is used for usage tracking and billing purposes.
+
+            '
+          example: 45000
+        utterances:
           type: array
+          description: 'Array of individual utterances detected in the audio, ordered by start time.
+
+            Each utterance represents a continuous segment of speech, potentially from a
+
+            specific speaker if diarization is enabled.
+
+            Always present; may be an empty array when no speech was recognized.
+
+            '
           items:
-            anyOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    STTConfig:
-      type: object
-      description: Per-request STT configuration. Every field is optional; a field present here overrides the matching top-level form parameter, and an omitted field falls back to the form parameter.
-      properties:
-        speaker_diarization:
-          type: boolean
-        emotion_signal:
-          type: boolean
-        accent_signal:
-          type: boolean
-        deepfake_signal:
-          type: boolean
-        pii_phi_tagging:
-          type: boolean
-        language:
-          oneOf:
-          - type: string
-            pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
-          - type: 'null'
-        custom_terms:
-          description: Optional custom vocabulary to bias transcription toward domain terms and names. Each entry is either a plain string (the term) or a CustomTerm object. Blank terms and blank pronunciations are dropped. At most 1000 entries, and the term strings serialized together as JSON must total under 8000 characters. Null or omitted means no biasing.
-          oneOf:
-          - type: 'null'
-          - type: array
-            maxItems: 1000
-            items:
-              oneOf:
-              - type: string
-              - $ref: '#/components/schemas/CustomTerm'
+            $ref: '#/components/schemas/Utterance'
     Utterance:
       type: object
       required:
@@ -407,22 +400,6 @@ components:
 
             '
           example: 0.05
-    ErrorResponse:
-      type: object
-      required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: Human-readable error message describing what went wrong
-          example: 'Unsupported file format. Supported formats: .aac, .aiff, .flac, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm.'
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
     CustomTerm:
       type: object
       required:
@@ -443,45 +420,68 @@ components:
             type: string
             maxLength: 128
           description: Optional pronunciation hints, as X-SAMPA notation or hyphen-separated ASCII respelling with the stressed syllable in capitals (e.g. GOO-guhl). Printable ASCII only.
-    TranscriptionResponse:
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    STTConfig:
+      type: object
+      description: Per-request STT configuration. Every field is optional; a field present here overrides the matching top-level form parameter, and an omitted field falls back to the form parameter.
+      properties:
+        speaker_diarization:
+          type: boolean
+        emotion_signal:
+          type: boolean
+        accent_signal:
+          type: boolean
+        deepfake_signal:
+          type: boolean
+        pii_phi_tagging:
+          type: boolean
+        language:
+          oneOf:
+          - type: string
+            pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
+          - type: 'null'
+        custom_terms:
+          description: Optional custom vocabulary to bias transcription toward domain terms and names. Each entry is either a plain string (the term) or a CustomTerm object. Blank terms and blank pronunciations are dropped. At most 1000 entries, and the term strings serialized together as JSON must total under 8000 characters. Null or omitted means no biasing.
+          oneOf:
+          - type: 'null'
+          - type: array
+            maxItems: 1000
+            items:
+              oneOf:
+              - type: string
+              - $ref: '#/components/schemas/CustomTerm'
+    ErrorResponse:
       type: object
       required:
-      - text
-      - duration_ms
-      - utterances
+      - detail
       properties:
-        text:
+        detail:
           type: string
-          description: 'The complete transcribed text from the audio file, containing all utterances
-
-            concatenated together. This provides a full transcript of the audio content.
-
-            Always present; may be an empty string when no speech was recognized.
-
-            '
-          example: Hello everyone. Welcome to the meeting.
-        duration_ms:
-          type: integer
-          minimum: 0
-          description: 'The total duration of the processed audio in milliseconds. This value represents
-
-            the actual audio duration and is used for usage tracking and billing purposes.
-
-            '
-          example: 45000
-        utterances:
+          description: Human-readable error message describing what went wrong
+          example: 'Unsupported file format. Supported formats: .aac, .aiff, .flac, .mov, .mp3, .mp4, .ogg, .opus, .wav, .webm.'
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
           type: array
-          description: 'Array of individual utterances detected in the audio, ordered by start time.
-
-            Each utterance represents a continuous segment of speech, potentially from a
-
-            specific speaker if diarization is enabled.
-
-            Always present; may be an empty array when no speech was recognized.
-
-            '
           items:
-            $ref: '#/components/schemas/Utterance'
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

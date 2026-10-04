@@ -147,23 +147,6 @@ paths:
       - Velma 2 Ai Music Detection Batch
 components:
   schemas:
-    ValidationError:
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      properties:
-        loc:
-          type: array
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
     AIMusicDetectionResponse:
       type: object
       required:
@@ -274,14 +257,6 @@ components:
           minimum: 0
           description: End-to-end inference time in milliseconds.
           example: 1333
-    ErrorResponse:
-      type: object
-      required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: Human-readable error message.
     HTTPValidationError:
       type: object
       properties:
@@ -375,6 +350,31 @@ components:
 
             '
           example: 0
+    ErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message.
+    ValidationError:
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

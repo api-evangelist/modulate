@@ -223,159 +223,6 @@ paths:
       - Velma 2 Batch
 components:
   schemas:
-    Clip:
-      type: object
-      required:
-      - clip_uuid
-      - text
-      - start_ms
-      - duration_ms
-      - speaker_label
-      - language
-      properties:
-        clip_uuid:
-          type: string
-          format: uuid
-        text:
-          type: string
-        start_ms:
-          type: integer
-          minimum: 0
-        duration_ms:
-          type: integer
-          minimum: 0
-        speaker_label:
-          type: string
-        language:
-          type: string
-        emotion:
-          description: Predicted emotion label for the clip, or null when the emotion signal is not enabled for the request.
-          oneOf:
-          - type: string
-          - type: 'null'
-        accent:
-          description: Predicted accent label for the clip, or null when the accent signal is not enabled for the request.
-          oneOf:
-          - type: string
-          - type: 'null'
-        deepfake_score:
-          oneOf:
-          - type: number
-            format: double
-            minimum: 0
-            maximum: 1
-          - type: 'null'
-    ListPresetsResponse:
-      type: object
-      required:
-      - presets
-      properties:
-        presets:
-          type: array
-          items:
-            $ref: '#/components/schemas/BehaviorPresetListing'
-    ValidationError:
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      properties:
-        loc:
-          type: array
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
-    BehaviorDef:
-      type: object
-      required:
-      - behavior_uuid
-      - name
-      - short_description
-      - detailed_description
-      properties:
-        behavior_uuid:
-          type: string
-          format: uuid
-        name:
-          type: string
-          minLength: 1
-        short_description:
-          type: string
-        detailed_description:
-          type: string
-        applies_to_conversation_type_uuids:
-          oneOf:
-          - type: array
-            items:
-              type: string
-              format: uuid
-          - type: 'null'
-        applies_to_participant_role_uuids:
-          oneOf:
-          - type: array
-            items:
-              type: string
-              format: uuid
-          - type: 'null'
-    ParticipantRoleDef:
-      type: object
-      required:
-      - participant_role_uuid
-      - name
-      - short_description
-      - detailed_description
-      properties:
-        participant_role_uuid:
-          type: string
-          format: uuid
-        name:
-          type: string
-          minLength: 1
-        short_description:
-          type: string
-        detailed_description:
-          type: string
-        applies_to_conversation_type_uuids:
-          description: Null/missing means applies to all conversation types.
-          oneOf:
-          - type: array
-            items:
-              type: string
-              format: uuid
-          - type: 'null'
-    ConversationTypePick:
-      type: object
-      required:
-      - conversation_type_uuid
-      - name
-      - confidence
-      - selection_source
-      - detail
-      properties:
-        conversation_type_uuid:
-          type: string
-          format: uuid
-        name:
-          type: string
-        confidence:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 1
-        selection_source:
-          $ref: '#/components/schemas/SelectionSource'
-        detail:
-          type: string
-        reasoning:
-          oneOf:
-          - type: string
-          - type: 'null'
     BehaviorDetection:
       type: object
       required:
@@ -416,6 +263,125 @@ components:
           oneOf:
           - type: string
           - type: 'null'
+    STTOptions:
+      type: object
+      properties:
+        speaker_diarization:
+          type: boolean
+          default: true
+        emotion_signal:
+          type: boolean
+          default: false
+        accent_signal:
+          type: boolean
+          default: false
+        deepfake_signal:
+          type: boolean
+          default: false
+        pii_phi_tagging:
+          type: boolean
+          default: false
+        language:
+          description: 'Optional language hint as a case-insensitive ISO 639-1 code (e.g.
+
+            "en", "fr"). BCP 47 region/script subtags (e.g. "en-US") are
+
+            accepted; only the primary language subtag is used. When omitted or
+
+            null, the language is detected automatically for each clip.
+
+            '
+          oneOf:
+          - type: string
+            pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
+          - type: 'null'
+        custom_terms:
+          description: Optional custom vocabulary to bias transcription toward domain terms and names. Each entry is either a plain string (the term) or a CustomTerm object. Blank terms and blank pronunciations are dropped. At most 1000 entries, and the term strings serialized together as JSON must total under 8000 characters. Null or omitted means no biasing.
+          oneOf:
+          - type: 'null'
+          - type: array
+            maxItems: 1000
+            items:
+              oneOf:
+              - type: string
+              - $ref: '#/components/schemas/CustomTerm'
+    ParticipantRoleDef:
+      type: object
+      required:
+      - participant_role_uuid
+      - name
+      - short_description
+      - detailed_description
+      properties:
+        participant_role_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+        applies_to_conversation_type_uuids:
+          description: Null/missing means applies to all conversation types.
+          oneOf:
+          - type: array
+            items:
+              type: string
+              format: uuid
+          - type: 'null'
+    TopicSentiment:
+      type: object
+      required:
+      - topic
+      - speaker_label
+      - sentiment_score
+      - sentiment_label
+      properties:
+        topic:
+          type: string
+        speaker_label:
+          type: string
+        sentiment_score:
+          type: number
+          format: double
+          minimum: -1
+          maximum: 1
+        sentiment_label:
+          type: string
+    BehaviorDef:
+      type: object
+      required:
+      - behavior_uuid
+      - name
+      - short_description
+      - detailed_description
+      properties:
+        behavior_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        short_description:
+          type: string
+        detailed_description:
+          type: string
+        applies_to_conversation_type_uuids:
+          oneOf:
+          - type: array
+            items:
+              type: string
+              format: uuid
+          - type: 'null'
+        applies_to_participant_role_uuids:
+          oneOf:
+          - type: array
+            items:
+              type: string
+              format: uuid
+          - type: 'null'
     ParticipantRolePick:
       type: object
       required:
@@ -446,6 +412,12 @@ components:
           oneOf:
           - type: string
           - type: 'null'
+    SelectionSource:
+      type: string
+      enum:
+      - inferred
+      - auto_selected_single_option
+      - default
     BatchResponse:
       type: object
       required:
@@ -484,6 +456,69 @@ components:
           oneOf:
           - type: string
           - type: 'null'
+    CustomTerm:
+      type: object
+      required:
+      - term
+      properties:
+        term:
+          type: string
+          minLength: 1
+          description: The vocabulary term to bias transcription toward.
+        definition:
+          type: string
+          maxLength: 256
+          description: Optional short definition of the term.
+        pronunciations:
+          type: array
+          maxItems: 16
+          items:
+            type: string
+            maxLength: 128
+          description: Optional pronunciation hints, as X-SAMPA notation or hyphen-separated ASCII respelling with the stressed syllable in capitals (e.g. GOO-guhl). Printable ASCII only.
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ConversationTypePick:
+      type: object
+      required:
+      - conversation_type_uuid
+      - name
+      - confidence
+      - selection_source
+      - detail
+      properties:
+        conversation_type_uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+        confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+        selection_source:
+          $ref: '#/components/schemas/SelectionSource'
+        detail:
+          type: string
+        reasoning:
+          oneOf:
+          - type: string
+          - type: 'null'
+    ListPresetsResponse:
+      type: object
+      required:
+      - presets
+      properties:
+        presets:
+          type: array
+          items:
+            $ref: '#/components/schemas/BehaviorPresetListing'
     BatchConfig:
       type: object
       properties:
@@ -566,67 +601,6 @@ components:
           oneOf:
           - $ref: '#/components/schemas/ParticipantRoleDef'
           - type: 'null'
-    STTOptions:
-      type: object
-      properties:
-        speaker_diarization:
-          type: boolean
-          default: true
-        emotion_signal:
-          type: boolean
-          default: false
-        accent_signal:
-          type: boolean
-          default: false
-        deepfake_signal:
-          type: boolean
-          default: false
-        pii_phi_tagging:
-          type: boolean
-          default: false
-        language:
-          description: 'Optional language hint as a case-insensitive ISO 639-1 code (e.g.
-
-            "en", "fr"). BCP 47 region/script subtags (e.g. "en-US") are
-
-            accepted; only the primary language subtag is used. When omitted or
-
-            null, the language is detected automatically for each clip.
-
-            '
-          oneOf:
-          - type: string
-            pattern: ^[A-Za-z]{2,3}([-_][A-Za-z0-9]+)*$
-          - type: 'null'
-        custom_terms:
-          description: Optional custom vocabulary to bias transcription toward domain terms and names. Each entry is either a plain string (the term) or a CustomTerm object. Blank terms and blank pronunciations are dropped. At most 1000 entries, and the term strings serialized together as JSON must total under 8000 characters. Null or omitted means no biasing.
-          oneOf:
-          - type: 'null'
-          - type: array
-            maxItems: 1000
-            items:
-              oneOf:
-              - type: string
-              - $ref: '#/components/schemas/CustomTerm'
-    TopicSentiment:
-      type: object
-      required:
-      - topic
-      - speaker_label
-      - sentiment_score
-      - sentiment_label
-      properties:
-        topic:
-          type: string
-        speaker_label:
-          type: string
-        sentiment_score:
-          type: number
-          format: double
-          minimum: -1
-          maximum: 1
-        sentiment_label:
-          type: string
     BehaviorPresetListing:
       type: object
       required:
@@ -648,6 +622,48 @@ components:
           type: string
         detailed_description:
           type: string
+    Clip:
+      type: object
+      required:
+      - clip_uuid
+      - text
+      - start_ms
+      - duration_ms
+      - speaker_label
+      - language
+      properties:
+        clip_uuid:
+          type: string
+          format: uuid
+        text:
+          type: string
+        start_ms:
+          type: integer
+          minimum: 0
+        duration_ms:
+          type: integer
+          minimum: 0
+        speaker_label:
+          type: string
+        language:
+          type: string
+        emotion:
+          description: Predicted emotion label for the clip, or null when the emotion signal is not enabled for the request.
+          oneOf:
+          - type: string
+          - type: 'null'
+        accent:
+          description: Predicted accent label for the clip, or null when the accent signal is not enabled for the request.
+          oneOf:
+          - type: string
+          - type: 'null'
+        deepfake_score:
+          oneOf:
+          - type: number
+            format: double
+            minimum: 0
+            maximum: 1
+          - type: 'null'
     ErrorResponse:
       type: object
       required:
@@ -656,33 +672,23 @@ components:
         detail:
           type: string
           description: Human-readable error message describing what went wrong
-    HTTPValidationError:
-      type: object
-      properties:
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/ValidationError'
-    CustomTerm:
+    ValidationError:
       type: object
       required:
-      - term
+      - loc
+      - msg
+      - type
       properties:
-        term:
-          type: string
-          minLength: 1
-          description: The vocabulary term to bias transcription toward.
-        definition:
-          type: string
-          maxLength: 256
-          description: Optional short definition of the term.
-        pronunciations:
+        loc:
           type: array
-          maxItems: 16
           items:
-            type: string
-            maxLength: 128
-          description: Optional pronunciation hints, as X-SAMPA notation or hyphen-separated ASCII respelling with the stressed syllable in capitals (e.g. GOO-guhl). Printable ASCII only.
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
     ConversationTypeDef:
       type: object
       required:
@@ -701,12 +707,6 @@ components:
           type: string
         detailed_description:
           type: string
-    SelectionSource:
-      type: string
-      enum:
-      - inferred
-      - auto_selected_single_option
-      - default
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

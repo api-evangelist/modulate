@@ -196,6 +196,14 @@ components:
 
             '
           example: 14253
+    ErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message.
     ValidationError:
       type: object
       required:
@@ -213,14 +221,6 @@ components:
           type: string
         type:
           type: string
-    ErrorResponse:
-      type: object
-      required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: Human-readable error message.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

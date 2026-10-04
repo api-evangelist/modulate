@@ -169,23 +169,13 @@ components:
             '
           items:
             $ref: '#/components/schemas/EmotionWindow'
-    ValidationError:
+    HTTPValidationError:
       type: object
-      required:
-      - loc
-      - msg
-      - type
       properties:
-        loc:
+        detail:
           type: array
           items:
-            anyOf:
-            - type: string
-            - type: integer
-        msg:
-          type: string
-        type:
-          type: string
+            $ref: '#/components/schemas/ValidationError'
     EmotionWindow:
       type: object
       required:
@@ -218,13 +208,23 @@ components:
           type: string
           description: Human-readable error message describing what went wrong
           example: The audio could not be processed. It may be corrupted or in an unsupported format.
-    HTTPValidationError:
+    ValidationError:
       type: object
+      required:
+      - loc
+      - msg
+      - type
       properties:
-        detail:
+        loc:
           type: array
           items:
-            $ref: '#/components/schemas/ValidationError'
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          type: string
+        type:
+          type: string
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
