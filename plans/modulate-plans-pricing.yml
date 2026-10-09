@@ -1,0 +1,296 @@
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-10-07'
+method: searched
+source: https://www.modulate.ai/api-pricing
+sources:
+- https://www.modulate.ai/api-pricing
+provenance:
+  tool: all/0-working/economics/harvest_pricing.py
+  run: 20261007T104522
+  grounding: every price_text was found verbatim in the fetched page text
+audience: developer-api
+pricing_basis: per-call
+delivery:
+  delivery: managed
+  method: page
+  read: '2026-10-07'
+published: true
+note: Usage-based per-hour-of-audio pricing per model plus annual credit commitment tiers; 100 credits
+  = $1.00 at pay-as-you-go.
+plan_count: 18
+currency: USD
+plans:
+- name: Pay-As-You-Go
+  price_text: $1.00
+  price: 1.0
+  currency: USD
+  period: per-use
+  unit: Per 100 Credits
+  included_quota: Inluded Credits / Year -
+- name: Starter
+  price_text: $30K Annual Commitment
+  price: 30000
+  currency: USD
+  period: year
+  unit: annual commitment
+  included_quota: Inluded Credits / Year 3,060,000; Per 100 Credits $0.98; Save 2%; Uptime 98.0%; Concurrent
+    Channels Up to 1,000
+  overage: Usage above your included block bills at your tier's rate with no surprise overage.
+- name: Growth
+  price_text: $180K Annual Commitment
+  price: 180000
+  currency: USD
+  period: year
+  unit: annual commitment
+  included_quota: Inluded Credits / Year 18,900,000; Per 100 Credits $0.95; Save 5%; Uptime 99.0%; Concurrent
+    Channels Up to 1,500
+  overage: Usage above your included block bills at your tier's rate with no surprise overage.
+- name: Enterprise
+  price_text: $450K Annual Commitment
+  price: 450000
+  currency: USD
+  period: year
+  unit: annual commitment
+  included_quota: Inluded Credits / Year 49,500,000; Per 100 Credits $0.90; Save 10%; Uptime 99.9%; Concurrent
+    Channels Up to 3,000
+  overage: Usage above your included block bills at your tier's rate with no surprise overage.
+- name: Custom
+  price_text: Let's talk
+  period: none
+  included_quota: Customized for you; Uptime 99.9%; Response 4 hours; Concurrent Channels 10,000+
+- name: English Fast Speech-to-Text (batch)
+  price_text: $0.025
+  price: 0.025
+  currency: USD
+  period: per-use
+  unit: per hour of audio (REST batch)
+- name: English Fast Speech-to-Text (streaming)
+  price_text: $0.05
+  price: 0.05
+  currency: USD
+  period: per-use
+  unit: per hour of audio (WebSocket streaming)
+- name: Multilingual Speech-to-Text (batch)
+  price_text: $0.03
+  price: 0.03
+  currency: USD
+  period: per-use
+  unit: per hour of audio (REST batch)
+  overage: 'Optional add-ons: Emotion ($.02), Accent ($.01) and PII/PHI tagging ($.02)'
+- name: Multilingual Speech-to-Text (streaming)
+  price_text: $0.06
+  price: 0.06
+  currency: USD
+  period: per-use
+  unit: per hour of audio (streaming)
+- name: Deepfake Detection
+  price_text: $0.25
+  price: 0.25
+  currency: USD
+  period: per-use
+  unit: per hour of audio (batch and streaming)
+- name: Emotion Detection
+  price_text: $0.02
+  price: 0.02
+  currency: USD
+  period: per-use
+  unit: per hour of audio (batch)
+- name: AI Music & Singing Detection
+  price_text: $0.07
+  price: 0.07
+  currency: USD
+  period: per-use
+  unit: per hour of audio
+- name: Music vs Speech Detection
+  price_text: $0.01
+  price: 0.01
+  currency: USD
+  period: per-use
+  unit: per hour of audio
+- name: Audio Event Detection
+  price_text: $0.02
+  price: 0.02
+  currency: USD
+  period: per-use
+  unit: per hour of audio (batch)
+- name: Velma - up to 10 behaviors
+  price_text: $0.75
+  price: 0.75
+  currency: USD
+  period: per-use
+  unit: per hour of audio (batch and streaming)
+- name: Velma - up to 25 behaviors
+  price_text: $1.25
+  price: 1.25
+  currency: USD
+  period: per-use
+  unit: per hour of audio (batch and streaming)
+- name: PII / PHI Redaction (batch)
+  price_text: $0.05
+  price: 0.05
+  currency: USD
+  period: per-use
+  unit: per hour of audio (batch)
+- name: PII / PHI Redaction (streaming)
+  price_text: $0.08
+  price: 0.08
+  currency: USD
+  period: per-use
+  unit: per hour of audio (streaming)
+rate_limit_statements:
+- Concurrent Channels Up to 1,000
+- Concurrent Channels Up to 1,500
+- Concurrent Channels Up to 3,000
+- Concurrent Channels 10,000+
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - hybrid
+  units:
+  - compute
+  - credit
+  plans:
+  - name: Pay-As-You-Go
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - credit
+    periods:
+    - other
+  - name: Starter
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - year
+  - name: Growth
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - year
+  - name: Enterprise
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - year
+  - name: Custom
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods:
+    - none
+  - name: English Fast Speech-to-Text (batch)
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: English Fast Speech-to-Text (streaming)
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: Multilingual Speech-to-Text (batch)
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: Multilingual Speech-to-Text (streaming)
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: Deepfake Detection
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: Emotion Detection
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: AI Music & Singing Detection
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: Music vs Speech Detection
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: Audio Event Detection
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: Velma - up to 10 behaviors
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: Velma - up to 25 behaviors
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: PII / PHI Redaction (batch)
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: PII / PHI Redaction (streaming)
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
