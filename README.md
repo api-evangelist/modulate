@@ -64,6 +64,173 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Modulate is a company surfaced as a portfolio company of sierra-ventures and added to the API Evangelist network as a stub for enrichment. Sector: ai. This profile is a lead awaiting the enrichment pipeline.
+Modulate is a voice AI company based in Cambridge, Massachusetts, building audio-native voice intelligence for trust, safety, and conversation understanding. Its Velma-2 platform exposes a suite of REST (batch) and WebSocket (streaming) model APIs — multilingual and English speech-to-text transcription with speaker diarization, deepfake (synthetic voice) detection, emotion and accent detection, PII/PHI tagging and redaction, language detection, and music/speech and AI-music detection — alongside Velma conversation analysis (behaviors, topics, sentiment, participant roles) and the ToxMod voice-safety product for gaming and social platforms. Authentication is via an X-API-Key header (an api_key query parameter for WebSocket streams), billed per hour of audio processed. Backed by Sierra Ventures.
 
-Backed by: sierra-ventures — https://modulate.ai/
+**Areas:** Company · Artificial Intelligence · Voice AI · Speech-to-Text · Transcription · Deepfake Detection · Content Moderation · Trust and Safety · Audio · Machine Learning · PII Redaction · Voice Intelligence
+
+## Modulate on APIs.io
+
+Everything profiled for Modulate is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/modulate/](https://apis.io/providers/modulate/)** — or go straight to one of the APIs or properties below.
+
+### APIs (11)
+
+- [Modulate Velma 2 Accent Batch API](https://apis.io/apis/modulate/modulate-velma-2-accent-batch-api/) — The Velma 2 Accent Batch API from Modulate — 1 operation(s) for velma 2 accent batch.
+- [Modulate Velma 2 Ai Music Detection Batch API](https://apis.io/apis/modulate/modulate-velma-2-ai-music-detection-batch-api/) — The Velma 2 Ai Music Detection Batch API from Modulate — 1 operation(s) for velma 2 ai music detection batch.
+- [Modulate Velma 2 Batch API](https://apis.io/apis/modulate/modulate-velma-2-batch-api/) — The Velma 2 Batch API from Modulate — 2 operation(s) for velma 2 batch.
+- [Modulate Velma 2 Emotion Batch API](https://apis.io/apis/modulate/modulate-velma-2-emotion-batch-api/) — The Velma 2 Emotion Batch API from Modulate — 1 operation(s) for velma 2 emotion batch.
+- [Modulate Velma 2 Language Detection Batch API](https://apis.io/apis/modulate/modulate-velma-2-language-detection-batch-api/) — The Velma 2 Language Detection Batch API from Modulate — 1 operation(s) for velma 2 language detection batch.
+- [Modulate Velma 2 Music Detection Batch API](https://apis.io/apis/modulate/modulate-velma-2-music-detection-batch-api/) — The Velma 2 Music Detection Batch API from Modulate — 1 operation(s) for velma 2 music detection batch.
+- [Modulate Velma 2 Pii Phi Redaction Batch API](https://apis.io/apis/modulate/modulate-velma-2-pii-phi-redaction-batch-api/) — The Velma 2 Pii Phi Redaction Batch API from Modulate — 1 operation(s) for velma 2 pii phi redaction batch.
+- [Modulate Velma 2 Stt Batch API](https://apis.io/apis/modulate/modulate-velma-2-stt-batch-api/) — The Velma 2 Stt Batch API from Modulate — 1 operation(s) for velma 2 stt batch.
+- [Modulate Velma 2 Stt Batch English Vfast API](https://apis.io/apis/modulate/modulate-velma-2-stt-batch-english-vfast-api/) — The Velma 2 Stt Batch English Vfast API from Modulate — 1 operation(s) for velma 2 stt batch english vfast.
+- [Modulate Velma 2 Stt Batch Multilingual Vfast API](https://apis.io/apis/modulate/modulate-velma-2-stt-batch-multilingual-vfast-api/) — The Velma 2 Stt Batch Multilingual Vfast API from Modulate — 1 operation(s) for velma 2 stt batch multilingual vfast.
+- [Modulate Velma 2 Synthetic Voice Detection Batch API](https://apis.io/apis/modulate/modulate-velma-2-synthetic-voice-detection-batch-api/) — The Velma 2 Synthetic Voice Detection Batch API from Modulate — 1 operation(s) for velma 2 synthetic voice detection batch.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (7)
+
+Event-driven and webhook contracts.
+
+- [Velma 2 AI Music Detection Streaming API](https://apis.io/asyncapis/modulate/modulate-ai-music-detection-streaming-asyncapi/)
+- [Velma 2 Music Detection Streaming API](https://apis.io/asyncapis/modulate/modulate-music-detection-streaming-asyncapi/)
+- [Velma 2 PII/PHI Redaction Streaming API](https://apis.io/asyncapis/modulate/modulate-pii-phi-redaction-streaming-asyncapi/)
+- [Velma 2 STT Streaming API](https://apis.io/asyncapis/modulate/modulate-stt-streaming-asyncapi/)
+- [Velma 2 STT Streaming English v2 API](https://apis.io/asyncapis/modulate/modulate-stt-streaming-english-v2-asyncapi/)
+- [Velma 2 Synthetic Voice Detection Streaming API](https://apis.io/asyncapis/modulate/modulate-synthetic-voice-detection-streaming-asyncapi/)
+- [Modulate Velma-2 Streaming Server](https://apis.io/asyncapis/modulate/modulate-velma-2-streaming-asyncapi/)
+
+#### Event channels (8)
+
+Individual events and webhooks the provider emits.
+
+- [/api/velma-2-ai-music-detection-streaming](https://apis.io/channels/modulate/api-velma-2-ai-music-detection-streaming/)
+- [/api/velma-2-music-detection-streaming](https://apis.io/channels/modulate/api-velma-2-music-detection-streaming/)
+- [/api/velma-2-pii-phi-redaction-streaming](https://apis.io/channels/modulate/api-velma-2-pii-phi-redaction-streaming/)
+- [/api/velma-2-streaming](https://apis.io/channels/modulate/api-velma-2-streaming/)
+- [/api/velma-2-streaming/list-presets](https://apis.io/channels/modulate/api-velma-2-streaming-list-presets/)
+- [/api/velma-2-stt-streaming](https://apis.io/channels/modulate/api-velma-2-stt-streaming/)
+- [/api/velma-2-stt-streaming-english-v2](https://apis.io/channels/modulate/api-velma-2-stt-streaming-english-v2/)
+- [/api/velma-2-synthetic-voice-detection-streaming](https://apis.io/channels/modulate/api-velma-2-synthetic-voice-detection-streaming/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [modulate](https://apis.io/servers/modulate/modulate/)
+
+#### Collections (11)
+
+Postman and Open Collection request collections.
+
+- [Velma 2 Accent Batch API](https://apis.io/collections/modulate/open-modulate-velma-2-accent-batch-api/)
+- [Velma 2 Accent Batch Velma 2 Ai Music Detection Batch API](https://apis.io/collections/modulate/open-modulate-velma-2-ai-music-detection-batch-api/)
+- [Velma 2 Accent Batch Velma 2 Batch API](https://apis.io/collections/modulate/open-modulate-velma-2-batch-api/)
+- [Velma 2 Accent Batch Velma 2 Emotion Batch API](https://apis.io/collections/modulate/open-modulate-velma-2-emotion-batch-api/)
+- [Velma 2 Accent Batch Velma 2 Language Detection Batch API](https://apis.io/collections/modulate/open-modulate-velma-2-language-detection-batch-api/)
+- [Velma 2 Accent Batch Velma 2 Music Detection Batch API](https://apis.io/collections/modulate/open-modulate-velma-2-music-detection-batch-api/)
+- [Velma 2 Accent Batch Velma 2 Pii Phi Redaction Batch API](https://apis.io/collections/modulate/open-modulate-velma-2-pii-phi-redaction-batch-api/)
+- [Velma 2 Accent Batch Velma 2 Stt Batch API](https://apis.io/collections/modulate/open-modulate-velma-2-stt-batch-api/)
+- [Velma 2 Accent Batch Velma 2 Stt Batch English Vfast API](https://apis.io/collections/modulate/open-modulate-velma-2-stt-batch-english-vfast-api/)
+- [Velma 2 Accent Batch Velma 2 Stt Batch Multilingual Vfast API](https://apis.io/collections/modulate/open-modulate-velma-2-stt-batch-multilingual-vfast-api/)
+- [Velma 2 Accent Batch Velma 2 Synthetic Voice Detection Batch API](https://apis.io/collections/modulate/open-modulate-velma-2-synthetic-voice-detection-batch-api/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Modulate Velma 2 Batch Overlay](https://apis.io/overlays/modulate/modulate-velma-2-batch-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Modulate Authentication](https://apis.io/security/modulate/modulate-authentication/)
+- [Modulate Domain Security](https://apis.io/security/modulate/modulate-domain-security/)
+- [Modulate Trust Center](https://apis.io/security/modulate/modulate-trust-center/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Modulate Plans Pricing](https://apis.io/plans/modulate/modulate-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Modulate Rate Limits](https://apis.io/rate-limits/modulate/modulate-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://modulate.ai/)
+- [Documentation](https://docs.modulate.ai/)
+- [Getting started](https://docs.modulate.ai/quickstart)
+- [API reference](https://docs.modulate.ai/api-reference/velma/overview)
+- [Pricing](https://www.modulate.ai/api-pricing)
+- [Sign up](https://platform.modulate.ai/signup-request)
+- [Support](https://docs.modulate.ai/support)
+- [Blog](https://www.modulate.ai/blog)
+- [Compliance](https://www.modulate.ai/compliance)
+- [Terms of service](https://www.modulate.ai/terms-and-conditions)
+- [Privacy policy](https://www.modulate.ai/privacy-policy)
+- [GitHub](https://github.com/modulateai)
+
+## API Evangelist rating
+
+**Kin Score 61.6** — strong · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 78.6 |
+| Contract quality | 59.5 |
+| Contract governance | 18.2 |
+| Operational transparency | 34.2 |
+| Developer ergonomics | 66.1 |
+| Access clarity | 92.1 |
+
+**Agent readiness 32.2** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | derived (partial credit) |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 26.3** — AI & Biometrics
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/modulate/](https://apis.io/providers/modulate/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Modulate: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/modulate/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
